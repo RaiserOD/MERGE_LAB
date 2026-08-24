@@ -6,10 +6,13 @@ export interface RuntimeConfig {
   readonly boardCols: number;
   readonly boardRows: number;
   readonly maxEnergy: number;
+  /** Energy restored per second of elapsed real time (A8). */
+  readonly energyRegenPerSecond: number;
 }
 
 export const runtimeConfig: RuntimeConfig = {
   boardCols: 7,
   boardRows: 9,
   maxEnergy: 100,
+  energyRegenPerSecond: 1 / 60,
 };

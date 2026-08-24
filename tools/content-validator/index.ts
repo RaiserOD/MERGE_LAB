@@ -1,48 +1,85 @@
 #!/usr/bin/env tsx
 /**
- * Minimal content validator (B5). Validates every content/items/*.json file
- * against ItemDefinitionSchema, then checks the two cross-reference rules
- * that are meaningful with items alone: unique IDs and resolvable
- * resultItemId chains. Extend this as generators/orders/chapters content is
- * added, per the full B5 checklist in the spec.
+ * Content validator (B5). Validates content/items/*.json and
+ * content/generators/*.json against their domain schemas, then checks the
+ * cross-reference rules that are meaningful for the content types that
+ * exist so far: unique IDs, resolvable resultItemId chains, and generator
+ * outputs pointing at real items. Extend this as orders/chapters/quests
+ * content is added, per the full B5 checklist in the spec.
  */
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import type { z } from "zod";
 import { ItemDefinitionSchema, type ItemDefinition } from "../../src/domain/items/ItemDefinition";
+import {
+  GeneratorDefinitionSchema,
+  type GeneratorDefinition,
+} from "../../src/domain/generators/GeneratorDefinition";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const itemsDir = path.resolve(__dirname, "../../content/items");
+const contentDir = path.resolve(__dirname, "../../content");
 
-async function loadItems(): Promise<ItemDefinition[]> {
-  const files = (await readdir(itemsDir)).filter((f) => f.endsWith(".json"));
-  const items: ItemDefinition[] = [];
+async function loadDir<TOut>(dirName: string, schema: z.ZodType<TOut>): Promise<TOut[]> {
+  const dir = path.join(contentDir, dirName);
+  const files = (await readdir(dir)).filter((f) => f.endsWith(".json"));
+  const parsedAll: TOut[] = [];
 
   for (const file of files) {
-    const raw = await readFile(path.join(itemsDir, file), "utf-8");
-    const parsed = ItemDefinitionSchema.safeParse(JSON.parse(raw));
+    const raw = await readFile(path.join(dir, file), "utf-8");
+    const parsed = schema.safeParse(JSON.parse(raw));
     if (!parsed.success) {
-      throw new Error(`content/items/${file} failed schema validation:\n${parsed.error.message}`);
+      throw new Error(
+        `content/${dirName}/${file} failed schema validation:\n${parsed.error.message}`,
+      );
     }
-    items.push(parsed.data);
+    parsedAll.push(parsed.data);
   }
 
-  return items;
+  return parsedAll;
 }
 
-function validateCrossReferences(items: ItemDefinition[]): string[] {
+function validateCrossReferences(
+  items: ItemDefinition[],
+  generators: GeneratorDefinition[],
+): string[] {
   const errors: string[] = [];
-  const idsSeen = new Set<string>();
-  const idToItem = new Map(items.map((item) => [item.id, item]));
+  const itemIds = new Set<string>();
+  const generatorIds = new Set<string>();
 
   for (const item of items) {
-    if (idsSeen.has(item.id)) {
+    if (itemIds.has(item.id)) {
       errors.push(`Duplicate item id: ${item.id}`);
     }
-    idsSeen.add(item.id);
+    itemIds.add(item.id);
+  }
 
-    if (item.resultItemId && !idToItem.has(item.resultItemId)) {
+  for (const generator of generators) {
+    if (generatorIds.has(generator.id)) {
+      errors.push(`Duplicate generator id: ${generator.id}`);
+    }
+    generatorIds.add(generator.id);
+  }
+
+  for (const item of items) {
+    if (item.resultItemId && !itemIds.has(item.resultItemId)) {
       errors.push(`${item.id}: resultItemId "${item.resultItemId}" does not exist`);
+    }
+    for (const generatorId of item.sourceGeneratorIds) {
+      if (!generatorIds.has(generatorId)) {
+        errors.push(`${item.id}: sourceGeneratorId "${generatorId}" does not exist`);
+      }
+    }
+  }
+
+  for (const generator of generators) {
+    if (!itemIds.has(generator.outputItemId)) {
+      errors.push(`${generator.id}: outputItemId "${generator.outputItemId}" does not exist`);
+    }
+    if (generator.chargesPerCycle > generator.maxCharges) {
+      errors.push(
+        `${generator.id}: chargesPerCycle (${generator.chargesPerCycle}) exceeds maxCharges (${generator.maxCharges})`,
+      );
     }
   }
 
@@ -50,8 +87,9 @@ function validateCrossReferences(items: ItemDefinition[]): string[] {
 }
 
 async function main(): Promise<void> {
-  const items = await loadItems();
-  const errors = validateCrossReferences(items);
+  const items = await loadDir("items", ItemDefinitionSchema);
+  const generators = await loadDir("generators", GeneratorDefinitionSchema);
+  const errors = validateCrossReferences(items, generators);
 
   if (errors.length > 0) {
     console.error(`Content validation failed (${errors.length} error(s)):`);
@@ -62,7 +100,9 @@ async function main(): Promise<void> {
     return;
   }
 
-  console.log(`Content validation passed: ${items.length} item definition(s) OK.`);
+  console.log(
+    `Content validation passed: ${items.length} item(s), ${generators.length} generator(s) OK.`,
+  );
 }
 
 await main();
