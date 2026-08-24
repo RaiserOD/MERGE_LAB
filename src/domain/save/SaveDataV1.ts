@@ -44,6 +44,13 @@ export const PlayerSaveSchema = z.object({
 export const ProgressionSaveSchema = z.object({
   labStage: z.number().int().nonnegative(),
   unlockedChapterIds: z.array(z.string().min(1)),
+  /**
+   * Items the player has produced at least once, backing DISCOVER_ITEM
+   * quests and the collection meta. Defaults to empty so a save written
+   * before this field existed still loads — no version bump needed while
+   * v1 is unreleased.
+   */
+  discoveredItemIds: z.array(z.string().min(1)).default([]),
 });
 
 export const QuestSaveSchema = z.object({

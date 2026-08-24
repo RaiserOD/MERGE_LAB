@@ -27,9 +27,37 @@ export class ProgressionSystem {
 
   /** Subscribes to the events progression reacts to. Returns an unsubscribe function. */
   start(): () => void {
-    return this.eventBus.on("ORDER_COMPLETED", (event) => {
-      this.grantXp(event.xpReward);
-    });
+    const unsubscribes = [
+      this.eventBus.on("ORDER_COMPLETED", (event) => {
+        this.grantXp(event.xpReward);
+      }),
+      this.eventBus.on("ITEM_SPAWNED", (event) => {
+        this.recordDiscovery(event.itemId);
+      }),
+      this.eventBus.on("ITEM_MERGED", (event) => {
+        this.recordDiscovery(event.resultItemId);
+      }),
+    ];
+
+    return () => {
+      for (const unsubscribe of unsubscribes) {
+        unsubscribe();
+      }
+    };
+  }
+
+  isDiscovered(itemId: string): boolean {
+    return this.progression.discoveredItemIds.includes(itemId);
+  }
+
+  /** Records a first sighting of an item and emits ITEM_DISCOVERED. Repeat sightings are a no-op. */
+  recordDiscovery(itemId: string): void {
+    if (this.isDiscovered(itemId)) {
+      return;
+    }
+
+    this.progression.discoveredItemIds.push(itemId);
+    this.eventBus.emit({ type: "ITEM_DISCOVERED", itemId });
   }
 
   grantXp(amount: number): void {

@@ -30,4 +30,11 @@ describe("SaveDataV1Schema", () => {
     const save = { ...makeValidSave(), version: 2 };
     expect(SaveDataV1Schema.safeParse(save).success).toBe(false);
   });
+
+  it("defaults discoveredItemIds for a save written before the field existed", () => {
+    const parsed = SaveDataV1Schema.safeParse(makeValidSave());
+
+    expect(parsed.success).toBe(true);
+    expect(parsed.success && parsed.data.progression.discoveredItemIds).toEqual([]);
+  });
 });

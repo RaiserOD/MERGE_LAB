@@ -31,7 +31,7 @@ describe("GeneratorSystem", () => {
     eventBus.on("GENERATOR_USED", (event) => emitted.push(event));
 
     const boardSystem = new BoardSystem(board, new ItemRegistry(testItems), eventBus);
-    const energySystem = new EnergySystem(currencies, clock, 0);
+    const energySystem = new EnergySystem(currencies, clock, 0, eventBus);
     generatorSystem = new GeneratorSystem(
       generatorSaves,
       new GeneratorRegistry(testGenerators),

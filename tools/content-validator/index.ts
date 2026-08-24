@@ -1,12 +1,12 @@
 #!/usr/bin/env tsx
 /**
  * Content validator (B5). Validates every content directory that has a
- * domain schema (items, generators, orders, chapters, lab-stages), then
- * checks the cross-reference rules: unique IDs, resolvable resultItemId
- * chains, generator outputs and order requirements pointing at real items,
- * chapter references to real generators/lab stages, no circular chapter
- * unlocks, and an unbroken 1..N lab stage run. Extend this as quest
- * content is added, per the full B5 checklist in the spec.
+ * domain schema (items, generators, orders, chapters, lab-stages, quests),
+ * then checks the cross-reference rules: unique IDs, resolvable
+ * resultItemId chains, generator outputs and order requirements pointing at
+ * real items, chapter references to real generators/lab stages, quest
+ * filters naming real content, no circular chapter unlocks, and an
+ * unbroken 1..N lab stage run.
  */
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -29,11 +29,20 @@ import {
   LabStageDefinitionSchema,
   type LabStageDefinition,
 } from "../../src/domain/progression/LabStageDefinition";
+import {
+  QuestDefinitionSchema,
+  type QuestDefinition,
+} from "../../src/domain/quests/QuestDefinition";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const contentDir = path.resolve(__dirname, "../../content");
 
-async function loadDir<TOut>(dirName: string, schema: z.ZodType<TOut>): Promise<TOut[]> {
+// Input is left as `unknown` so schemas using .default() (whose input and
+// output types differ) still infer TOut from the parsed output.
+async function loadDir<TOut>(
+  dirName: string,
+  schema: z.ZodType<TOut, z.ZodTypeDef, unknown>,
+): Promise<TOut[]> {
   const dir = path.join(contentDir, dirName);
   const files = (await readdir(dir)).filter((f) => f.endsWith(".json"));
   const parsedAll: TOut[] = [];
@@ -58,6 +67,7 @@ interface ContentSet {
   orders: OrderDefinition[];
   chapters: ChapterDefinition[];
   labStages: LabStageDefinition[];
+  quests: QuestDefinition[];
 }
 
 function validateCrossReferences({
@@ -66,6 +76,7 @@ function validateCrossReferences({
   orders,
   chapters,
   labStages,
+  quests,
 }: ContentSet): string[] {
   const errors: string[] = [];
   const itemIds = new Set<string>();
@@ -129,6 +140,41 @@ function validateCrossReferences({
 
   errors.push(...validateChapters(chapters, chapterIds, generatorIds, labStageNumbers));
   errors.push(...validateLabStages(labStages));
+  errors.push(...validateQuests(quests, itemIds, generatorIds, orderIds));
+
+  return errors;
+}
+
+function validateQuests(
+  quests: QuestDefinition[],
+  itemIds: Set<string>,
+  generatorIds: Set<string>,
+  orderIds: Set<string>,
+): string[] {
+  const errors: string[] = [];
+  const seen = new Set<string>();
+
+  for (const quest of quests) {
+    if (seen.has(quest.id)) {
+      errors.push(`Duplicate quest id: ${quest.id}`);
+    }
+    seen.add(quest.id);
+
+    // Filters are optional; when present they must name real content.
+    if (quest.type === "DISCOVER_ITEM" && quest.itemId && !itemIds.has(quest.itemId)) {
+      errors.push(`${quest.id}: itemId "${quest.itemId}" does not exist`);
+    }
+    if (
+      quest.type === "USE_GENERATOR" &&
+      quest.generatorId &&
+      !generatorIds.has(quest.generatorId)
+    ) {
+      errors.push(`${quest.id}: generatorId "${quest.generatorId}" does not exist`);
+    }
+    if (quest.type === "COMPLETE_ORDER" && quest.orderId && !orderIds.has(quest.orderId)) {
+      errors.push(`${quest.id}: orderId "${quest.orderId}" does not exist`);
+    }
+  }
 
   return errors;
 }
@@ -242,7 +288,15 @@ async function main(): Promise<void> {
   const orders = await loadDir("orders", OrderDefinitionSchema);
   const chapters = await loadDir("chapters", ChapterDefinitionSchema);
   const labStages = (await loadDir("lab-stages", LabStageDefinitionSchema.array())).flat();
-  const errors = validateCrossReferences({ items, generators, orders, chapters, labStages });
+  const quests = await loadDir("quests", QuestDefinitionSchema);
+  const errors = validateCrossReferences({
+    items,
+    generators,
+    orders,
+    chapters,
+    labStages,
+    quests,
+  });
 
   if (errors.length > 0) {
     console.error(`Content validation failed (${errors.length} error(s)):`);
@@ -255,7 +309,8 @@ async function main(): Promise<void> {
 
   console.log(
     `Content validation passed: ${items.length} item(s), ${generators.length} generator(s), ` +
-      `${orders.length} order(s), ${chapters.length} chapter(s), ${labStages.length} lab stage(s) OK.`,
+      `${orders.length} order(s), ${chapters.length} chapter(s), ${labStages.length} lab stage(s), ` +
+      `${quests.length} quest(s) OK.`,
   );
 }
 

@@ -1,0 +1,8 @@
+{
+  "id": "quest.tap_the_water",
+  "type": "USE_GENERATOR",
+  "title": "Use the water tap five times",
+  "generatorId": "gen.water_tap",
+  "target": 5,
+  "coinReward": 10
+}

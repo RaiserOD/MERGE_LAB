@@ -26,7 +26,7 @@ describe("First order (integration)", () => {
 
     const boardSystem = new BoardSystem(state.board, new ItemRegistry(testItems), eventBus);
     const mergeSystem = new MergeSystem(state.board, new ItemRegistry(testItems), eventBus);
-    const energySystem = new EnergySystem(state.currencies, clock, 0);
+    const energySystem = new EnergySystem(state.currencies, clock, 0, eventBus);
     const economySystem = new EconomySystem(state.currencies, eventBus);
     const generatorSystem = new GeneratorSystem(
       state.generators,

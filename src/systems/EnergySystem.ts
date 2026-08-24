@@ -1,4 +1,6 @@
 import type { CurrencySave } from "@domain/save/SaveDataV1";
+import type { DomainEvent } from "@systems/events/DomainEvent";
+import type { EventBus } from "@systems/events/EventBus";
 import type { Clock } from "@infrastructure/clock/Clock";
 
 export class InsufficientEnergyError extends Error {}
@@ -17,6 +19,7 @@ export class EnergySystem {
     private readonly currencies: CurrencySave,
     private readonly clock: Clock,
     private readonly regenPerSecond: number,
+    private readonly eventBus: EventBus<DomainEvent>,
   ) {
     this.lastRegenAt = clock.now();
   }
@@ -53,6 +56,15 @@ export class EnergySystem {
         `Need ${amount} energy but only ${this.currencies.energy} available`,
       );
     }
+    if (amount === 0) {
+      return;
+    }
+
     this.currencies.energy -= amount;
+    this.eventBus.emit({
+      type: "ENERGY_SPENT",
+      amount,
+      remaining: this.currencies.energy,
+    });
   }
 }

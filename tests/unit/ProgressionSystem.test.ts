@@ -18,7 +18,11 @@ describe("ProgressionSystem", () => {
 
   beforeEach(() => {
     player = { level: 1, xp: 0 };
-    progression = { labStage: 1, unlockedChapterIds: ["chapter.basement"] };
+    progression = {
+      labStage: 1,
+      unlockedChapterIds: ["chapter.basement"],
+      discoveredItemIds: [],
+    };
     currencies = { coins: 0, gems: 0, researchPoints: 0, energy: 100, maxEnergy: 100 };
     eventBus = new EventBus<DomainEvent>();
     emitted = [];
@@ -63,6 +67,44 @@ describe("ProgressionSystem", () => {
     });
 
     expect(player.xp).toBe(5);
+    stop();
+  });
+
+  it("records a first-time item as discovered and emits ITEM_DISCOVERED", () => {
+    const discovered: DomainEvent[] = [];
+    eventBus.on("ITEM_DISCOVERED", (event) => discovered.push(event));
+
+    system.recordDiscovery("item.steam");
+
+    expect(system.isDiscovered("item.steam")).toBe(true);
+    expect(progression.discoveredItemIds).toEqual(["item.steam"]);
+    expect(discovered).toEqual([{ type: "ITEM_DISCOVERED", itemId: "item.steam" }]);
+  });
+
+  it("treats a repeat sighting as a no-op", () => {
+    const discovered: DomainEvent[] = [];
+    eventBus.on("ITEM_DISCOVERED", (event) => discovered.push(event));
+
+    system.recordDiscovery("item.steam");
+    system.recordDiscovery("item.steam");
+
+    expect(progression.discoveredItemIds).toEqual(["item.steam"]);
+    expect(discovered).toHaveLength(1);
+  });
+
+  it("discovers items from spawn and merge events once started", () => {
+    const stop = system.start();
+
+    eventBus.emit({ type: "ITEM_SPAWNED", itemId: "item.water", position: { x: 0, y: 0 } });
+    eventBus.emit({
+      type: "ITEM_MERGED",
+      consumedItemId: "item.water",
+      resultItemId: "item.steam",
+      from: { x: 0, y: 0 },
+      to: { x: 1, y: 0 },
+    });
+
+    expect(progression.discoveredItemIds).toEqual(["item.water", "item.steam"]);
     stop();
   });
 

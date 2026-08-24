@@ -17,6 +17,8 @@ import {
   type LabStageDefinition,
 } from "@domain/progression/LabStageDefinition";
 import { ChapterRegistry, LabStageRegistry } from "@domain/progression/ChapterRegistry";
+import { QuestDefinitionSchema, type QuestDefinition } from "@domain/quests/QuestDefinition";
+import { QuestRegistry } from "@domain/quests/QuestRegistry";
 
 /**
  * Bridges the content/ JSON pipeline into runtime domain objects. This is
@@ -44,9 +46,15 @@ const labStageModules = import.meta.glob<{ default: unknown }>("/content/lab-sta
   eager: true,
 });
 
+const questModules = import.meta.glob<{ default: unknown }>("/content/quests/*.json", {
+  eager: true,
+});
+
+// Input is left as `unknown` so schemas using .default() (whose input and
+// output types differ) still infer TOut from the parsed output.
 function parseAll<TOut>(
   modules: Record<string, { default: unknown }>,
-  schema: z.ZodType<TOut>,
+  schema: z.ZodType<TOut, z.ZodTypeDef, unknown>,
 ): TOut[] {
   const parsedAll: TOut[] = [];
 
@@ -81,6 +89,10 @@ export function loadLabStageDefinitions(): LabStageDefinition[] {
   return parseAll(labStageModules, LabStageDefinitionSchema.array()).flat();
 }
 
+export function loadQuestDefinitions(): QuestDefinition[] {
+  return parseAll(questModules, QuestDefinitionSchema);
+}
+
 export function loadItemRegistry(): ItemRegistry {
   return new ItemRegistry(loadItemDefinitions());
 }
@@ -99,4 +111,8 @@ export function loadChapterRegistry(): ChapterRegistry {
 
 export function loadLabStageRegistry(): LabStageRegistry {
   return new LabStageRegistry(loadLabStageDefinitions());
+}
+
+export function loadQuestRegistry(): QuestRegistry {
+  return new QuestRegistry(loadQuestDefinitions());
 }

@@ -1,0 +1,9 @@
+{
+  "id": "quest.discover_steam",
+  "type": "DISCOVER_ITEM",
+  "title": "Produce your first Steam",
+  "itemId": "item.steam",
+  "target": 1,
+  "coinReward": 20,
+  "researchReward": 1
+}
