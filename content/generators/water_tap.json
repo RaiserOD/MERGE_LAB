@@ -1,0 +1,8 @@
+{
+  "id": "gen.water_tap",
+  "outputItemId": "item.water",
+  "cooldownSeconds": 5,
+  "energyCost": 2,
+  "chargesPerCycle": 3,
+  "maxCharges": 3
+}

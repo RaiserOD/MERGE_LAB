@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Env / secrets — never commit real values
+.env
+.env.*
+!.env.example
+
+# Save exports / debug dumps
+*.save.json
+tools/**/output/
+
+# Test / coverage
+coverage/
+playwright-report/
+test-results/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# PWA generated
+dev-dist/
+
+# TypeScript incremental build info
+*.tsbuildinfo

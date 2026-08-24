@@ -1,0 +1,8 @@
+{
+  "id": "order.water_delivery",
+  "chapterId": "chapter.basement",
+  "requirements": [{ "itemId": "item.water", "quantity": 2 }],
+  "coinReward": 10,
+  "researchReward": 0,
+  "xpReward": 2
+}

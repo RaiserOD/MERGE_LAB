@@ -1,0 +1,8 @@
+{
+  "id": "order.first_sample",
+  "chapterId": "chapter.basement",
+  "requirements": [{ "itemId": "item.steam", "quantity": 1 }],
+  "coinReward": 25,
+  "researchReward": 1,
+  "xpReward": 5
+}
