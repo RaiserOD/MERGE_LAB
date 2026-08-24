@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Merge Lab">
+  <rect width="64" height="64" rx="12" fill="#101820" />
+  <path d="M26 14h12v10.5l9.5 17A7 7 0 0 1 41.4 52H22.6a7 7 0 0 1-6.1-10.5l9.5-17V14z" fill="none" stroke="#3d8bfd" stroke-width="3.5" stroke-linejoin="round" />
+  <path d="M20.5 38h23l4 7A7 7 0 0 1 41.4 52H22.6a7 7 0 0 1-6.1-10.5l4-3.5z" fill="#3d8bfd" opacity="0.55" />
+  <circle cx="28" cy="44" r="2.6" fill="#9ec5ff" />
+  <circle cx="36.5" cy="47" r="1.8" fill="#9ec5ff" />
+  <rect x="24" y="11" width="16" height="4" rx="2" fill="#3d8bfd" />
+</svg>

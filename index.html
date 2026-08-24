@@ -3,12 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!--
+      frame-ancestors is deliberately absent: browsers ignore it when it
+      arrives via <meta>, so it has to be set as an HTTP response header at
+      the hosting layer (see SECURITY.md).
+    -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'"
     />
     <title>Merge Lab</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #101820;
+        overflow: hidden;
+      }
+
+      #app {
+        width: 100vw;
+        height: 100dvh;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
