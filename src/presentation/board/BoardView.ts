@@ -35,9 +35,11 @@ export class BoardView {
 
   /** Recomputes cell size for the current viewport (A18: responsive on desktop and mobile). */
   layoutFor(width: number, height: number): void {
+    // The banner strip is reserved whether or not it is currently showing,
+    // so the board keeps the same position once the tutorial finishes.
+    const topReserved = layout.hudHeight + layout.bannerHeight;
     const availableWidth = width - layout.boardPadding * 2;
-    const availableHeight =
-      height - layout.hudHeight - layout.footerHeight - layout.boardPadding * 2;
+    const availableHeight = height - topReserved - layout.footerHeight - layout.boardPadding * 2;
 
     const cellSize = Math.floor(
       Math.min(availableWidth / this.board.cols, availableHeight / this.board.rows),
@@ -48,9 +50,7 @@ export class BoardView {
     this.geometry = {
       cellSize,
       originX: Math.floor((width - boardWidth) / 2),
-      originY: Math.floor(
-        layout.hudHeight + (availableHeight - boardHeight) / 2 + layout.boardPadding,
-      ),
+      originY: Math.floor(topReserved + (availableHeight - boardHeight) / 2 + layout.boardPadding),
     };
   }
 

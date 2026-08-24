@@ -23,6 +23,7 @@ describe("ProgressionSystem", () => {
       unlockedChapterIds: ["chapter.basement"],
       discoveredItemIds: [],
       seenDialogueIds: [],
+      completedTutorialStepIds: [],
     };
     currencies = { coins: 0, gems: 0, researchPoints: 0, energy: 100, maxEnergy: 100 };
     eventBus = new EventBus<DomainEvent>();

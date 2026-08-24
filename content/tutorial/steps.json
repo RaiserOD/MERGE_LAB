@@ -1,0 +1,25 @@
+[
+  {
+    "id": "tutorial.first_merge",
+    "instruction": "Drag one Water sample onto the other to combine them.",
+    "completedBy": { "event": "ITEM_MERGED" }
+  },
+  {
+    "id": "tutorial.use_generator",
+    "instruction": "Tap the Water Tap below to draw a fresh sample.",
+    "dialogueId": "dialogue.tutorial_generator",
+    "completedBy": { "event": "GENERATOR_USED", "generatorId": "gen.water_tap" }
+  },
+  {
+    "id": "tutorial.first_order",
+    "instruction": "An order is waiting. Deliver it to earn coins.",
+    "dialogueId": "dialogue.tutorial_order",
+    "completedBy": { "event": "ORDER_COMPLETED" }
+  },
+  {
+    "id": "tutorial.first_upgrade",
+    "instruction": "Save up coins, then restore the next wing of the laboratory.",
+    "dialogueId": "dialogue.tutorial_upgrade",
+    "completedBy": { "event": "LAB_UPGRADED" }
+  }
+]

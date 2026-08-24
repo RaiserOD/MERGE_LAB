@@ -49,6 +49,8 @@ export type DomainEvent =
   | { type: "DIALOGUE_STARTED"; dialogueId: string; lineCount: number }
   | { type: "DIALOGUE_ADVANCED"; dialogueId: string; lineIndex: number }
   | { type: "DIALOGUE_COMPLETED"; dialogueId: string }
+  | { type: "TUTORIAL_STEP_COMPLETED"; stepId: string; nextStepId: string | undefined }
+  | { type: "TUTORIAL_COMPLETED" }
   | { type: "ENERGY_SPENT"; amount: number; remaining: number }
   | {
       type: "QUEST_COMPLETED";

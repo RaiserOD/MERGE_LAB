@@ -37,6 +37,10 @@ import {
   DialogueDefinitionSchema,
   type DialogueDefinition,
 } from "../../src/domain/dialogues/DialogueDefinition";
+import {
+  TutorialStepDefinitionSchema,
+  type TutorialStepDefinition,
+} from "../../src/domain/tutorial/TutorialStepDefinition";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const contentDir = path.resolve(__dirname, "../../content");
@@ -73,6 +77,7 @@ interface ContentSet {
   labStages: LabStageDefinition[];
   quests: QuestDefinition[];
   dialogues: DialogueDefinition[];
+  tutorialSteps: TutorialStepDefinition[];
 }
 
 function validateCrossReferences({
@@ -83,6 +88,7 @@ function validateCrossReferences({
   labStages,
   quests,
   dialogues,
+  tutorialSteps,
 }: ContentSet): string[] {
   const errors: string[] = [];
   const itemIds = new Set<string>();
@@ -151,6 +157,55 @@ function validateCrossReferences({
   errors.push(...validateLabStages(labStages));
   errors.push(...validateQuests(quests, itemIds, generatorIds, orderIds));
   errors.push(...validateDialogues(dialogues));
+  errors.push(
+    ...validateTutorialSteps(tutorialSteps, itemIds, generatorIds, orderIds, dialogueIds),
+  );
+
+  return errors;
+}
+
+function validateTutorialSteps(
+  steps: TutorialStepDefinition[],
+  itemIds: Set<string>,
+  generatorIds: Set<string>,
+  orderIds: Set<string>,
+  dialogueIds: Set<string>,
+): string[] {
+  const errors: string[] = [];
+  const seen = new Set<string>();
+
+  for (const step of steps) {
+    if (seen.has(step.id)) {
+      errors.push(`Duplicate tutorial step id: ${step.id}`);
+    }
+    seen.add(step.id);
+
+    if (step.dialogueId && !dialogueIds.has(step.dialogueId)) {
+      errors.push(`${step.id}: dialogueId "${step.dialogueId}" does not exist`);
+    }
+
+    const completion = step.completedBy;
+    if (completion.event === "ITEM_MERGED" && completion.resultItemId) {
+      if (!itemIds.has(completion.resultItemId)) {
+        errors.push(`${step.id}: resultItemId "${completion.resultItemId}" does not exist`);
+      }
+    }
+    if (completion.event === "ITEM_DISCOVERED" && completion.itemId) {
+      if (!itemIds.has(completion.itemId)) {
+        errors.push(`${step.id}: itemId "${completion.itemId}" does not exist`);
+      }
+    }
+    if (completion.event === "GENERATOR_USED" && completion.generatorId) {
+      if (!generatorIds.has(completion.generatorId)) {
+        errors.push(`${step.id}: generatorId "${completion.generatorId}" does not exist`);
+      }
+    }
+    if (completion.event === "ORDER_COMPLETED" && completion.orderId) {
+      if (!orderIds.has(completion.orderId)) {
+        errors.push(`${step.id}: orderId "${completion.orderId}" does not exist`);
+      }
+    }
+  }
 
   return errors;
 }
@@ -321,6 +376,7 @@ async function main(): Promise<void> {
   const labStages = (await loadDir("lab-stages", LabStageDefinitionSchema.array())).flat();
   const quests = await loadDir("quests", QuestDefinitionSchema);
   const dialogues = await loadDir("dialogues", DialogueDefinitionSchema);
+  const tutorialSteps = (await loadDir("tutorial", TutorialStepDefinitionSchema.array())).flat();
   const errors = validateCrossReferences({
     items,
     generators,
@@ -329,6 +385,7 @@ async function main(): Promise<void> {
     labStages,
     quests,
     dialogues,
+    tutorialSteps,
   });
 
   if (errors.length > 0) {
@@ -343,7 +400,8 @@ async function main(): Promise<void> {
   console.log(
     `Content validation passed: ${items.length} item(s), ${generators.length} generator(s), ` +
       `${orders.length} order(s), ${chapters.length} chapter(s), ${labStages.length} lab stage(s), ` +
-      `${quests.length} quest(s), ${dialogues.length} dialogue(s) OK.`,
+      `${quests.length} quest(s), ${dialogues.length} dialogue(s), ` +
+      `${tutorialSteps.length} tutorial step(s) OK.`,
   );
 }
 

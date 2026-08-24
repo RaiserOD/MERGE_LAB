@@ -1,0 +1,14 @@
+{
+  "id": "dialogue.tutorial_upgrade",
+  "oneShot": true,
+  "lines": [
+    {
+      "speaker": "professor",
+      "text": "Coins in hand. Good — the chemistry wing has been dark for years."
+    },
+    {
+      "speaker": "professor",
+      "text": "Restore it when you can afford to. Every wing you reopen widens what we can make."
+    }
+  ]
+}

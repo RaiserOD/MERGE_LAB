@@ -71,6 +71,7 @@ export class GameState {
         unlockedChapterIds: ["chapter.basement"],
         discoveredItemIds: [],
         seenDialogueIds: [],
+        completedTutorialStepIds: [],
       },
       [],
       [],
