@@ -7,22 +7,22 @@ import { z } from "zod";
  * input, not just a serialization detail.
  */
 
-const BoardCellStateSchema = z.enum(["EMPTY", "OCCUPIED", "BLOCKED", "LOCKED"]);
+export const BoardCellStateSchema = z.enum(["EMPTY", "OCCUPIED", "BLOCKED", "LOCKED"]);
 
-const BoardCellSchema = z.object({
+export const BoardCellSaveSchema = z.object({
   x: z.number().int().nonnegative(),
   y: z.number().int().nonnegative(),
   state: BoardCellStateSchema,
   itemId: z.string().min(1).optional(),
 });
 
-const BoardSaveSchema = z.object({
+export const BoardSaveSchema = z.object({
   cols: z.number().int().positive(),
   rows: z.number().int().positive(),
-  cells: z.array(BoardCellSchema),
+  cells: z.array(BoardCellSaveSchema),
 });
 
-const CurrencySaveSchema = z.object({
+export const CurrencySaveSchema = z.object({
   coins: z.number().int().nonnegative(),
   gems: z.number().int().nonnegative(),
   researchPoints: z.number().int().nonnegative(),
@@ -30,29 +30,29 @@ const CurrencySaveSchema = z.object({
   maxEnergy: z.number().positive(),
 });
 
-const GeneratorSaveSchema = z.object({
+export const GeneratorSaveSchema = z.object({
   generatorId: z.string().min(1),
   chargesRemaining: z.number().int().nonnegative(),
   cooldownEndsAt: z.number().int().nonnegative().nullable(),
 });
 
-const PlayerSaveSchema = z.object({
+export const PlayerSaveSchema = z.object({
   level: z.number().int().nonnegative(),
   xp: z.number().int().nonnegative(),
 });
 
-const ProgressionSaveSchema = z.object({
+export const ProgressionSaveSchema = z.object({
   labStage: z.number().int().nonnegative(),
   unlockedChapterIds: z.array(z.string().min(1)),
 });
 
-const QuestSaveSchema = z.object({
+export const QuestSaveSchema = z.object({
   questId: z.string().min(1),
   progress: z.number().int().nonnegative(),
   completed: z.boolean(),
 });
 
-const EventSaveSchema = z.object({
+export const EventSaveSchema = z.object({
   eventId: z.string().min(1),
   startsAt: z.number().int().nonnegative(),
   endsAt: z.number().int().nonnegative(),
@@ -71,3 +71,11 @@ export const SaveDataV1Schema = z.object({
 });
 
 export type SaveDataV1 = z.infer<typeof SaveDataV1Schema>;
+export type BoardCellSave = z.infer<typeof BoardCellSaveSchema>;
+export type BoardSave = z.infer<typeof BoardSaveSchema>;
+export type CurrencySave = z.infer<typeof CurrencySaveSchema>;
+export type GeneratorSave = z.infer<typeof GeneratorSaveSchema>;
+export type PlayerSave = z.infer<typeof PlayerSaveSchema>;
+export type ProgressionSave = z.infer<typeof ProgressionSaveSchema>;
+export type QuestSave = z.infer<typeof QuestSaveSchema>;
+export type EventSave = z.infer<typeof EventSaveSchema>;
