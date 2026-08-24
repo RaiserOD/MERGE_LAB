@@ -6,6 +6,8 @@ import {
   type GeneratorDefinition,
 } from "@domain/generators/GeneratorDefinition";
 import { GeneratorRegistry } from "@domain/generators/GeneratorRegistry";
+import { OrderDefinitionSchema, type OrderDefinition } from "@domain/orders/OrderDefinition";
+import { OrderRegistry } from "@domain/orders/OrderRegistry";
 
 /**
  * Bridges the content/ JSON pipeline into runtime domain objects. This is
@@ -17,6 +19,10 @@ const itemModules = import.meta.glob<{ default: unknown }>("/content/items/*.jso
 });
 
 const generatorModules = import.meta.glob<{ default: unknown }>("/content/generators/*.json", {
+  eager: true,
+});
+
+const orderModules = import.meta.glob<{ default: unknown }>("/content/orders/*.json", {
   eager: true,
 });
 
@@ -45,10 +51,18 @@ export function loadGeneratorDefinitions(): GeneratorDefinition[] {
   return parseAll(generatorModules, GeneratorDefinitionSchema);
 }
 
+export function loadOrderDefinitions(): OrderDefinition[] {
+  return parseAll(orderModules, OrderDefinitionSchema);
+}
+
 export function loadItemRegistry(): ItemRegistry {
   return new ItemRegistry(loadItemDefinitions());
 }
 
 export function loadGeneratorRegistry(): GeneratorRegistry {
   return new GeneratorRegistry(loadGeneratorDefinitions());
+}
+
+export function loadOrderRegistry(): OrderRegistry {
+  return new OrderRegistry(loadOrderDefinitions());
 }

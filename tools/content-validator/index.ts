@@ -1,11 +1,12 @@
 #!/usr/bin/env tsx
 /**
- * Content validator (B5). Validates content/items/*.json and
- * content/generators/*.json against their domain schemas, then checks the
+ * Content validator (B5). Validates content/items, content/generators and
+ * content/orders against their domain schemas, then checks the
  * cross-reference rules that are meaningful for the content types that
- * exist so far: unique IDs, resolvable resultItemId chains, and generator
- * outputs pointing at real items. Extend this as orders/chapters/quests
- * content is added, per the full B5 checklist in the spec.
+ * exist so far: unique IDs, resolvable resultItemId chains, generator
+ * outputs pointing at real items, and order requirements pointing at real
+ * items. Extend this as chapters/quests content is added, per the full B5
+ * checklist in the spec.
  */
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -16,6 +17,10 @@ import {
   GeneratorDefinitionSchema,
   type GeneratorDefinition,
 } from "../../src/domain/generators/GeneratorDefinition";
+import {
+  OrderDefinitionSchema,
+  type OrderDefinition,
+} from "../../src/domain/orders/OrderDefinition";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const contentDir = path.resolve(__dirname, "../../content");
@@ -42,10 +47,12 @@ async function loadDir<TOut>(dirName: string, schema: z.ZodType<TOut>): Promise<
 function validateCrossReferences(
   items: ItemDefinition[],
   generators: GeneratorDefinition[],
+  orders: OrderDefinition[],
 ): string[] {
   const errors: string[] = [];
   const itemIds = new Set<string>();
   const generatorIds = new Set<string>();
+  const orderIds = new Set<string>();
 
   for (const item of items) {
     if (itemIds.has(item.id)) {
@@ -83,13 +90,27 @@ function validateCrossReferences(
     }
   }
 
+  for (const order of orders) {
+    if (orderIds.has(order.id)) {
+      errors.push(`Duplicate order id: ${order.id}`);
+    }
+    orderIds.add(order.id);
+
+    for (const requirement of order.requirements) {
+      if (!itemIds.has(requirement.itemId)) {
+        errors.push(`${order.id}: required itemId "${requirement.itemId}" does not exist`);
+      }
+    }
+  }
+
   return errors;
 }
 
 async function main(): Promise<void> {
   const items = await loadDir("items", ItemDefinitionSchema);
   const generators = await loadDir("generators", GeneratorDefinitionSchema);
-  const errors = validateCrossReferences(items, generators);
+  const orders = await loadDir("orders", OrderDefinitionSchema);
+  const errors = validateCrossReferences(items, generators, orders);
 
   if (errors.length > 0) {
     console.error(`Content validation failed (${errors.length} error(s)):`);
@@ -101,7 +122,7 @@ async function main(): Promise<void> {
   }
 
   console.log(
-    `Content validation passed: ${items.length} item(s), ${generators.length} generator(s) OK.`,
+    `Content validation passed: ${items.length} item(s), ${generators.length} generator(s), ${orders.length} order(s) OK.`,
   );
 }
 
