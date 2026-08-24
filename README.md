@@ -42,14 +42,16 @@ Phaser**.
 See `docs/architecture/ADR/` for the decisions behind this structure,
 starting with `0001-stack-and-trust-boundary.md`.
 
-## Known gaps (bootstrap stage only)
+## Current state
 
-- PWA manifest icons (`public/pwa-192x192.png`, `public/pwa-512x512.png`)
-  are referenced but not yet generated — add real icons before relying on
-  PWA install prompts.
-- This is Stage 0/1 bootstrap scaffolding (per the master spec's A26
-  staging), not a playable build: board/merge/generator/economy systems
-  are not implemented yet.
+The core loop is playable: `pnpm dev` opens a board you can drag items
+around, merge them, run the generator and deliver orders, with progress
+saved to `localStorage` between reloads.
+
+Not built yet (per the master spec's A26 staging): tutorial, narrative and
+dialogue UI, lab-upgrade and quest screens, events, analytics,
+monetization adapters, and real art/audio — items currently render as
+rarity-tinted placeholder tiles.
 
 ## Security
 

@@ -35,3 +35,6 @@ consequences that are accepted by design, not oversights:
 - Content Security Policy is set in `index.html`; loosen it only when
   actually wiring a specific third-party SDK, and scope it to that SDK's
   origin.
+- `frame-ancestors` cannot be delivered via `<meta>` — browsers ignore it
+  there. Set it (alongside `X-Frame-Options`) as an HTTP response header at
+  the hosting layer to stop the game being framed by another site.
