@@ -3,6 +3,7 @@ import type { ItemRegistry } from "@domain/items/ItemRegistry";
 import type { GeneratorRegistry } from "@domain/generators/GeneratorRegistry";
 import type { OrderRegistry } from "@domain/orders/OrderRegistry";
 import type { QuestRegistry } from "@domain/quests/QuestRegistry";
+import type { DialogueRegistry } from "@domain/dialogues/DialogueRegistry";
 import type { ChapterRegistry, LabStageRegistry } from "@domain/progression/ChapterRegistry";
 import { EventBus } from "@systems/events/EventBus";
 import type { DomainEvent } from "@systems/events/DomainEvent";
@@ -14,6 +15,7 @@ import { EconomySystem } from "@systems/EconomySystem";
 import { OrderSystem } from "@systems/OrderSystem";
 import { ProgressionSystem } from "@systems/ProgressionSystem";
 import { QuestSystem } from "@systems/QuestSystem";
+import { DialogueSystem } from "@systems/DialogueSystem";
 import { SaveSystem } from "@infrastructure/persistence/SaveSystem";
 import { SystemClock, type Clock } from "@infrastructure/clock/Clock";
 import {
@@ -23,6 +25,7 @@ import {
   loadLabStageRegistry,
   loadOrderRegistry,
   loadQuestRegistry,
+  loadDialogueRegistry,
 } from "@infrastructure/content/ContentLoader";
 import { runtimeConfig } from "@config/runtime";
 
@@ -43,6 +46,7 @@ export class GameContext {
   readonly generators: GeneratorRegistry;
   readonly orders: OrderRegistry;
   readonly quests: QuestRegistry;
+  readonly dialogues: DialogueRegistry;
   readonly chapters: ChapterRegistry;
   readonly labStages: LabStageRegistry;
   readonly boardSystem: BoardSystem;
@@ -53,6 +57,7 @@ export class GameContext {
   readonly orderSystem: OrderSystem;
   readonly progressionSystem: ProgressionSystem;
   readonly questSystem: QuestSystem;
+  readonly dialogueSystem: DialogueSystem;
   readonly saveSystem: SaveSystem;
 
   private readonly stopHandlers: (() => void)[] = [];
@@ -65,6 +70,7 @@ export class GameContext {
     this.generators = loadGeneratorRegistry();
     this.orders = loadOrderRegistry();
     this.quests = loadQuestRegistry();
+    this.dialogues = loadDialogueRegistry();
     this.chapters = loadChapterRegistry();
     this.labStages = loadLabStageRegistry();
 
@@ -109,6 +115,7 @@ export class GameContext {
       this.economySystem,
       this.eventBus,
     );
+    this.dialogueSystem = new DialogueSystem(this.state.progression, this.dialogues, this.eventBus);
   }
 
   /** Attaches the event-driven systems. Call once, before gameplay starts. */

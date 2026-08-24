@@ -7,6 +7,7 @@ import { OrderError } from "@systems/OrderSystem";
 import { BoardView } from "@presentation/board/BoardView";
 import { Hud } from "@presentation/ui/Hud";
 import { ActionBar } from "@presentation/ui/ActionBar";
+import { DialogueView } from "@presentation/npc/DialogueView";
 import { palette } from "@presentation/theme";
 import { SCENE_KEYS } from "@presentation/scenes/BootScene";
 
@@ -29,7 +30,9 @@ export class GameScene extends Phaser.Scene {
   private boardView!: BoardView;
   private hud!: Hud;
   private actionBar!: ActionBar;
+  private dialogueView!: DialogueView;
   private drag: DragState | undefined;
+  private dialogueUnsubscribe: (() => void) | undefined;
 
   constructor() {
     super(SCENE_KEYS.game);
@@ -53,6 +56,8 @@ export class GameScene extends Phaser.Scene {
       },
     });
 
+    this.dialogueView = new DialogueView(this, this.context);
+
     this.relayout();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.relayout);
 
@@ -60,7 +65,30 @@ export class GameScene extends Phaser.Scene {
     this.input.on(Phaser.Input.Events.POINTER_MOVE, this.onPointerMove);
     this.input.on(Phaser.Input.Events.POINTER_UP, this.onPointerUp);
 
+    // Persist the "seen" flag so a one-shot intro survives a reload.
+    this.dialogueUnsubscribe = this.context.eventBus.on("DIALOGUE_COMPLETED", () => {
+      this.context.save();
+    });
+
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.teardown);
+
+    this.playCurrentChapterIntro();
+  }
+
+  /** Chapter intros are one-shot, so this is safe to call on every boot. */
+  private playCurrentChapterIntro(): void {
+    const { unlockedChapterIds } = this.context.state.progression;
+    const currentChapterId = unlockedChapterIds[unlockedChapterIds.length - 1];
+    if (!currentChapterId) {
+      return;
+    }
+
+    const chapter = this.context.chapters.getById(currentChapterId);
+    for (const dialogueId of chapter?.dialogueIds ?? []) {
+      if (this.context.dialogueSystem.start(dialogueId)) {
+        return;
+      }
+    }
   }
 
   // Bound as fields so Phaser's emitter keeps `this` without a context arg.
@@ -70,9 +98,16 @@ export class GameScene extends Phaser.Scene {
     this.boardView.render();
     this.hud.layoutFor(width);
     this.actionBar.layoutFor(width, height);
+    this.dialogueView.layoutFor(width, height);
   };
 
   private readonly onPointerDown = (pointer: Phaser.Input.Pointer): void => {
+    // An open dialogue owns the screen; the scrim also blocks hit-testing,
+    // but this keeps the rule explicit rather than relying on draw order.
+    if (this.dialogueView.isOpen()) {
+      return;
+    }
+
     const position = this.boardView.cellAt(pointer.x, pointer.y);
     if (!position) {
       return;
@@ -173,9 +208,12 @@ export class GameScene extends Phaser.Scene {
     this.input.off(Phaser.Input.Events.POINTER_DOWN, this.onPointerDown);
     this.input.off(Phaser.Input.Events.POINTER_MOVE, this.onPointerMove);
     this.input.off(Phaser.Input.Events.POINTER_UP, this.onPointerUp);
+    this.dialogueUnsubscribe?.();
+    this.dialogueUnsubscribe = undefined;
     this.drag?.ghost.destroy(true);
     this.hud.destroy();
     this.actionBar.destroy();
+    this.dialogueView.destroy();
     this.boardView.destroy();
   };
 }

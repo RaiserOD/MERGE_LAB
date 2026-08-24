@@ -66,7 +66,12 @@ export class GameState {
         maxEnergy: runtimeConfig.maxEnergy,
       },
       [],
-      { labStage: 1, unlockedChapterIds: ["chapter.basement"], discoveredItemIds: [] },
+      {
+        labStage: 1,
+        unlockedChapterIds: ["chapter.basement"],
+        discoveredItemIds: [],
+        seenDialogueIds: [],
+      },
       [],
       [],
     );

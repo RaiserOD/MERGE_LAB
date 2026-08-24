@@ -4,6 +4,6 @@
   "unlockConditions": [],
   "availableItemGroups": ["chemistry.water"],
   "availableGenerators": ["gen.water_tap"],
-  "dialogueIds": [],
+  "dialogueIds": ["dialogue.basement_intro"],
   "labStage": 1
 }
