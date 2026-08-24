@@ -1,0 +1,9 @@
+{
+  "id": "chapter.basement",
+  "title": "The Basement",
+  "unlockConditions": [],
+  "availableItemGroups": ["chemistry.water"],
+  "availableGenerators": ["gen.water_tap"],
+  "dialogueIds": [],
+  "labStage": 1
+}

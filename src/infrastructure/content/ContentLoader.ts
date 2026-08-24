@@ -8,6 +8,15 @@ import {
 import { GeneratorRegistry } from "@domain/generators/GeneratorRegistry";
 import { OrderDefinitionSchema, type OrderDefinition } from "@domain/orders/OrderDefinition";
 import { OrderRegistry } from "@domain/orders/OrderRegistry";
+import {
+  ChapterDefinitionSchema,
+  type ChapterDefinition,
+} from "@domain/progression/ChapterDefinition";
+import {
+  LabStageDefinitionSchema,
+  type LabStageDefinition,
+} from "@domain/progression/LabStageDefinition";
+import { ChapterRegistry, LabStageRegistry } from "@domain/progression/ChapterRegistry";
 
 /**
  * Bridges the content/ JSON pipeline into runtime domain objects. This is
@@ -23,6 +32,15 @@ const generatorModules = import.meta.glob<{ default: unknown }>("/content/genera
 });
 
 const orderModules = import.meta.glob<{ default: unknown }>("/content/orders/*.json", {
+  eager: true,
+});
+
+const chapterModules = import.meta.glob<{ default: unknown }>("/content/chapters/*.json", {
+  eager: true,
+});
+
+// Lab stages are a single ordered list rather than one file per stage.
+const labStageModules = import.meta.glob<{ default: unknown }>("/content/lab-stages/*.json", {
   eager: true,
 });
 
@@ -55,6 +73,14 @@ export function loadOrderDefinitions(): OrderDefinition[] {
   return parseAll(orderModules, OrderDefinitionSchema);
 }
 
+export function loadChapterDefinitions(): ChapterDefinition[] {
+  return parseAll(chapterModules, ChapterDefinitionSchema);
+}
+
+export function loadLabStageDefinitions(): LabStageDefinition[] {
+  return parseAll(labStageModules, LabStageDefinitionSchema.array()).flat();
+}
+
 export function loadItemRegistry(): ItemRegistry {
   return new ItemRegistry(loadItemDefinitions());
 }
@@ -65,4 +91,12 @@ export function loadGeneratorRegistry(): GeneratorRegistry {
 
 export function loadOrderRegistry(): OrderRegistry {
   return new OrderRegistry(loadOrderDefinitions());
+}
+
+export function loadChapterRegistry(): ChapterRegistry {
+  return new ChapterRegistry(loadChapterDefinitions());
+}
+
+export function loadLabStageRegistry(): LabStageRegistry {
+  return new LabStageRegistry(loadLabStageDefinitions());
 }

@@ -1,11 +1,11 @@
 /**
  * Events describe completed state changes (A22). This union covers only
  * events actually emitted by systems that exist so far (board/merge/spawn,
- * generators, economy and orders). Quest/progression events
- * (QUEST_COMPLETED, ITEM_DISCOVERED, LAB_UPGRADED, ...) get added here as
- * their producing systems are built — see A22 for the full target
- * vocabulary. Not to be confused with content/events/ (temporary in-game
- * events like "Alien Samples").
+ * generators, economy, orders and progression). Quest events
+ * (QUEST_COMPLETED, ITEM_DISCOVERED) get added here as their producing
+ * systems are built — see A22 for the full target vocabulary. Not to be
+ * confused with content/events/ (temporary in-game events like "Alien
+ * Samples").
  */
 export interface BoardPosition {
   readonly x: number;
@@ -44,6 +44,9 @@ export type DomainEvent =
       coinReward: number;
       researchReward: number;
       xpReward: number;
-    };
+    }
+  | { type: "PLAYER_LEVELED"; newLevel: number; totalXp: number }
+  | { type: "LAB_UPGRADED"; newStage: number; title: string; coinCost: number }
+  | { type: "CHAPTER_UNLOCKED"; chapterId: string };
 
 export type DomainEventType = DomainEvent["type"];
