@@ -13,6 +13,7 @@ export const palette = {
   highlight: 0x3d8bfd,
   text: "#e8eef4",
   textMuted: "#94a7b8",
+  highlightText: "#7fb0ff",
   panel: 0x16202a,
 } as const;
 

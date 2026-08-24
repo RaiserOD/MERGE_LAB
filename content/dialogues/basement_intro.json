@@ -1,0 +1,26 @@
+{
+  "id": "dialogue.basement_intro",
+  "oneShot": true,
+  "lines": [
+    {
+      "speaker": "narrator",
+      "text": "The lift shudders to a stop. Somewhere below, a generator coughs back to life."
+    },
+    {
+      "speaker": "professor",
+      "text": "You came. Good. I was beginning to think the letter never reached you."
+    },
+    {
+      "speaker": "professor",
+      "text": "This laboratory was yours before it was mine — and it has been dark for a long time."
+    },
+    {
+      "speaker": "professor",
+      "text": "Start with what still works. Drag two identical samples together and they will combine into something better."
+    },
+    {
+      "speaker": "professor",
+      "text": "Everything here was built on that one idea. Let us see how far it takes you."
+    }
+  ]
+}

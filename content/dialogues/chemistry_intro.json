@@ -1,0 +1,18 @@
+{
+  "id": "dialogue.chemistry_intro",
+  "oneShot": true,
+  "lines": [
+    {
+      "speaker": "professor",
+      "text": "The chemistry wing still has power. That is more than I expected."
+    },
+    {
+      "speaker": "professor",
+      "text": "There are notes here in a hand I do not recognise. Research that was never filed."
+    },
+    {
+      "speaker": "professor",
+      "text": "Work through it. Whatever they were building, they left the first steps behind for us."
+    }
+  ]
+}

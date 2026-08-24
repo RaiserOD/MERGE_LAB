@@ -46,6 +46,9 @@ export type DomainEvent =
   | { type: "LAB_UPGRADED"; newStage: number; title: string; coinCost: number }
   | { type: "CHAPTER_UNLOCKED"; chapterId: string }
   | { type: "ITEM_DISCOVERED"; itemId: string }
+  | { type: "DIALOGUE_STARTED"; dialogueId: string; lineCount: number }
+  | { type: "DIALOGUE_ADVANCED"; dialogueId: string; lineIndex: number }
+  | { type: "DIALOGUE_COMPLETED"; dialogueId: string }
   | { type: "ENERGY_SPENT"; amount: number; remaining: number }
   | {
       type: "QUEST_COMPLETED";

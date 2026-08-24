@@ -19,6 +19,11 @@ import {
 import { ChapterRegistry, LabStageRegistry } from "@domain/progression/ChapterRegistry";
 import { QuestDefinitionSchema, type QuestDefinition } from "@domain/quests/QuestDefinition";
 import { QuestRegistry } from "@domain/quests/QuestRegistry";
+import {
+  DialogueDefinitionSchema,
+  type DialogueDefinition,
+} from "@domain/dialogues/DialogueDefinition";
+import { DialogueRegistry } from "@domain/dialogues/DialogueRegistry";
 
 /**
  * Bridges the content/ JSON pipeline into runtime domain objects. This is
@@ -47,6 +52,10 @@ const labStageModules = import.meta.glob<{ default: unknown }>("/content/lab-sta
 });
 
 const questModules = import.meta.glob<{ default: unknown }>("/content/quests/*.json", {
+  eager: true,
+});
+
+const dialogueModules = import.meta.glob<{ default: unknown }>("/content/dialogues/*.json", {
   eager: true,
 });
 
@@ -93,6 +102,10 @@ export function loadQuestDefinitions(): QuestDefinition[] {
   return parseAll(questModules, QuestDefinitionSchema);
 }
 
+export function loadDialogueDefinitions(): DialogueDefinition[] {
+  return parseAll(dialogueModules, DialogueDefinitionSchema);
+}
+
 export function loadItemRegistry(): ItemRegistry {
   return new ItemRegistry(loadItemDefinitions());
 }
@@ -115,4 +128,8 @@ export function loadLabStageRegistry(): LabStageRegistry {
 
 export function loadQuestRegistry(): QuestRegistry {
   return new QuestRegistry(loadQuestDefinitions());
+}
+
+export function loadDialogueRegistry(): DialogueRegistry {
+  return new DialogueRegistry(loadDialogueDefinitions());
 }

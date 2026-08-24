@@ -51,6 +51,12 @@ export const ProgressionSaveSchema = z.object({
    * v1 is unreleased.
    */
   discoveredItemIds: z.array(z.string().min(1)).default([]),
+  /**
+   * One-shot dialogues the player has already been shown, so chapter
+   * intros and tutorial beats don't replay. Defaults to empty for the same
+   * reason as discoveredItemIds.
+   */
+  seenDialogueIds: z.array(z.string().min(1)).default([]),
 });
 
 export const QuestSaveSchema = z.object({

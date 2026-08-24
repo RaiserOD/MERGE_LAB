@@ -1,11 +1,11 @@
 #!/usr/bin/env tsx
 /**
  * Content validator (B5). Validates every content directory that has a
- * domain schema (items, generators, orders, chapters, lab-stages, quests),
- * then checks the cross-reference rules: unique IDs, resolvable
+ * domain schema (items, generators, orders, chapters, lab-stages, quests,
+ * dialogues), then checks the cross-reference rules: unique IDs, resolvable
  * resultItemId chains, generator outputs and order requirements pointing at
- * real items, chapter references to real generators/lab stages, quest
- * filters naming real content, no circular chapter unlocks, and an
+ * real items, chapter references to real generators/lab stages/dialogues,
+ * quest filters naming real content, no circular chapter unlocks, and an
  * unbroken 1..N lab stage run.
  */
 import { readdir, readFile } from "node:fs/promises";
@@ -33,6 +33,10 @@ import {
   QuestDefinitionSchema,
   type QuestDefinition,
 } from "../../src/domain/quests/QuestDefinition";
+import {
+  DialogueDefinitionSchema,
+  type DialogueDefinition,
+} from "../../src/domain/dialogues/DialogueDefinition";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const contentDir = path.resolve(__dirname, "../../content");
@@ -68,6 +72,7 @@ interface ContentSet {
   chapters: ChapterDefinition[];
   labStages: LabStageDefinition[];
   quests: QuestDefinition[];
+  dialogues: DialogueDefinition[];
 }
 
 function validateCrossReferences({
@@ -77,6 +82,7 @@ function validateCrossReferences({
   chapters,
   labStages,
   quests,
+  dialogues,
 }: ContentSet): string[] {
   const errors: string[] = [];
   const itemIds = new Set<string>();
@@ -84,6 +90,7 @@ function validateCrossReferences({
   const orderIds = new Set<string>();
   const chapterIds = new Set(chapters.map((chapter) => chapter.id));
   const labStageNumbers = new Set(labStages.map((stage) => stage.stage));
+  const dialogueIds = new Set(dialogues.map((dialogue) => dialogue.id));
 
   for (const item of items) {
     if (itemIds.has(item.id)) {
@@ -138,9 +145,26 @@ function validateCrossReferences({
     }
   }
 
-  errors.push(...validateChapters(chapters, chapterIds, generatorIds, labStageNumbers));
+  errors.push(
+    ...validateChapters(chapters, chapterIds, generatorIds, labStageNumbers, dialogueIds),
+  );
   errors.push(...validateLabStages(labStages));
   errors.push(...validateQuests(quests, itemIds, generatorIds, orderIds));
+  errors.push(...validateDialogues(dialogues));
+
+  return errors;
+}
+
+function validateDialogues(dialogues: DialogueDefinition[]): string[] {
+  const errors: string[] = [];
+  const seen = new Set<string>();
+
+  for (const dialogue of dialogues) {
+    if (seen.has(dialogue.id)) {
+      errors.push(`Duplicate dialogue id: ${dialogue.id}`);
+    }
+    seen.add(dialogue.id);
+  }
 
   return errors;
 }
@@ -184,6 +208,7 @@ function validateChapters(
   chapterIds: Set<string>,
   generatorIds: Set<string>,
   labStageNumbers: Set<number>,
+  dialogueIds: Set<string>,
 ): string[] {
   const errors: string[] = [];
   const seen = new Set<string>();
@@ -203,6 +228,12 @@ function validateChapters(
     for (const generatorId of chapter.availableGenerators) {
       if (!generatorIds.has(generatorId)) {
         errors.push(`${chapter.id}: availableGenerator "${generatorId}" does not exist`);
+      }
+    }
+
+    for (const dialogueId of chapter.dialogueIds) {
+      if (!dialogueIds.has(dialogueId)) {
+        errors.push(`${chapter.id}: dialogueId "${dialogueId}" does not exist`);
       }
     }
 
@@ -289,6 +320,7 @@ async function main(): Promise<void> {
   const chapters = await loadDir("chapters", ChapterDefinitionSchema);
   const labStages = (await loadDir("lab-stages", LabStageDefinitionSchema.array())).flat();
   const quests = await loadDir("quests", QuestDefinitionSchema);
+  const dialogues = await loadDir("dialogues", DialogueDefinitionSchema);
   const errors = validateCrossReferences({
     items,
     generators,
@@ -296,6 +328,7 @@ async function main(): Promise<void> {
     chapters,
     labStages,
     quests,
+    dialogues,
   });
 
   if (errors.length > 0) {
@@ -310,7 +343,7 @@ async function main(): Promise<void> {
   console.log(
     `Content validation passed: ${items.length} item(s), ${generators.length} generator(s), ` +
       `${orders.length} order(s), ${chapters.length} chapter(s), ${labStages.length} lab stage(s), ` +
-      `${quests.length} quest(s) OK.`,
+      `${quests.length} quest(s), ${dialogues.length} dialogue(s) OK.`,
   );
 }
 
