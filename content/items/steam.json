@@ -1,0 +1,13 @@
+{
+  "id": "item.steam",
+  "mergeGroup": "chemistry.water",
+  "level": 2,
+  "displayName": "Steam",
+  "rarity": "common",
+  "sellValue": 3,
+  "xpValue": 2,
+  "spriteKey": "item_steam",
+  "sourceGeneratorIds": [],
+  "tags": ["chemistry", "gas"],
+  "maxLevel": true
+}

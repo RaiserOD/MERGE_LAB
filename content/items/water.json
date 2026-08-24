@@ -1,0 +1,13 @@
+{
+  "id": "item.water",
+  "mergeGroup": "chemistry.water",
+  "level": 1,
+  "displayName": "Water",
+  "rarity": "common",
+  "sellValue": 1,
+  "xpValue": 1,
+  "spriteKey": "item_water",
+  "resultItemId": "item.steam",
+  "sourceGeneratorIds": ["gen.water_tap"],
+  "tags": ["chemistry", "liquid"]
+}

@@ -1,0 +1,9 @@
+# Default owner for the whole repository — adjust to your actual GitHub
+# handle(s) once collaborators are added.
+* @RaiserOD
+
+# Anything touching security-sensitive scaffolding needs an explicit look.
+/SECURITY.md @RaiserOD
+/.github/ @RaiserOD
+/src/infrastructure/billing/ @RaiserOD
+/src/infrastructure/ads/ @RaiserOD
