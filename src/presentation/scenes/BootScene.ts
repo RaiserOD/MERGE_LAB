@@ -32,6 +32,13 @@ export class BootScene extends Phaser.Scene {
     context.start();
     this.seedFirstRun(context);
 
+    // No domain event marks the end of a session — the browser tab closing
+    // is the only signal, so this is the one place presentation reaches for
+    // a raw DOM API on analytics' behalf.
+    window.addEventListener("beforeunload", () => {
+      context.trackSessionEnded();
+    });
+
     this.scene.start(SCENE_KEYS.game, { context });
   }
 

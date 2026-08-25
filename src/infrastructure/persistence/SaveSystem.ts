@@ -25,6 +25,11 @@ export class SaveSystem {
     private readonly clock: Clock,
   ) {}
 
+  /** True once anything has ever been saved, even a since-corrupted entry. For distinguishing a first-ever launch from a returning player (analytics' game_started vs session_started) — not part of game state, so it doesn't go through SaveDataV1. */
+  hasExistingSave(): boolean {
+    return this.storage.getItem(SAVE_KEY) !== null;
+  }
+
   save(state: GameState): void {
     const data = state.toSaveData(this.clock.now());
     const validated = SaveDataV1Schema.parse(data);
