@@ -54,9 +54,18 @@ no vendor is chosen yet: the default adapter (`NoopAnalyticsAdapter`)
 discards every event, so the game ships with zero analytics footprint
 until that product decision is made.
 
+Monetization (rewarded video + IAP) follows the same pattern:
+`MonetizationService` gates both behind feature flags (`FeatureFlags`,
+default off) and talks to `RewardedAdAdapter`/`BillingAdapter`. No ad
+network or billing vendor is chosen yet, so the default `Noop*` adapters
+never grant a reward or complete a purchase, and both flags stay off —
+the game ships fully playable with zero ad/IAP surface until a vendor and
+a rewards/product catalog are decided.
+
 Not built yet (per the master spec's A26 staging): a live analytics
-vendor, monetization adapters (ads/IAP), temporary events, and real
-art/audio — items currently render as rarity-tinted placeholder tiles.
+vendor, a real ad network/billing vendor and rewards/IAP catalog,
+temporary events, and real art/audio — items currently render as
+rarity-tinted placeholder tiles.
 
 ## Security
 

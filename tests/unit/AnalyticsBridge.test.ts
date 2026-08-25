@@ -162,6 +162,42 @@ describe("AnalyticsBridge", () => {
     expect(tracked).toEqual([{ name: "energy_empty" }]);
   });
 
+  it("translates REWARDED_AD_STARTED into rewarded_ad_started", () => {
+    new AnalyticsBridge(adapter, eventBus, makeProgression()).start(false);
+    tracked.length = 0;
+
+    eventBus.emit({ type: "REWARDED_AD_STARTED", placementId: "placement.double_coins" });
+
+    expect(tracked).toEqual([{ name: "rewarded_ad_started" }]);
+  });
+
+  it("translates REWARDED_AD_COMPLETED into rewarded_ad_completed", () => {
+    new AnalyticsBridge(adapter, eventBus, makeProgression()).start(false);
+    tracked.length = 0;
+
+    eventBus.emit({ type: "REWARDED_AD_COMPLETED", placementId: "placement.double_coins" });
+
+    expect(tracked).toEqual([{ name: "rewarded_ad_completed" }]);
+  });
+
+  it("translates IAP_STARTED into iap_started", () => {
+    new AnalyticsBridge(adapter, eventBus, makeProgression()).start(false);
+    tracked.length = 0;
+
+    eventBus.emit({ type: "IAP_STARTED", productId: "product.remove_ads" });
+
+    expect(tracked).toEqual([{ name: "iap_started" }]);
+  });
+
+  it("translates IAP_COMPLETED into iap_completed", () => {
+    new AnalyticsBridge(adapter, eventBus, makeProgression()).start(false);
+    tracked.length = 0;
+
+    eventBus.emit({ type: "IAP_COMPLETED", productId: "product.remove_ads" });
+
+    expect(tracked).toEqual([{ name: "iap_completed" }]);
+  });
+
   it("tracks session_ended on demand", () => {
     const bridge = new AnalyticsBridge(adapter, eventBus, makeProgression());
     bridge.start(false);
