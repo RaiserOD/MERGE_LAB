@@ -42,6 +42,12 @@ export class SaveSystem {
     this.storage.setItem(SAVE_KEY, json);
   }
 
+  /** Wipes both the primary and backup save entries. Used by dev-only QA tooling to reset progress. */
+  clear(): void {
+    this.storage.removeItem(SAVE_KEY);
+    this.storage.removeItem(BACKUP_KEY);
+  }
+
   /** Never throws: falls back to backup, then to a fresh game (deterministic recovery). */
   load(): GameState {
     const primary = this.tryLoadFrom(SAVE_KEY);

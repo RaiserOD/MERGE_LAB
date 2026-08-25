@@ -62,6 +62,12 @@ never grant a reward or complete a purchase, and both flags stay off —
 the game ships fully playable with zero ad/IAP surface until a vendor and
 a rewards/product catalog are decided.
 
+A dev-only QA panel (top-right "QA" toggle in `pnpm dev`) gives testers
+cheats — add currency, refill energy, skip the tutorial, force-unlock the
+next chapter, wipe the save — without grinding. It's tree-shaken out of
+production builds entirely (`import.meta.env.DEV`-gated), so it ships with
+zero footprint.
+
 Not built yet (per the master spec's A26 staging): a live analytics
 vendor, a real ad network/billing vendor and rewards/IAP catalog,
 temporary events, and real art/audio — items currently render as
