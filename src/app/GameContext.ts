@@ -18,8 +18,11 @@ import { ProgressionSystem } from "@systems/ProgressionSystem";
 import { QuestSystem } from "@systems/QuestSystem";
 import { DialogueSystem } from "@systems/DialogueSystem";
 import { TutorialSystem } from "@systems/TutorialSystem";
-import { SaveSystem } from "@infrastructure/persistence/SaveSystem";
+import { AnalyticsBridge } from "@application/services/AnalyticsBridge";
+import { SaveSystem, type KeyValueStorage } from "@infrastructure/persistence/SaveSystem";
 import { SystemClock, type Clock } from "@infrastructure/clock/Clock";
+import type { AnalyticsAdapter } from "@infrastructure/analytics/AnalyticsAdapter";
+import { NoopAnalyticsAdapter } from "@infrastructure/analytics/NoopAnalyticsAdapter";
 import {
   loadChapterRegistry,
   loadGeneratorRegistry,
@@ -39,7 +42,8 @@ import { runtimeConfig } from "@config/runtime";
  */
 export interface GameContextDeps {
   clock?: Clock;
-  storage?: Storage;
+  storage?: KeyValueStorage;
+  analytics?: AnalyticsAdapter;
 }
 
 export class GameContext {
@@ -63,13 +67,16 @@ export class GameContext {
   readonly questSystem: QuestSystem;
   readonly dialogueSystem: DialogueSystem;
   readonly tutorialSystem: TutorialSystem;
+  readonly analyticsBridge: AnalyticsBridge;
   readonly saveSystem: SaveSystem;
 
   private readonly stopHandlers: (() => void)[] = [];
+  private readonly isFirstLaunch: boolean;
 
   constructor(deps: GameContextDeps = {}) {
     const clock = deps.clock ?? new SystemClock();
     const storage = deps.storage ?? localStorage;
+    const analytics = deps.analytics ?? new NoopAnalyticsAdapter();
 
     this.items = loadItemRegistry();
     this.generators = loadGeneratorRegistry();
@@ -81,6 +88,7 @@ export class GameContext {
     this.labStages = loadLabStageRegistry();
 
     this.saveSystem = new SaveSystem(storage, clock);
+    this.isFirstLaunch = !this.saveSystem.hasExistingSave();
     this.state = this.saveSystem.load();
     this.eventBus = new EventBus<DomainEvent>();
 
@@ -123,6 +131,7 @@ export class GameContext {
     );
     this.dialogueSystem = new DialogueSystem(this.state.progression, this.dialogues, this.eventBus);
     this.tutorialSystem = new TutorialSystem(this.state.progression, this.tutorial, this.eventBus);
+    this.analyticsBridge = new AnalyticsBridge(analytics, this.eventBus, this.state.progression);
   }
 
   /** Attaches the event-driven systems. Call once, before gameplay starts. */
@@ -131,7 +140,13 @@ export class GameContext {
       this.progressionSystem.start(),
       this.questSystem.start(),
       this.tutorialSystem.start(),
+      this.analyticsBridge.start(this.isFirstLaunch),
     );
+  }
+
+  /** Call from a browser unload hook — session_ended has no domain event to hang off. */
+  trackSessionEnded(): void {
+    this.analyticsBridge.trackSessionEnded();
   }
 
   stop(): void {

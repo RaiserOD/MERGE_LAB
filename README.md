@@ -44,14 +44,19 @@ starting with `0001-stack-and-trust-boundary.md`.
 
 ## Current state
 
-The core loop is playable: `pnpm dev` opens a board you can drag items
-around, merge them, run the generator and deliver orders, with progress
-saved to `localStorage` between reloads.
+The core loop is playable end to end: `pnpm dev` opens a board where you
+drag items to merge them, run the generator, deliver orders, restore lab
+stages, and follow a Professor-narrated tutorial through all of it — with
+progress saved to `localStorage` between reloads.
 
-Not built yet (per the master spec's A26 staging): tutorial, narrative and
-dialogue UI, lab-upgrade and quest screens, events, analytics,
-monetization adapters, and real art/audio — items currently render as
-rarity-tinted placeholder tiles.
+Analytics is wired to the A24 event vocabulary via `AnalyticsBridge`, but
+no vendor is chosen yet: the default adapter (`NoopAnalyticsAdapter`)
+discards every event, so the game ships with zero analytics footprint
+until that product decision is made.
+
+Not built yet (per the master spec's A26 staging): a live analytics
+vendor, monetization adapters (ads/IAP), temporary events, and real
+art/audio — items currently render as rarity-tinted placeholder tiles.
 
 ## Security
 

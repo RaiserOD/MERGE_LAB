@@ -81,4 +81,27 @@ describe("SaveSystem", () => {
     const loaded = saveSystem.load();
     expect(loaded.currencies.coins).toBe(0);
   });
+
+  describe("hasExistingSave", () => {
+    it("is false before anything has ever been saved", () => {
+      const saveSystem = new SaveSystem(new InMemoryStorage(), new FixedClock());
+      expect(saveSystem.hasExistingSave()).toBe(false);
+    });
+
+    it("is true after the first save", () => {
+      const saveSystem = new SaveSystem(new InMemoryStorage(), new FixedClock());
+      saveSystem.save(GameState.createNew());
+      expect(saveSystem.hasExistingSave()).toBe(true);
+    });
+
+    it("stays true even if the primary entry becomes corrupted", () => {
+      const storage = new InMemoryStorage();
+      const saveSystem = new SaveSystem(storage, new FixedClock());
+      saveSystem.save(GameState.createNew());
+
+      storage.setItem("mergeLab.save", "not json");
+
+      expect(saveSystem.hasExistingSave()).toBe(true);
+    });
+  });
 });
