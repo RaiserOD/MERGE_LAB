@@ -64,6 +64,18 @@ export class AnalyticsBridge {
           this.adapter.track({ name: "energy_empty" });
         }
       }),
+      this.eventBus.on("REWARDED_AD_STARTED", () => {
+        this.adapter.track({ name: "rewarded_ad_started" });
+      }),
+      this.eventBus.on("REWARDED_AD_COMPLETED", () => {
+        this.adapter.track({ name: "rewarded_ad_completed" });
+      }),
+      this.eventBus.on("IAP_STARTED", () => {
+        this.adapter.track({ name: "iap_started" });
+      }),
+      this.eventBus.on("IAP_COMPLETED", () => {
+        this.adapter.track({ name: "iap_completed" });
+      }),
     ];
 
     return () => {
