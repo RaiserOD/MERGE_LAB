@@ -1,6 +1,6 @@
 [
   { "stage": 1, "title": "Basement Lab", "upgradeCost": 0 },
-  { "stage": 2, "title": "Chemistry Lab", "upgradeCost": 150 },
+  { "stage": 2, "title": "Chemistry Lab", "upgradeCost": 25 },
   { "stage": 3, "title": "Biology Lab", "upgradeCost": 500 },
   { "stage": 4, "title": "Robotics Lab", "upgradeCost": 1200 },
   { "stage": 5, "title": "Advanced Research Lab", "upgradeCost": 3000 }

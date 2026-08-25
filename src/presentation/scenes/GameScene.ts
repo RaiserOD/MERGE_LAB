@@ -4,6 +4,7 @@ import type { BoardPosition } from "@systems/events/DomainEvent";
 import { MergeError } from "@systems/MergeSystem";
 import { GeneratorError } from "@systems/GeneratorSystem";
 import { OrderError } from "@systems/OrderSystem";
+import { ProgressionError } from "@systems/ProgressionSystem";
 import { BoardView } from "@presentation/board/BoardView";
 import { Hud } from "@presentation/ui/Hud";
 import { ActionBar } from "@presentation/ui/ActionBar";
@@ -55,6 +56,9 @@ export class GameScene extends Phaser.Scene {
       },
       onCompleteOrder: (orderId) => {
         this.completeOrder(orderId);
+      },
+      onUpgradeLab: () => {
+        this.upgradeLab();
       },
     });
 
@@ -211,6 +215,22 @@ export class GameScene extends Phaser.Scene {
       this.hud.setStatus(
         error instanceof OrderError ? "Order requirements are not met" : String(error),
       );
+    }
+    this.afterStateChange();
+  }
+
+  private upgradeLab(): void {
+    const nextStage = this.context.labStages.getByStage(
+      this.context.progressionSystem.getLabStage() + 1,
+    );
+
+    try {
+      this.context.progressionSystem.upgradeLab();
+      this.hud.setStatus(`Restored the ${nextStage?.title ?? "lab"}`);
+      this.context.progressionSystem.unlockEligibleChapters();
+      this.playCurrentChapterIntro();
+    } catch (error) {
+      this.hud.setStatus(error instanceof ProgressionError ? error.message : String(error));
     }
     this.afterStateChange();
   }

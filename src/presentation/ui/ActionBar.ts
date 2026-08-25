@@ -5,9 +5,10 @@ import { layout, palette } from "@presentation/theme";
 export interface ActionBarHandlers {
   onUseGenerator: (generatorId: string) => void;
   onCompleteOrder: (orderId: string) => void;
+  onUpgradeLab: () => void;
 }
 
-/** Bottom bar (A18): generator buttons plus the first fulfillable order. */
+/** Bottom bar (A18): generator buttons, the first fulfillable order, and an affordable lab upgrade. */
 export class ActionBar {
   private readonly background: Phaser.GameObjects.Rectangle;
   private readonly buttons: Phaser.GameObjects.Container[] = [];
@@ -62,6 +63,22 @@ export class ActionBar {
         `Deliver order (+${String(readyOrder.coinReward)})`,
         () => {
           this.handlers.onCompleteOrder(readyOrder.id);
+        },
+      );
+      this.buttons.push(button);
+      x += button.width + 12;
+    }
+
+    const nextStage = this.context.labStages.getByStage(
+      this.context.progressionSystem.getLabStage() + 1,
+    );
+    if (nextStage && this.context.progressionSystem.canUpgradeLab()) {
+      const button = this.createButton(
+        x,
+        top + 16,
+        `Restore ${nextStage.title} (-${String(nextStage.upgradeCost)})`,
+        () => {
+          this.handlers.onUpgradeLab();
         },
       );
       this.buttons.push(button);
