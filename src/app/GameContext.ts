@@ -19,10 +19,17 @@ import { QuestSystem } from "@systems/QuestSystem";
 import { DialogueSystem } from "@systems/DialogueSystem";
 import { TutorialSystem } from "@systems/TutorialSystem";
 import { AnalyticsBridge } from "@application/services/AnalyticsBridge";
+import { MonetizationService } from "@application/services/MonetizationService";
 import { SaveSystem, type KeyValueStorage } from "@infrastructure/persistence/SaveSystem";
 import { SystemClock, type Clock } from "@infrastructure/clock/Clock";
 import type { AnalyticsAdapter } from "@infrastructure/analytics/AnalyticsAdapter";
 import { NoopAnalyticsAdapter } from "@infrastructure/analytics/NoopAnalyticsAdapter";
+import type { FeatureFlags } from "@infrastructure/flags/FeatureFlags";
+import { StaticFeatureFlags } from "@infrastructure/flags/StaticFeatureFlags";
+import type { RewardedAdAdapter } from "@infrastructure/ads/RewardedAdAdapter";
+import { NoopRewardedAdAdapter } from "@infrastructure/ads/NoopRewardedAdAdapter";
+import type { BillingAdapter } from "@infrastructure/billing/BillingAdapter";
+import { NoopBillingAdapter } from "@infrastructure/billing/NoopBillingAdapter";
 import {
   loadChapterRegistry,
   loadGeneratorRegistry,
@@ -44,6 +51,9 @@ export interface GameContextDeps {
   clock?: Clock;
   storage?: KeyValueStorage;
   analytics?: AnalyticsAdapter;
+  featureFlags?: FeatureFlags;
+  ads?: RewardedAdAdapter;
+  billing?: BillingAdapter;
 }
 
 export class GameContext {
@@ -68,6 +78,7 @@ export class GameContext {
   readonly dialogueSystem: DialogueSystem;
   readonly tutorialSystem: TutorialSystem;
   readonly analyticsBridge: AnalyticsBridge;
+  readonly monetization: MonetizationService;
   readonly saveSystem: SaveSystem;
 
   private readonly stopHandlers: (() => void)[] = [];
@@ -77,6 +88,9 @@ export class GameContext {
     const clock = deps.clock ?? new SystemClock();
     const storage = deps.storage ?? localStorage;
     const analytics = deps.analytics ?? new NoopAnalyticsAdapter();
+    const featureFlags = deps.featureFlags ?? new StaticFeatureFlags();
+    const ads = deps.ads ?? new NoopRewardedAdAdapter();
+    const billing = deps.billing ?? new NoopBillingAdapter();
 
     this.items = loadItemRegistry();
     this.generators = loadGeneratorRegistry();
@@ -132,6 +146,7 @@ export class GameContext {
     this.dialogueSystem = new DialogueSystem(this.state.progression, this.dialogues, this.eventBus);
     this.tutorialSystem = new TutorialSystem(this.state.progression, this.tutorial, this.eventBus);
     this.analyticsBridge = new AnalyticsBridge(analytics, this.eventBus, this.state.progression);
+    this.monetization = new MonetizationService(this.eventBus, featureFlags, ads, billing);
   }
 
   /** Attaches the event-driven systems. Call once, before gameplay starts. */

@@ -3,11 +3,10 @@
  * identifiers (item/generator/order/quest/chapter ids) — never anything
  * that could identify a person, per A24's "no sensitive personal data".
  *
- * rewarded_ad_started/completed and iap_started/completed have no producer
- * yet — nothing in the codebase calls track() with them until the ads and
- * billing adapters (ML-032/033) exist. They're declared now because A24
- * fixes the whole vocabulary as one contract, not because anything emits
- * them today.
+ * rewarded_ad_started/completed and iap_started/completed are produced by
+ * MonetizationService, gated behind their feature flags — both flags
+ * default off until a vendor is chosen (B9), so neither fires in practice
+ * yet, but the wiring is real.
  */
 export type AnalyticsEvent =
   | { name: "game_started" }

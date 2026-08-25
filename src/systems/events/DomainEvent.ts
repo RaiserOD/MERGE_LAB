@@ -58,6 +58,10 @@ export type DomainEvent =
       coinReward: number;
       gemReward: number;
       researchReward: number;
-    };
+    }
+  | { type: "REWARDED_AD_STARTED"; placementId: string }
+  | { type: "REWARDED_AD_COMPLETED"; placementId: string }
+  | { type: "IAP_STARTED"; productId: string }
+  | { type: "IAP_COMPLETED"; productId: string };
 
 export type DomainEventType = DomainEvent["type"];
