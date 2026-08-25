@@ -18,6 +18,7 @@ describe("DialogueSystem", () => {
       unlockedChapterIds: ["chapter.basement"],
       discoveredItemIds: [],
       seenDialogueIds: [],
+      completedTutorialStepIds: [],
     };
     eventBus = new EventBus<DomainEvent>();
     emitted = [];

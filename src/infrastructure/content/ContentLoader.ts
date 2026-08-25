@@ -24,6 +24,11 @@ import {
   type DialogueDefinition,
 } from "@domain/dialogues/DialogueDefinition";
 import { DialogueRegistry } from "@domain/dialogues/DialogueRegistry";
+import {
+  TutorialStepDefinitionSchema,
+  type TutorialStepDefinition,
+} from "@domain/tutorial/TutorialStepDefinition";
+import { TutorialRegistry } from "@domain/tutorial/TutorialRegistry";
 
 /**
  * Bridges the content/ JSON pipeline into runtime domain objects. This is
@@ -56,6 +61,11 @@ const questModules = import.meta.glob<{ default: unknown }>("/content/quests/*.j
 });
 
 const dialogueModules = import.meta.glob<{ default: unknown }>("/content/dialogues/*.json", {
+  eager: true,
+});
+
+// Tutorial steps are one ordered list, like lab stages.
+const tutorialModules = import.meta.glob<{ default: unknown }>("/content/tutorial/*.json", {
   eager: true,
 });
 
@@ -106,6 +116,10 @@ export function loadDialogueDefinitions(): DialogueDefinition[] {
   return parseAll(dialogueModules, DialogueDefinitionSchema);
 }
 
+export function loadTutorialSteps(): TutorialStepDefinition[] {
+  return parseAll(tutorialModules, TutorialStepDefinitionSchema.array()).flat();
+}
+
 export function loadItemRegistry(): ItemRegistry {
   return new ItemRegistry(loadItemDefinitions());
 }
@@ -132,4 +146,8 @@ export function loadQuestRegistry(): QuestRegistry {
 
 export function loadDialogueRegistry(): DialogueRegistry {
   return new DialogueRegistry(loadDialogueDefinitions());
+}
+
+export function loadTutorialRegistry(): TutorialRegistry {
+  return new TutorialRegistry(loadTutorialSteps());
 }

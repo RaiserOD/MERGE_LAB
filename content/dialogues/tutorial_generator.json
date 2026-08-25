@@ -1,0 +1,14 @@
+{
+  "id": "dialogue.tutorial_generator",
+  "oneShot": true,
+  "lines": [
+    {
+      "speaker": "professor",
+      "text": "There. Two became one, and one became something new."
+    },
+    {
+      "speaker": "professor",
+      "text": "The tap still runs. Draw another sample whenever the board has room."
+    }
+  ]
+}

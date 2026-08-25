@@ -1,0 +1,14 @@
+{
+  "id": "dialogue.tutorial_order",
+  "oneShot": true,
+  "lines": [
+    {
+      "speaker": "professor",
+      "text": "Word travels. Someone already wants what you have made."
+    },
+    {
+      "speaker": "professor",
+      "text": "Fill the order. Coins are how this place gets rebuilt."
+    }
+  ]
+}

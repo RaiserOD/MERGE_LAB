@@ -27,6 +27,11 @@ export const rarityColors: Record<ItemRarity, number> = {
 
 export const layout = {
   hudHeight: 72,
+  /**
+   * Reserved for the tutorial banner. Always reserved, even after the
+   * tutorial finishes, so the board doesn't reflow under the player.
+   */
+  bannerHeight: 42,
   footerHeight: 88,
   boardPadding: 12,
   cellGap: 4,

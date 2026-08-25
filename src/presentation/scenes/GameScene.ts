@@ -8,6 +8,7 @@ import { BoardView } from "@presentation/board/BoardView";
 import { Hud } from "@presentation/ui/Hud";
 import { ActionBar } from "@presentation/ui/ActionBar";
 import { DialogueView } from "@presentation/npc/DialogueView";
+import { TutorialBanner } from "@presentation/ui/TutorialBanner";
 import { palette } from "@presentation/theme";
 import { SCENE_KEYS } from "@presentation/scenes/BootScene";
 
@@ -31,8 +32,9 @@ export class GameScene extends Phaser.Scene {
   private hud!: Hud;
   private actionBar!: ActionBar;
   private dialogueView!: DialogueView;
+  private tutorialBanner!: TutorialBanner;
   private drag: DragState | undefined;
-  private dialogueUnsubscribe: (() => void) | undefined;
+  private readonly sceneUnsubscribes: (() => void)[] = [];
 
   constructor() {
     super(SCENE_KEYS.game);
@@ -57,6 +59,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.dialogueView = new DialogueView(this, this.context);
+    this.tutorialBanner = new TutorialBanner(this, this.context);
 
     this.relayout();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.relayout);
@@ -65,14 +68,29 @@ export class GameScene extends Phaser.Scene {
     this.input.on(Phaser.Input.Events.POINTER_MOVE, this.onPointerMove);
     this.input.on(Phaser.Input.Events.POINTER_UP, this.onPointerUp);
 
-    // Persist the "seen" flag so a one-shot intro survives a reload.
-    this.dialogueUnsubscribe = this.context.eventBus.on("DIALOGUE_COMPLETED", () => {
-      this.context.save();
-    });
+    this.sceneUnsubscribes.push(
+      // Persist the "seen" flag so a one-shot intro survives a reload.
+      this.context.eventBus.on("DIALOGUE_COMPLETED", () => {
+        this.context.save();
+      }),
+      // Each tutorial step can introduce itself through the Professor.
+      this.context.eventBus.on("TUTORIAL_STEP_COMPLETED", () => {
+        this.context.save();
+        this.playCurrentTutorialDialogue();
+      }),
+    );
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.teardown);
 
     this.playCurrentChapterIntro();
+  }
+
+  /** Chapter intros take precedence on boot; step dialogues fire as steps land. */
+  private playCurrentTutorialDialogue(): void {
+    const step = this.context.tutorialSystem.getCurrentStep();
+    if (step?.dialogueId) {
+      this.context.dialogueSystem.start(step.dialogueId);
+    }
   }
 
   /** Chapter intros are one-shot, so this is safe to call on every boot. */
@@ -99,6 +117,7 @@ export class GameScene extends Phaser.Scene {
     this.hud.layoutFor(width);
     this.actionBar.layoutFor(width, height);
     this.dialogueView.layoutFor(width, height);
+    this.tutorialBanner.layoutFor(width);
   };
 
   private readonly onPointerDown = (pointer: Phaser.Input.Pointer): void => {
@@ -208,12 +227,14 @@ export class GameScene extends Phaser.Scene {
     this.input.off(Phaser.Input.Events.POINTER_DOWN, this.onPointerDown);
     this.input.off(Phaser.Input.Events.POINTER_MOVE, this.onPointerMove);
     this.input.off(Phaser.Input.Events.POINTER_UP, this.onPointerUp);
-    this.dialogueUnsubscribe?.();
-    this.dialogueUnsubscribe = undefined;
+    for (const unsubscribe of this.sceneUnsubscribes.splice(0)) {
+      unsubscribe();
+    }
     this.drag?.ghost.destroy(true);
     this.hud.destroy();
     this.actionBar.destroy();
     this.dialogueView.destroy();
+    this.tutorialBanner.destroy();
     this.boardView.destroy();
   };
 }

@@ -57,6 +57,12 @@ export const ProgressionSaveSchema = z.object({
    * reason as discoveredItemIds.
    */
   seenDialogueIds: z.array(z.string().min(1)).default([]),
+  /**
+   * Tutorial steps already finished, stored by id rather than by index so
+   * inserting or reordering steps in content doesn't strand a save
+   * mid-tutorial. Defaults to empty like the fields above.
+   */
+  completedTutorialStepIds: z.array(z.string().min(1)).default([]),
 });
 
 export const QuestSaveSchema = z.object({
