@@ -1,6 +1,6 @@
 # Mechanic specs
 
-**STATUS: Proposed** — see `docs/design/mechanic-pipeline.md` and ADR-0005.
+**STATUS: Proposed** — see `docs/design/mechanic-pipeline.md` and ADR-0008.
 Nothing here is binding until that ADR is Accepted.
 
 One file per mechanic. The process, the classification rules and the gates

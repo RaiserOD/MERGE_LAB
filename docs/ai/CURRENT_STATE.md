@@ -47,9 +47,9 @@ Post-B2 work, in the order it landed:
 
 Nothing implemented. One documentation proposal is awaiting a PM decision:
 the mechanic design pipeline (`docs/design/mechanic-pipeline.md`,
-`docs/design/mechanics/`, ADR-0005 **Proposed**). It is additive docs only —
+`docs/design/mechanics/`, ADR-0008 **Proposed**). It is additive docs only —
 no code, content or runtime change — and no agent should treat it as binding
-until ADR-0005 is Accepted. `ACTIVE_TASK.md` is idle.
+until ADR-0008 is Accepted. `ACTIVE_TASK.md` is idle.
 
 ## Next
 
@@ -98,10 +98,10 @@ the 7×9 board peaks at 4 of 63 cells in use.
 
 Each needs an ADR before implementation, per `AI_RULES.md`:
 
-- **Mechanic design pipeline (ADR-0005).** Which route to take, not just
+- **Mechanic design pipeline (ADR-0008).** Which route to take, not just
   whether: rules-only (classification in `AI_RULES.md`), the full spec catalog
   proposed here, chapter beat sheets first, machine-checked specs, or a
-  MASTER_SPEC index. ADR-0005's ALTERNATIVES lists all of them with what each
+  MASTER_SPEC index. ADR-0008's ALTERNATIVES lists all of them with what each
   costs and buys; several are complementary rather than exclusive. Also open:
   the pipeline's section number, where the proposed numbering conflicts with
   `CONTEXT_MAP.md`.
@@ -145,7 +145,7 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Recent decisions
 
-- ADR-0005 (**Proposed**, not accepted): mechanic design pipeline.
+- ADR-0008 (**Proposed**, not accepted): mechanic design pipeline.
 - ADR-0005: Android is the release target; the web build is the shared bundle
   rather than a separate release, and iOS is kept reachable but not planned.
   Amends ADR-0003's roadmap assumption.

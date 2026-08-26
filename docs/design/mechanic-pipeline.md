@@ -1,6 +1,6 @@
 # Mechanic pipeline
 
-**STATUS: Proposed.** Nothing below is binding until ADR-0005 is Accepted.
+**STATUS: Proposed.** Nothing below is binding until ADR-0008 is Accepted.
 Until then this is a proposal for the human PM, not a rule agents follow.
 
 Canon is `docs/MASTER_SPEC.md`, which is not in this repo yet — see the note
