@@ -44,26 +44,26 @@ should start it — see "Blocked on human decisions".
 
 ## System coverage
 
-| Area                 | Status                | Note                                                             |
-| -------------------- | --------------------- | ---------------------------------------------------------------- |
-| Board                | Done                  | 7×9 fixed, `runtimeConfig`                                       |
-| Items / registry     | Done                  | 2 items, one chain (Water → Steam) — thin content, not thin code |
-| Merge                | Done                  | Atomic, emits `ITEM_MERGED`                                      |
-| Generators           | Done                  | 1 generator defined                                              |
-| Energy               | Done                  | Clock-driven regen, 1/60 per second                              |
-| Economy              | Done                  | Sole currency mutator                                            |
-| Orders               | Done                  | 2 orders defined                                                 |
-| Progression          | Done                  | XP curve, lab stages, chapter unlocks                            |
-| Quests               | Done                  | 3 quests defined                                                 |
-| Dialogue / narrative | Done                  | 5 dialogues; Professor voice only                                |
-| Tutorial             | Done                  | Event-gated steps, full run verified in browser                  |
-| Save                 | Done                  | Zod-validated on load, backup slot, `clear()`                    |
-| UI                   | Done, placeholder art | Rarity-tinted rectangles, no sprites                             |
-| Analytics            | Wired, no vendor      | `NoopAnalyticsAdapter` by default                                |
-| Monetization         | Wired, no vendor      | Flags default-off; `Noop` ads/billing                            |
-| PWA                  | Done                  | Offline boot verified in a real browser                          |
-| Android              | Builds in CI          | `assembleDebug` green; never booted on a device                  |
-| iOS                  | Not started           | Deferred in ADR-0003                                             |
+| Area                 | Status                | Note                                                                |
+| -------------------- | --------------------- | ------------------------------------------------------------------- |
+| Board                | Done                  | 7×9 fixed, `runtimeConfig`                                          |
+| Items / registry     | Done                  | 2 items, one chain (Water → Steam) — thin content, not thin code    |
+| Merge                | Done                  | Atomic, emits `ITEM_MERGED`                                         |
+| Generators           | Done                  | 1 generator defined                                                 |
+| Energy               | Done                  | Clock-driven regen, 1/60 per second                                 |
+| Economy              | Done                  | Sole currency mutator                                               |
+| Orders               | Done                  | 2 orders defined                                                    |
+| Progression          | Done                  | XP curve, lab stages, chapter unlocks                               |
+| Quests               | Done                  | 3 quests defined                                                    |
+| Dialogue / narrative | Done                  | 5 dialogues; two voices (`narrator`, `professor`)                   |
+| Tutorial             | Done                  | Event-gated steps, full run verified in browser                     |
+| Save                 | Done                  | Zod-validated on load, backup slot, `clear()`                       |
+| UI                   | Done, placeholder art | Rarity-tinted rectangles, no sprites                                |
+| Analytics            | Wired, no vendor      | `NoopAnalyticsAdapter` by default                                   |
+| Monetization         | Wired, no vendor      | Flags default-off; `Noop` ads/billing                               |
+| Web / PWA            | Done, not a release   | Shared bundle + dev/QA surface; offline boot verified by hand       |
+| Android              | Builds in CI          | The release target; `assembleDebug` green, never booted on a device |
+| iOS                  | Not planned           | Kept reachable, not committed — ADR-0005                            |
 
 ## Verification status
 
@@ -80,7 +80,9 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
   sent anywhere. Picking a vendor is a data-processing decision.
 - **Ad network and billing vendor**, plus the rewards and IAP catalog.
   `MonetizationService` deliberately does not decide what a reward grants.
-- **iOS.** Needs an environment with Xcode/macOS before it can be built at all.
+- **iOS.** Not planned (ADR-0005). Starting it needs a PM decision plus an
+  environment with Xcode/macOS — nothing here can build or verify it today.
+  The constraints that keep it cheap are in ADR-0005 and are binding now.
 - **Pixel-diff visual regression.** Currently screenshots are captured for
   human review, not compared — see ADR-0002 for what would change that.
 - **Real art and audio.** Items render as placeholder tiles.
@@ -104,6 +106,9 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Recent decisions
 
+- ADR-0005: Android is the release target; the web build is the shared bundle
+  rather than a separate release, and iOS is kept reachable but not planned.
+  Amends ADR-0003's roadmap assumption.
 - ADR-0004: this AI memory layer.
 - ADR-0003: Capacitor for Android; `appId` is a placeholder pending a real
   product decision.

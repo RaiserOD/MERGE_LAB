@@ -5,8 +5,10 @@ abandoned laboratory by generating, merging and discovering materials.
 Full product/design/technical spec belongs at `docs/MASTER_SPEC.md` — see
 "Documentation" below for how the docs are laid out.
 
-Platform roadmap: Web/PWA → Android → iOS. Stack: Phaser 3 + TypeScript +
-Vite.
+Platform: Android. The web build is the shared bundle Android ships and the
+development/QA surface, not a separate release; iOS is kept possible but is
+not planned (see `docs/architecture/ADR/0005-android-only-release-target.md`).
+Stack: Phaser 3 + TypeScript + Vite.
 
 ## Getting started
 
@@ -74,9 +76,10 @@ resolving them silently.
 The core loop is playable end to end: `pnpm dev` opens a board where you
 drag items to merge them, run the generator, deliver orders, restore lab
 stages, and follow a Professor-narrated tutorial through all of it — with
-progress saved to `localStorage` between reloads. The production build is
-an installable, offline-capable PWA, and the Android build is a Capacitor
-shell around the same bundle, compiled as a debug APK in CI.
+progress saved to `localStorage` between reloads. The Android build is a
+Capacitor shell around that same bundle, compiled as a debug APK in CI; the
+bundle is also an installable, offline-capable PWA, which is what Capacitor
+wraps and what the e2e tests drive.
 
 Analytics and monetization are wired but inert: both sit behind adapters
 with `Noop` defaults, and monetization additionally behind feature flags

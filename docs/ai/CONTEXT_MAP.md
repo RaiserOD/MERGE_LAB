@@ -170,7 +170,8 @@ check `docs/architecture/ADR/` for a binding prior decision.
 - Spec: B2 step 20
 - Code: `capacitor.config.ts`, `android/`, `.github/workflows/ci.yml`
   (`android` job)
-- ADR: 0003
+- ADR: 0003 (Capacitor), 0005 (Android is the release target; iOS kept
+  reachable but not planned — read before anything platform-shaped)
 
 ## Security and trust boundary
 
