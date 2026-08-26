@@ -1,5 +1,6 @@
 import type { ChapterDefinition } from "@domain/progression/ChapterDefinition";
 import type { LabStageDefinition } from "@domain/progression/LabStageDefinition";
+import type { ProgressionSave } from "@domain/save/SaveDataV1";
 
 export const testLabStages: LabStageDefinition[] = [
   { stage: 1, title: "Basement Lab", upgradeCost: 0 },
@@ -42,3 +43,26 @@ export const testChapters: ChapterDefinition[] = [
   chemistryChapter,
   levelGatedChapter,
 ];
+
+/**
+ * A fresh ProgressionSave for tests, with every field at its empty value.
+ *
+ * Tests that only care about one field should override that one and let
+ * the rest default: `makeProgressionSave({ labStage: 2 })`. Building the
+ * literal inline instead means every new save field breaks every test
+ * that does so — which is exactly what happened when the campaign fields
+ * landed (ADR-0006).
+ */
+export function makeProgressionSave(overrides: Partial<ProgressionSave> = {}): ProgressionSave {
+  return {
+    labStage: 1,
+    unlockedChapterIds: ["chapter.basement"],
+    discoveredItemIds: [],
+    seenDialogueIds: [],
+    completedTutorialStepIds: [],
+    completedLevelIds: [],
+    unlockedContentIds: [],
+    purchasedResearchNodeIds: [],
+    ...overrides,
+  };
+}

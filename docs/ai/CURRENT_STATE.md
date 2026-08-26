@@ -35,11 +35,13 @@ The full B2 order, in the order the spec sets:
 
 Post-B2 work, in the order it landed:
 
-| What landed                                         | Commit    | PR  |
-| --------------------------------------------------- | --------- | --- |
-| AI memory layer (`docs/ai/`, `CLAUDE.md`, ADR-0004) | `9ec50e7` | #17 |
-| Android-only platform scope (ADR-0005)              | `d0e86e2` | #18 |
-| Economy simulator (`pnpm economy:simulate`)         | pending   | —   |
+| What landed                                          | Commit    | PR  |
+| ---------------------------------------------------- | --------- | --- |
+| AI memory layer (`docs/ai/`, `CLAUDE.md`, ADR-0004)  | `9ec50e7` | #17 |
+| Android-only platform scope (ADR-0005)               | `d0e86e2` | #18 |
+| Economy simulator (`pnpm economy:simulate`)          | `f07352b` | #19 |
+| Campaign canon gap analysis                          | `4983968` | #21 |
+| Canonical save shape ahead of its systems (ADR-0006) | pending   | —   |
 
 ## In progress
 
@@ -83,7 +85,7 @@ the 7×9 board peaks at 4 of 63 cells in use.
 
 ## Verification status
 
-- 171 unit + integration tests (Vitest), 29 files — green.
+- 174 unit + integration tests (Vitest), 29 files — green.
 - 2 Playwright e2e tests — green (functional smoke + screenshot capture).
 - CI: `build`, `e2e`, `android`, `security` — all green on `main`.
 - Last full pipeline pass: PR #19, 2026-08-26.

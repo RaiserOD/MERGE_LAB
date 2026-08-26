@@ -5,17 +5,12 @@ import { EventBus } from "@systems/events/EventBus";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import { TutorialSystem } from "@systems/TutorialSystem";
 import { testTutorialSteps } from "../fixtures/testTutorial";
+import { makeProgressionSave } from "../fixtures/testProgression";
 
 const somePosition = { x: 0, y: 0 };
 
 function makeProgression(completedTutorialStepIds: string[] = []): ProgressionSave {
-  return {
-    labStage: 1,
-    unlockedChapterIds: ["chapter.basement"],
-    discoveredItemIds: [],
-    seenDialogueIds: [],
-    completedTutorialStepIds,
-  };
+  return makeProgressionSave({ completedTutorialStepIds });
 }
 
 describe("TutorialSystem", () => {

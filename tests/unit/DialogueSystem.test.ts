@@ -5,6 +5,7 @@ import { EventBus } from "@systems/events/EventBus";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import { DialogueSystem } from "@systems/DialogueSystem";
 import { introDialogue, testDialogues } from "../fixtures/testDialogues";
+import { makeProgressionSave } from "../fixtures/testProgression";
 
 describe("DialogueSystem", () => {
   let progression: ProgressionSave;
@@ -13,13 +14,7 @@ describe("DialogueSystem", () => {
   let system: DialogueSystem;
 
   beforeEach(() => {
-    progression = {
-      labStage: 1,
-      unlockedChapterIds: ["chapter.basement"],
-      discoveredItemIds: [],
-      seenDialogueIds: [],
-      completedTutorialStepIds: [],
-    };
+    progression = makeProgressionSave();
     eventBus = new EventBus<DomainEvent>();
     emitted = [];
     for (const type of ["DIALOGUE_STARTED", "DIALOGUE_ADVANCED", "DIALOGUE_COMPLETED"] as const) {
