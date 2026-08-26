@@ -56,15 +56,53 @@ Faucets and sinks as defined in content today:
 - Lab stages — 2: 25 coins, 3: 500, 4: 1200, 5: 3000.
 
 The stage-2 cost was rebalanced down to 25 (commit `34224ac`) so the first
-repair lands inside the tutorial rather than after a long grind. The later
-costs (500 → 3000) have **not** been validated against a real faucet rate —
-there is no economy simulation behind them.
+repair lands inside the tutorial rather than after a long grind.
 
-## Missing: economy simulation
+## What the numbers actually produce
 
-`tools/economy-simulator/` is an empty placeholder. Until something models
-coins-per-session against the upgrade curve, every number past stage 2 is a
-guess. Balance changes should say so rather than implying they're tuned.
+`pnpm economy:simulate` drives a real `GameContext` headlessly with an
+optimal player — merges everything, delivers the best-paying order, generates
+whenever it can, upgrades the moment it can afford to. Optimal is deliberate:
+it measures the **floor** on how long progression takes, so anything it flags
+is real, and a live player is slower rather than faster.
+
+Measured on the content above (`pnpm economy:simulate 900 30`):
+
+| Lab stage           | Cost | Reached at | Time in previous stage |
+| ------------------- | ---- | ---------- | ---------------------- |
+| 2 Chemistry         | 25   | ~0h        | —                      |
+| 3 Biology           | 500  | 0.1h       | 0.1h                   |
+| 4 Robotics          | 1200 | 2.9h       | 2.8h                   |
+| 5 Advanced Research | 3000 | 10.9h      | 8h                     |
+
+Steady state is **6.25 coins/min (375/h)**, and it is energy-bound: the
+generator is blocked waiting for energy on ~90% of ticks, never by board
+space. Tick size does not change the economics — only the blocked-reason
+percentages, which are per-tick counts by construction.
+
+The chain is rigid: 1 energy/min ÷ 2 energy per generator use = 0.5 Water/min
+→ 0.25 Steam/min → 0.25 × 25 coins. Every coin number in the game is a
+multiple of the energy regen rate.
+
+## Three findings the simulation surfaced
+
+These are reported, not fixed — balance is a PM decision (see the rules
+below), and each is a real property of the current content, not a simulator
+artefact.
+
+1. **The 500-coin stage-3 gate does nothing.** A new player starts with a
+   full 100-energy bar, which converts to ~625 coins — so stages 2 and 3 both
+   fall inside the first few minutes, before the tutorial has finished. Only
+   stage 4 onwards is actually paced by anything.
+2. **`order.water_delivery` is dead content.** It pays 10 coins for 2 Water;
+   merging those same 2 Water into 1 Steam and delivering `order.first_sample`
+   pays 25. No rational player ever delivers it, and the simulation completed
+   it zero times across every run. It is arithmetic, not strategy — the
+   dominated order can never be worth taking while those numbers hold.
+3. **The 7×9 board is 94% idle.** Peak occupancy is 4 of 63 cells. Board size
+   is not a constraint on anything at this content volume, so any design that
+   assumes board pressure (a merge-space squeeze, a storage upgrade) currently
+   has nothing to push against.
 
 ## Rules for changing the economy
 
@@ -73,3 +111,7 @@ guess. Balance changes should say so rather than implying they're tuned.
   doesn't.
 - Rebalancing existing numbers → content-only, but say what you're optimizing
   for, and don't silently change the tutorial's pacing.
+- Any of the above → re-run `pnpm economy:simulate` and quote the new numbers.
+  It takes seconds and it is the difference between a tuned number and a
+  guess. The simulator reads the same content the game does, so a content
+  change is reflected without touching the tool.
