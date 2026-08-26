@@ -48,7 +48,7 @@ Post-B2 work, in the order it landed:
 | Audit fixes: energy invariant, layout deduplication         | `d67b2a6` | #26 |
 | Chapter ids stay order-free; `chapterNumber` (ADR-0010)     | `99a84f1` | #27 |
 | Dead slots: optional `sellValue`, `content/events/` removed | `663bd7a` | #28 |
-| Progressive board unlocking, canon §39 (ADR-0011)           | pending   | —   |
+| Progressive board unlocking, canon §39 (ADR-0011)           | `cf50e41` | #30 |
 
 ## In progress
 
@@ -103,12 +103,12 @@ stages instead. See ADR-0011.
 
 ## Verification status
 
-- 192 unit + integration tests (Vitest), 30 files — green.
+- 223 unit + integration tests (Vitest), 34 files — green.
 - 2 Playwright e2e tests — green (functional smoke + screenshot capture).
 - CI: `build`, `e2e`, `android`, `security` — all green on `main`, last
-  verified on PR #28. Actions stopped triggering for ~4 hours on 2026-08-26
+  verified on PR #30. Actions stopped triggering for ~4 hours on 2026-08-26
   and has since recovered; PR #22 merged during that window without a CI run.
-- Last full pipeline pass: PR #28, 2026-08-26.
+- Last full pipeline pass: PR #30, 2026-08-26.
 
 ## Blocked on human decisions
 
