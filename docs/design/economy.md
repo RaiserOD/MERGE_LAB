@@ -75,6 +75,17 @@ Measured on the content above (`pnpm economy:simulate 900 30`):
 | 4 Robotics          | 1200 | 2.9h       | 2.8h                   |
 | 5 Advanced Research | 3000 | 10.9h      | 8h                     |
 
+Player level over the same run: **6** at 1743 XP, crossing levels at 0.1h,
+1.2h, 4.1h, 7.9h and 12.7h.
+
+XP comes from two sources today (canon §5 also lists first discoveries and
+quests, which are not wired): `ORDER_COMPLETED.xpReward`, and — since
+ADR-0009 — the result item's `ItemDefinition.xpValue` on every merge. On the
+run above that is 249 × 5 from orders plus 249 × 2 from merges. Merges add
+**40% more XP**, which the quadratic `LevelCurve` absorbs into roughly one
+extra level over 15 hours: the same run reached level 5 before merge XP and
+level 6 after.
+
 Steady state is **6.25 coins/min (375/h)**, and it is energy-bound: the
 generator is blocked waiting for energy on ~90% of ticks, never by board
 space. Tick size does not change the economics — only the blocked-reason

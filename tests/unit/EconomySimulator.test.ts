@@ -43,6 +43,29 @@ describe("economy simulator", () => {
     expect(report.finalStage).toBe(reached.at(-1) ?? 1);
   });
 
+  // Added with merge XP (ADR-0009): the simulator could not previously show
+  // the effect of an XP change at all, so it could not verify one either.
+  it("reports player level and XP earned along the way", () => {
+    const report = simulate({ minutes: 240, tickSeconds: 30 });
+
+    expect(report.totalXp).toBeGreaterThan(0);
+    expect(report.finalPlayerLevel).toBeGreaterThan(1);
+    expect(report.levelUps.length).toBeGreaterThan(0);
+
+    // Level-ups are recorded in order, and the last one names the final level.
+    const levels = report.levelUps.map((levelUp) => levelUp.level);
+    expect(levels).toEqual([...levels].sort((a, b) => a - b));
+    expect(report.levelUps.at(-1)?.level).toBe(report.finalPlayerLevel);
+  });
+
+  it("earns more XP than orders alone would pay, because merges award it too", () => {
+    const report = simulate({ minutes: 240, tickSeconds: 30 });
+
+    // order.first_sample pays 5 XP; anything above that came from merges.
+    const orderXp = (report.ordersCompleted["order.first_sample"] ?? 0) * 5;
+    expect(report.totalXp).toBeGreaterThan(orderXp);
+  });
+
   it("reports the same economics regardless of tick size", () => {
     const coarse = simulate({ minutes: 120, tickSeconds: 60 });
     const fine = simulate({ minutes: 120, tickSeconds: 10 });

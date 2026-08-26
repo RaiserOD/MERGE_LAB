@@ -132,6 +132,7 @@ export class GameContext {
     this.progressionSystem = new ProgressionSystem(
       this.state.player,
       this.state.progression,
+      this.items,
       this.chapters,
       this.labStages,
       this.economySystem,

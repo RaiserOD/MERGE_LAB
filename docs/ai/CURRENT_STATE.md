@@ -98,6 +98,14 @@ the 7×9 board peaks at 4 of 63 cells in use.
 
 Each needs an ADR before implementation, per `AI_RULES.md`:
 
+- **Retune `LevelCurve`?** Merge XP (ADR-0009) raised total XP by 40% over a
+  15-hour optimal run, moving the player from level 5 to 6. The quadratic
+  curve absorbed it, so nothing is broken — but the curve has never been
+  tuned against a measurement, and now there is one.
+- **First-discovery and quest XP.** Canon §5 lists both; neither is wired.
+  Discovery XP would need either a second content field or a ruling that
+  reusing `xpValue` (and so double-paying the first merge of each item) is
+  intended. Quests have no XP reward field at all.
 - **Mechanic design pipeline (ADR-0008).** Which route to take, not just
   whether: rules-only (classification in `AI_RULES.md`), the full spec catalog
   proposed here, chapter beat sheets first, machine-checked specs, or a
