@@ -35,17 +35,18 @@ The full B2 order, in the order the spec sets:
 
 Post-B2 work, in the order it landed:
 
-| What landed                                          | Commit    | PR  |
-| ---------------------------------------------------- | --------- | --- |
-| AI memory layer (`docs/ai/`, `CLAUDE.md`, ADR-0004)  | `9ec50e7` | #17 |
-| Android-only platform scope (ADR-0005)               | `d0e86e2` | #18 |
-| Economy simulator (`pnpm economy:simulate`)          | `f07352b` | #19 |
-| Campaign canon gap analysis                          | `4983968` | #21 |
-| Canonical save shape ahead of its systems (ADR-0006) | `2285905` | #22 |
-| Shared `ProgressionRequirement` predicate (ADR-0007) | `a35234b` | #23 |
-| Duplicate ADR-0005 resolved; numbering rule added    | `a35234b` | #24 |
-| XP on merges (ADR-0009) + simulator level reporting  | `9bdeb3a` | #25 |
-| Audit fixes: energy invariant, layout deduplication  | pending   | —   |
+| What landed                                                 | Commit    | PR  |
+| ----------------------------------------------------------- | --------- | --- |
+| AI memory layer (`docs/ai/`, `CLAUDE.md`, ADR-0004)         | `9ec50e7` | #17 |
+| Android-only platform scope (ADR-0005)                      | `d0e86e2` | #18 |
+| Economy simulator (`pnpm economy:simulate`)                 | `f07352b` | #19 |
+| Campaign canon gap analysis                                 | `4983968` | #21 |
+| Canonical save shape ahead of its systems (ADR-0006)        | `2285905` | #22 |
+| Shared `ProgressionRequirement` predicate (ADR-0007)        | `a35234b` | #23 |
+| Duplicate ADR-0005 resolved; numbering rule added           | `a35234b` | #24 |
+| XP on merges (ADR-0009) + simulator level reporting         | `9bdeb3a` | #25 |
+| Audit fixes: energy invariant, layout deduplication         | pending   | —   |
+| Dead slots: optional `sellValue`, `content/events/` removed | pending   | —   |
 
 ## In progress
 
@@ -129,8 +130,10 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 - **Pixel-diff visual regression.** Currently screenshots are captured for
   human review, not compared — see ADR-0002 for what would change that.
 - **Real art and audio.** Items render as placeholder tiles.
-- **Temporary events.** `content/events/` and the `EventSave` slot exist and
-  round-trip; no system consumes them.
+- **Temporary events.** The save's `EventSave` slot exists and round-trips; no
+  system consumes it, and there is no content format. The empty
+  `content/events/` directory that used to sit beside it is gone — it implied
+  a wiring that never existed. Designing the mechanic brings both back.
 - **Content volume.** The systems are done but the game is small: 2 items
   (one merge chain), 1 generator, 2 orders, 3 quests, 2 chapters, 5 dialogues.
 

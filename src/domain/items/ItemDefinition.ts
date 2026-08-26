@@ -9,7 +9,14 @@ export const ItemDefinitionSchema = z.object({
   level: z.number().int().positive(),
   displayName: z.string().min(1),
   rarity: ItemRaritySchema,
-  sellValue: z.number().int().nonnegative(),
+  /**
+   * Coins the item is worth if sold. Optional: there is no selling mechanic
+   * (`docs/design/game-design.md` lists it as a deliberate non-feature), so
+   * nothing reads this. Required, it forced every new item to invent a
+   * balance number for a mechanic that does not exist. The two items that
+   * already carry one keep it — the values are plausible and cost nothing.
+   */
+  sellValue: z.number().int().nonnegative().optional(),
   xpValue: z.number().int().nonnegative(),
   spriteKey: z.string().min(1),
   resultItemId: z.string().min(1).optional(),

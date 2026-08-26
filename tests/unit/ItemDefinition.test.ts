@@ -37,7 +37,24 @@ describe("ItemDefinitionSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects a negative sellValue", () => {
+  it("accepts an item with no sellValue — there is no selling mechanic", () => {
+    const result = ItemDefinitionSchema.safeParse({
+      id: "item.water",
+      mergeGroup: "chemistry.water",
+      level: 1,
+      displayName: "Water",
+      rarity: "common",
+      xpValue: 1,
+      spriteKey: "item_water",
+      sourceGeneratorIds: [],
+      tags: [],
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.success && result.data.sellValue).toBeUndefined();
+  });
+
+  it("still rejects a negative sellValue when one is given", () => {
     const result = ItemDefinitionSchema.safeParse({
       id: "item.water",
       mergeGroup: "chemistry.water",
