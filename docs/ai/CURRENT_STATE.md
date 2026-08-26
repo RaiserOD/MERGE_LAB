@@ -35,7 +35,11 @@ The full B2 order, in the order the spec sets:
 
 ## In progress
 
-Nothing. `ACTIVE_TASK.md` is idle.
+Nothing implemented. One documentation proposal is awaiting a PM decision:
+the mechanic design pipeline (`docs/design/mechanic-pipeline.md`,
+`docs/design/mechanics/`, ADR-0005 **Proposed**). It is additive docs only —
+no code, content or runtime change — and no agent should treat it as binding
+until ADR-0005 is Accepted. `ACTIVE_TASK.md` is idle.
 
 ## Next
 
@@ -76,6 +80,11 @@ should start it — see "Blocked on human decisions".
 
 Each needs an ADR before implementation, per `AI_RULES.md`:
 
+- **Mechanic design pipeline (ADR-0005).** Whether to adopt the
+  narrative-beat → classification → mechanic-spec → approval process, whether
+  to backfill specs for already-shipped mechanics, and whether to build
+  `pnpm mechanics:validate`. Also open: the pipeline's section number in
+  MASTER_SPEC, where the proposed numbering conflicts with `CONTEXT_MAP.md`.
 - **Analytics vendor.** The A24 event vocabulary is implemented; nothing is
   sent anywhere. Picking a vendor is a data-processing decision.
 - **Ad network and billing vendor**, plus the rewards and IAP catalog.
@@ -104,6 +113,7 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Recent decisions
 
+- ADR-0005 (**Proposed**, not accepted): mechanic design pipeline.
 - ADR-0004: this AI memory layer.
 - ADR-0003: Capacitor for Android; `appId` is a placeholder pending a real
   product decision.
