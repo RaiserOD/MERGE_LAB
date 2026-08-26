@@ -56,11 +56,19 @@ interface StageRecord {
   readonly minutesInStage: number;
 }
 
+interface LevelUpRecord {
+  readonly level: number;
+  readonly atMinute: number;
+}
+
 export interface SimulationReport {
   readonly tickSeconds: number;
   readonly simulatedMinutes: number;
   readonly stages: StageRecord[];
   readonly finalStage: number;
+  readonly finalPlayerLevel: number;
+  readonly totalXp: number;
+  readonly levelUps: LevelUpRecord[];
   readonly coinsEarned: number;
   readonly coinsSpent: number;
   readonly generatorUses: number;
@@ -125,6 +133,8 @@ export function simulate(options: SimulationOptions): SimulationReport {
   let peakOccupiedCells = 0;
   let energySpent = 0;
   let lastStageAtMinute = 0;
+  const levelUps: LevelUpRecord[] = [];
+  let minuteNow = 0;
 
   context.eventBus.on("CURRENCY_CHANGED", (event) => {
     if (event.currency !== "coins") {
@@ -139,11 +149,15 @@ export function simulate(options: SimulationOptions): SimulationReport {
   context.eventBus.on("ENERGY_SPENT", (event) => {
     energySpent += event.amount;
   });
+  context.eventBus.on("PLAYER_LEVELED", (event) => {
+    levelUps.push({ level: event.newLevel, atMinute: round(minuteNow, 1) });
+  });
 
   const totalTicks = Math.ceil((options.minutes * 60) / options.tickSeconds);
 
   for (let tick = 0; tick < totalTicks; tick += 1) {
     const minute = (tick * options.tickSeconds) / 60;
+    minuteNow = minute;
 
     // 1. Merge until nothing else can be merged. Merging first keeps the
     //    board clear, which is what stops boardFull from binding early.
@@ -215,6 +229,9 @@ export function simulate(options: SimulationOptions): SimulationReport {
     simulatedMinutes: options.minutes,
     stages,
     finalStage: progressionSystem.getLabStage(),
+    finalPlayerLevel: state.player.level,
+    totalXp: state.player.xp,
+    levelUps,
     coinsEarned,
     coinsSpent,
     generatorUses,
@@ -302,6 +319,23 @@ export function formatReport(report: SimulationReport): string {
     lines.push(
       `  ...stage ${report.finalStage + 1} not reached within ${hours(report.simulatedMinutes)}.`,
     );
+  }
+  lines.push("");
+
+  lines.push("Player level");
+  lines.push("-".repeat(60));
+  lines.push(`  Final level           ${report.finalPlayerLevel}  (${report.totalXp} XP total)`);
+  lines.push(`  XP per minute         ${round(report.totalXp / report.simulatedMinutes, 2)}`);
+  if (report.levelUps.length === 0) {
+    lines.push("  no level-ups — the XP curve was never crossed.");
+  } else {
+    const shown = report.levelUps.slice(0, 8);
+    for (const levelUp of shown) {
+      lines.push(`  level ${String(levelUp.level).padStart(2)}  at ${hours(levelUp.atMinute)}`);
+    }
+    if (report.levelUps.length > shown.length) {
+      lines.push(`  ...and ${report.levelUps.length - shown.length} more.`);
+    }
   }
   lines.push("");
 

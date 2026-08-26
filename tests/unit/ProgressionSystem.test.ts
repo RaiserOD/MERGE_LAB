@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { CurrencySave, PlayerSave, ProgressionSave } from "@domain/save/SaveDataV1";
 import { ChapterRegistry, LabStageRegistry } from "@domain/progression/ChapterRegistry";
+import { ItemRegistry } from "@domain/items/ItemRegistry";
 import { xpForLevel } from "@domain/progression/LevelCurve";
 import { EventBus } from "@systems/events/EventBus";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import { EconomySystem } from "@systems/EconomySystem";
 import { ProgressionError, ProgressionSystem } from "@systems/ProgressionSystem";
 import { makeProgressionSave, testChapters, testLabStages } from "../fixtures/testProgression";
+import { testItems } from "../fixtures/testItems";
 
 describe("ProgressionSystem", () => {
   let player: PlayerSave;
@@ -29,6 +31,7 @@ describe("ProgressionSystem", () => {
     system = new ProgressionSystem(
       player,
       progression,
+      new ItemRegistry(testItems),
       new ChapterRegistry(testChapters),
       new LabStageRegistry(testLabStages),
       new EconomySystem(currencies, eventBus),
@@ -86,6 +89,51 @@ describe("ProgressionSystem", () => {
 
     expect(progression.discoveredItemIds).toEqual(["item.steam"]);
     expect(discovered).toHaveLength(1);
+  });
+
+  // Canon §5 lists merges as an XP source; the amount is the result item's
+  // content-defined xpValue, not a constant in code.
+  it("awards the result item's xpValue on a merge", () => {
+    const stop = system.start();
+
+    eventBus.emit({
+      type: "ITEM_MERGED",
+      consumedItemId: "item.water",
+      resultItemId: "item.steam",
+      from: { x: 0, y: 0 },
+      to: { x: 1, y: 0 },
+    });
+
+    expect(player.xp).toBe(2);
+    stop();
+  });
+
+  it("awards merge XP every time, not only on the first discovery", () => {
+    const stop = system.start();
+
+    for (let i = 0; i < 3; i += 1) {
+      eventBus.emit({
+        type: "ITEM_MERGED",
+        consumedItemId: "item.water",
+        resultItemId: "item.steam",
+        from: { x: 0, y: 0 },
+        to: { x: 1, y: 0 },
+      });
+    }
+
+    expect(player.xp).toBe(6);
+    expect(progression.discoveredItemIds).toEqual(["item.steam"]);
+    stop();
+  });
+
+  it("does not award XP for a generator spawn — canon names merges, not spawns", () => {
+    const stop = system.start();
+
+    eventBus.emit({ type: "ITEM_SPAWNED", itemId: "item.water", position: { x: 0, y: 0 } });
+
+    expect(player.xp).toBe(0);
+    expect(progression.discoveredItemIds).toEqual(["item.water"]);
+    stop();
   });
 
   it("discovers items from spawn and merge events once started", () => {
@@ -201,6 +249,7 @@ describe("ProgressionSystem", () => {
     const broken = new ProgressionSystem(
       player,
       progression,
+      new ItemRegistry(testItems),
       registry,
       new LabStageRegistry(testLabStages),
       new EconomySystem(currencies, eventBus),

@@ -1,4 +1,5 @@
 import type { PlayerSave, ProgressionSave } from "@domain/save/SaveDataV1";
+import type { ItemRegistry } from "@domain/items/ItemRegistry";
 import type { ChapterRegistry, LabStageRegistry } from "@domain/progression/ChapterRegistry";
 import { levelForXp } from "@domain/progression/LevelCurve";
 import type { DomainEvent } from "@systems/events/DomainEvent";
@@ -11,14 +12,16 @@ export class ProgressionError extends Error {}
  * The three progression tracks from A11: player XP/level, laboratory stage
  * (bought with coins), and chapter unlocks.
  *
- * XP arrives by subscribing to ORDER_COMPLETED rather than being pushed by
- * OrderSystem, so orders stay unaware of levelling. Call `start()` once to
- * attach that subscription.
+ * XP arrives by subscription rather than being pushed, so the systems that
+ * produce it stay unaware of levelling. Canon §5 names merges, first
+ * discoveries, orders and quests as sources; merges and orders are wired
+ * here. Call `start()` once to attach the subscriptions.
  */
 export class ProgressionSystem {
   constructor(
     private readonly player: PlayerSave,
     private readonly progression: ProgressionSave,
+    private readonly items: ItemRegistry,
     private readonly chapters: ChapterRegistry,
     private readonly labStages: LabStageRegistry,
     private readonly economySystem: EconomySystem,
@@ -35,6 +38,9 @@ export class ProgressionSystem {
         this.recordDiscovery(event.itemId);
       }),
       this.eventBus.on("ITEM_MERGED", (event) => {
+        // Canon §5 lists merges as an XP source. The value is the result
+        // item's xpValue — content-defined, like every other XP amount.
+        this.grantXp(this.items.requireById(event.resultItemId).xpValue);
         this.recordDiscovery(event.resultItemId);
       }),
     ];
