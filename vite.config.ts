@@ -51,7 +51,8 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["tests/**/*.{test,spec}.ts"],
+    // Excludes tests/e2e — those are Playwright specs, run via `pnpm test:e2e`.
+    include: ["tests/unit/**/*.{test,spec}.ts", "tests/integration/**/*.{test,spec}.ts"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],

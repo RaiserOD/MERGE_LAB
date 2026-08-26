@@ -18,7 +18,13 @@ pnpm lint            # ESLint
 pnpm typecheck        # tsc -b --noEmit
 pnpm content:validate # validate content/**/*.json against domain schemas
 pnpm build            # production build
+pnpm test:e2e         # Playwright end-to-end/visual QA (needs Chromium — see below)
 ```
+
+`pnpm test:e2e` needs a Chromium build Playwright knows about. If you already
+have one (e.g. `PLAYWRIGHT_BROWSERS_PATH` set), it's reused as-is; otherwise
+run `pnpm exec playwright install --with-deps chromium` once first. CI does
+this automatically in its own job.
 
 Node version is pinned in `.nvmrc` (22). Package manager is pnpm — see
 `packageManager` in `package.json`.
@@ -67,6 +73,12 @@ cheats — add currency, refill energy, skip the tutorial, force-unlock the
 next chapter, wipe the save — without grinding. It's tree-shaken out of
 production builds entirely (`import.meta.env.DEV`-gated), so it ships with
 zero footprint.
+
+`pnpm test:e2e` runs Playwright against a real browser: a functional smoke
+test (boot, merge, tutorial progress, zero console errors) plus a
+screenshot capture attached to the HTML report for human review. It's not
+pixel-diff regression yet — see `docs/architecture/ADR/
+0002-playwright-visual-qa-scope.md` for why and what would change that.
 
 Not built yet (per the master spec's A26 staging): a live analytics
 vendor, a real ad network/billing vendor and rewards/IAP catalog,
