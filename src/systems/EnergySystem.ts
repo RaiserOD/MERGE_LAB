@@ -6,7 +6,7 @@ import type { Clock } from "@infrastructure/clock/Clock";
 export class InsufficientEnergyError extends Error {}
 
 /**
- * Energy pacing (A8). Regeneration is a pure function of elapsed time —
+ * Energy pacing. Regeneration is a pure function of elapsed time —
  * `lastRegenAt` is tracked in-system rather than in the save, so a restart
  * simply resumes regen from the load moment. Offline regen (crediting time
  * spent with the game closed) is a separate feature and deliberately not
@@ -66,5 +66,28 @@ export class EnergySystem {
       amount,
       remaining: this.currencies.energy,
     });
+  }
+
+  /**
+   * Adds energy, clamped to the cap. Emits nothing, for the same reason
+   * regen doesn't: gaining energy is not a player action anything observes,
+   * while spending it is.
+   *
+   * This exists so that "energy changes only through EnergySystem" is a rule
+   * callers can actually keep. Without it the only way to add energy was to
+   * write `currencies.energy` directly, which is what the QA panel did.
+   */
+  grant(amount: number): void {
+    if (!Number.isFinite(amount) || amount < 0) {
+      throw new Error(`Energy grant must be a non-negative number, got ${amount}`);
+    }
+
+    this.update();
+    this.currencies.energy = Math.min(this.currencies.maxEnergy, this.currencies.energy + amount);
+  }
+
+  /** Fills the bar to the cap. Convenience over grant(maxEnergy) for QA tooling. */
+  refill(): void {
+    this.grant(this.currencies.maxEnergy);
   }
 }

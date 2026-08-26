@@ -3,7 +3,7 @@ import { ProgressionRequirementSchema } from "@domain/progression/ProgressionReq
 
 /**
  * A quest is a `ProgressionRequirement` plus an identity and a payout
- * (A10). The condition itself is the shared predicate, so quests and
+ *. The condition itself is the shared predicate, so quests and
  * campaign level requirements express the same things the same way and are
  * evaluated by the same rules — see ADR-0007.
  */

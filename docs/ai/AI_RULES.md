@@ -52,16 +52,32 @@ poisons everything downstream. If a check couldn't run, say which and why.
 
 These are not judgment calls. Stop, state the options, and wait:
 
-- A new mechanic, currency, or resource is required.
-- Monetization behavior, pricing, or the rewards/IAP catalog changes.
+This list is canon §57's, plus four items canon doesn't name but this
+repository's own decisions do. If they ever disagree, canon wins and the
+disagreement gets reported.
+
+From canon §57:
+
+- Campaign structure, or the number of levels.
+- Chapter canon, or the final story reveal — any narrative canon change.
+- A new currency, a new major mechanic, or a new progression layer.
+- **Merge rules.** How merging validates or resolves is canon, not an
+  implementation detail.
+- **Core Energy rules.** The cap, the regeneration rate, and what energy is
+  spent on. Adding a method to `EnergySystem` is not a rules change; changing
+  what those numbers mean is.
+- Monetization behavior, pricing, or the rewards/IAP catalog.
+- Board dimensions.
+- The save schema version.
+- Platform architecture — a platform added or dropped.
+
+Added by this repository:
+
 - The architecture or a layer boundary changes.
 - Scope changes — anything touching the MVP non-goals list.
-- A platform is added or dropped.
-- Narrative canon changes.
 - A new third-party vendor or SDK is introduced (analytics, ads, billing,
   crash reporting).
-- Board dimensions, save-schema version, or another documented invariant
-  changes.
+- Any other documented invariant changes.
 
 Approved decisions in these categories get an ADR in
 `docs/architecture/ADR/` before the code lands.

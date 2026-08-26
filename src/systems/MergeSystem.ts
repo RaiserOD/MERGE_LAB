@@ -17,11 +17,11 @@ type MergeValidation =
   | { ok: false; reason: string };
 
 /**
- * Atomic merge transaction (A5): VALIDATE -> CALCULATE -> MUTATE -> EMIT.
+ * Atomic merge transaction: VALIDATE -> CALCULATE -> MUTATE -> EMIT.
  * Persistence ("SAVE") is the caller's responsibility, not this system's.
  *
  * Merge condition: same mergeGroup AND same level AND a result item exists.
- * "Neither item is locked" (A5) is satisfied by requiring both cells to be
+ * "Neither item is locked" is satisfied by requiring both cells to be
  * OCCUPIED — BLOCKED/LOCKED cells never hold a mergeable item in this model.
  */
 export class MergeSystem {

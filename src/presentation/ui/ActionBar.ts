@@ -8,7 +8,7 @@ export interface ActionBarHandlers {
   onUpgradeLab: () => void;
 }
 
-/** Bottom bar (A18): generator buttons, the first fulfillable order, and an affordable lab upgrade. */
+/** Bottom bar: generator buttons, the first fulfillable order, and an affordable lab upgrade. */
 export class ActionBar {
   private readonly background: Phaser.GameObjects.Rectangle;
   private readonly buttons: Phaser.GameObjects.Container[] = [];

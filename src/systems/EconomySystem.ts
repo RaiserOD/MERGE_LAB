@@ -5,7 +5,7 @@ import type { EventBus } from "@systems/events/EventBus";
 export class InsufficientFundsError extends Error {}
 
 /**
- * The only place coins/gems/researchPoints are allowed to change (A16).
+ * The only place coins/gems/researchPoints are allowed to change.
  * Every mutation is validated against the no-negative-balance rule and
  * emits CURRENCY_CHANGED, so UI and analytics can react without polling.
  *

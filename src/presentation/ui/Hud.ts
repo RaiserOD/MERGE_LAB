@@ -3,7 +3,7 @@ import type { GameContext } from "@app/GameContext";
 import { layout, palette } from "@presentation/theme";
 
 /**
- * Top bar readout (A18): currencies and energy, refreshed from domain
+ * Top bar readout: currencies and energy, refreshed from domain
  * events rather than polled, plus a transient status line for action
  * feedback ("why did I get this reward", "why can't I merge these").
  */

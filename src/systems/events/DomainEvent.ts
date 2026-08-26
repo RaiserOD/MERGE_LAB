@@ -1,5 +1,5 @@
 /**
- * Events describe completed state changes (A22). Every system built so far
+ * Events describe completed state changes. Every system built so far
  * emits through this union: board/merge/spawn, generators, energy, economy,
  * orders, progression and quests. Not to be confused with content/events/
  * (temporary in-game events like "Alien Samples").
@@ -9,7 +9,7 @@ export interface BoardPosition {
   readonly y: number;
 }
 
-/** Currencies mutated through EconomySystem. Energy is paced by EnergySystem, not economy (A16). */
+/** Currencies mutated through EconomySystem. Energy is paced by EnergySystem, not economy. */
 export type CurrencyKind = "coins" | "gems" | "researchPoints";
 
 export type DomainEvent =

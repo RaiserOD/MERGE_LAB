@@ -1,5 +1,5 @@
 /**
- * Economy simulator (B5). Drives a real GameContext headlessly to measure
+ * Economy simulator. Drives a real GameContext headlessly to measure
  * what the current content actually implies: how long each lab stage takes,
  * what the steady-state coin rate is, and which resource is the binding
  * constraint.

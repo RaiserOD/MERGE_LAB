@@ -77,4 +77,56 @@ describe("EnergySystem", () => {
       system.spend(-1);
     }).toThrow(/cannot be negative/);
   });
+
+  // grant() exists so "energy changes only through EnergySystem" is a rule
+  // callers can keep — before it, adding energy meant writing the field.
+  describe("grant", () => {
+    // Regen is 0 in these so the clock cannot mask what grant() itself does.
+    function makeSystem(energy: number) {
+      const currencies = makeCurrencies(energy);
+      const system = new EnergySystem(currencies, new FixedClock(0), 0, eventBus);
+      return { currencies, system };
+    }
+
+    it("adds energy up to the cap", () => {
+      const { system } = makeSystem(70);
+
+      system.grant(20);
+
+      expect(system.getEnergy()).toBe(90);
+    });
+
+    it("clamps at the cap rather than overflowing", () => {
+      const { currencies, system } = makeSystem(90);
+
+      system.grant(1000);
+
+      expect(system.getEnergy()).toBe(currencies.maxEnergy);
+    });
+
+    it("rejects a negative grant instead of silently draining", () => {
+      const { system } = makeSystem(50);
+
+      expect(() => {
+        system.grant(-5);
+      }).toThrow(/non-negative/);
+      expect(system.getEnergy()).toBe(50);
+    });
+
+    it("emits nothing — gaining energy is not an observed action", () => {
+      const { system } = makeSystem(50);
+
+      system.grant(10);
+
+      expect(emitted).toHaveLength(0);
+    });
+
+    it("refill() fills the bar to the cap", () => {
+      const { currencies, system } = makeSystem(25);
+
+      system.refill();
+
+      expect(system.getEnergy()).toBe(currencies.maxEnergy);
+    });
+  });
 });

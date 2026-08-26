@@ -11,7 +11,7 @@ import type {
 import { runtimeConfig } from "@config/runtime";
 
 /**
- * Runtime game state, shaped after SaveDataV1 (A23) but with `board` as a
+ * Runtime game state, shaped after SaveDataV1 but with `board` as a
  * live Board instance instead of a flat array. Fields not yet driven by an
  * implemented system (generators, quests, events) default to empty so the
  * full save round-trips validly even before those systems exist.
@@ -27,7 +27,7 @@ export class GameState {
     public events: EventSave[],
   ) {}
 
-  /** `now` must come from an injected Clock (A8) — never Date.now() here. */
+  /** `now` must come from an injected Clock — never Date.now() here. */
   toSaveData(now: number): SaveDataV1 {
     return {
       version: 1,

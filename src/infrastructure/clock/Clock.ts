@@ -1,4 +1,4 @@
-/** Time must be injectable (A8) — domain/systems never call Date.now() directly. */
+/** Time must be injectable — domain/systems never call Date.now() directly. */
 export interface Clock {
   now(): number;
 }

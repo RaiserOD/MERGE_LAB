@@ -17,7 +17,7 @@ const BACKUP_KEY = "mergeLab.save.backup";
  * keep the previous save as a backup before overwriting, so a write that's
  * interrupted (or a save that's schema-valid JSON but semantically broken)
  * can still be recovered from. This is the only place in the codebase
- * allowed to call storage.setItem/getItem directly (B4).
+ * allowed to call storage.setItem/getItem directly.
  */
 export class SaveSystem {
   constructor(

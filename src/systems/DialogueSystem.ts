@@ -14,7 +14,7 @@ export interface ActiveDialogue {
 }
 
 /**
- * Playback cursor over dialogue content (A13). It owns which dialogue is
+ * Playback cursor over dialogue content. It owns which dialogue is
  * on screen and how far through it the player is, and records one-shot
  * dialogues as seen so chapter intros never replay.
  *

@@ -2,7 +2,7 @@ import type { BoardSave } from "@domain/save/SaveDataV1";
 import { type BoardCell, cellKey } from "@domain/board/BoardCell";
 
 /**
- * Pure grid state (A5). No Phaser, no I/O — BoardSystem wraps this with
+ * Pure grid state. No Phaser, no I/O — BoardSystem wraps this with
  * validation/events, and infrastructure/persistence handles serialization
  * to/from localStorage.
  */
