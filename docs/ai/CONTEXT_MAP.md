@@ -16,10 +16,15 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Board
 
-- Spec: A5
+- Spec: A5; canon §39 (progressive unlocking)
 - Docs: `architecture/system-map.md`, `architecture/data-contracts.md`
-- Code: `src/domain/board/`, `src/systems/BoardSystem.ts`, `src/config/runtime.ts`
-- Tests: `tests/unit/Board.test.ts`, `tests/unit/BoardSystem.test.ts`
+- Code: `src/domain/board/`, `src/systems/BoardSystem.ts`,
+  `src/systems/BoardExpansionSystem.ts`, `src/config/runtime.ts`
+- Content: `content/board-sections/*.json`
+- Tests: `tests/unit/Board.test.ts`, `tests/unit/BoardSystem.test.ts`,
+  `tests/unit/BoardExpansionSystem.test.ts`,
+  `tests/integration/board-expansion.test.ts`
+- ADR: 0011
 
 ## Merge
 
@@ -157,7 +162,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 - Spec: not yet in canon — see the open question in `design/mechanic-pipeline.md`
 - Docs: `design/mechanic-pipeline.md`, `design/mechanics/README.md`,
   `design/mechanics/TEMPLATE.md`
-- ADR: 0005 (**Proposed** — not binding until Accepted)
+- ADR: 0008 (**Proposed** — not binding until Accepted)
 - Load this row when a task asks for a _new or changed gameplay rule_ rather
   than new content. Classification (M0–M4) comes before design.
 

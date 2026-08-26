@@ -99,9 +99,13 @@ replay. See `narrative.md`.
 
 ## What is deliberately absent
 
-No energy purchase, no timers beyond generator cooldowns, no board expansion,
-no item selling, no temporary events. Each is a design decision that hasn't
-been made — not an oversight to fill in.
+No energy purchase, no timers beyond generator cooldowns, no item selling,
+no temporary events. Each is a design decision that hasn't been made — not an
+oversight to fill in.
+
+Board _expansion_ is no longer on that list: the board opens progressively,
+section by section, per canon §39 (ADR-0011). The board itself is still a
+fixed 7×9 — what changes is how much of it the player can reach.
 
 `ItemDefinition.xpValue` used to sit here as an unread forward declaration; it
 is live now — merges pay it (ADR-0009). `ItemDefinition.sellValue` is still

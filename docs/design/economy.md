@@ -5,12 +5,12 @@ implementation does and what is still undecided.
 
 ## Currencies
 
-| Currency         | Faucet                      | Sink                     | Mutated by      |
-| ---------------- | --------------------------- | ------------------------ | --------------- |
-| `coins`          | orders, quests              | lab stage upgrades       | `EconomySystem` |
-| `gems`           | quests (no content uses it) | _none yet_               | `EconomySystem` |
-| `researchPoints` | orders, quests              | research nodes — unbuilt | `EconomySystem` |
-| `energy`         | time (1/60 per second)      | generator use            | `EnergySystem`  |
+| Currency         | Faucet                      | Sink                               | Mutated by      |
+| ---------------- | --------------------------- | ---------------------------------- | --------------- |
+| `coins`          | orders, quests              | lab stage upgrades, board sections | `EconomySystem` |
+| `gems`           | quests (no content uses it) | _none yet_                         | `EconomySystem` |
+| `researchPoints` | orders, quests              | research nodes — unbuilt           | `EconomySystem` |
+| `energy`         | time (1/60 per second)      | generator use                      | `EnergySystem`  |
 
 Energy lives in the same `CurrencySave` block but is **not** an economy
 currency: it never passes through `EconomySystem`, and it regenerates rather

@@ -80,9 +80,10 @@ Systems emit `DomainEvent` (see `src/systems/events/DomainEvent.ts`) **after**
 a state change succeeds. Events describe what happened, never what should
 happen — nothing in the bus is a command.
 
-Emitters: `BoardSystem`, `MergeSystem`, `GeneratorSystem`, `EnergySystem`,
-`EconomySystem`, `OrderSystem`, `ProgressionSystem`, `QuestSystem`,
-`DialogueSystem`, `TutorialSystem`, `MonetizationService`.
+Emitters: `BoardSystem`, `BoardExpansionSystem`, `MergeSystem`,
+`GeneratorSystem`, `EnergySystem`, `EconomySystem`, `OrderSystem`,
+`ProgressionSystem`, `QuestSystem`, `DialogueSystem`, `TutorialSystem`,
+`MonetizationService`.
 
 Observers, attached by `GameContext.start()`:
 

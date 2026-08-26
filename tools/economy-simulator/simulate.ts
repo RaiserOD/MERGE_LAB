@@ -61,6 +61,13 @@ interface LevelUpRecord {
   readonly atMinute: number;
 }
 
+interface SectionRecord {
+  readonly sectionId: string;
+  readonly title: string;
+  readonly cost: number;
+  readonly reachedAtMinute: number;
+}
+
 export interface SimulationReport {
   readonly tickSeconds: number;
   readonly simulatedMinutes: number;
@@ -77,6 +84,8 @@ export interface SimulationReport {
   readonly blocked: Record<BlockedReason, number>;
   readonly ticks: number;
   readonly peakOccupiedCells: number;
+  readonly sectionsUnlocked: SectionRecord[];
+  readonly finalUnlockedCells: number;
   readonly energyPerCoin: number;
 }
 
@@ -107,6 +116,7 @@ export function simulate(options: SimulationOptions): SimulationReport {
     energySystem,
     orderSystem,
     progressionSystem,
+    boardExpansionSystem,
     generators,
     orders,
     labStages,
@@ -123,6 +133,7 @@ export function simulate(options: SimulationOptions): SimulationReport {
     .map((order) => order.id);
 
   const stages: StageRecord[] = [];
+  const sectionsUnlocked: SectionRecord[] = [];
   const ordersCompleted: Record<string, number> = {};
   const blocked: Record<BlockedReason, number> = { energy: 0, charges: 0, boardFull: 0, none: 0 };
 
@@ -215,6 +226,20 @@ export function simulate(options: SimulationOptions): SimulationReport {
       lastStageAtMinute = minute;
     }
 
+    // 5. Open the next board section whenever it is affordable. An optimal
+    //    player buys space as soon as canon's gate lets them.
+    let nextSection = boardExpansionSystem.nextLockedSection();
+    while (nextSection && boardExpansionSystem.canUnlock(nextSection.id)) {
+      boardExpansionSystem.unlockSection(nextSection.id);
+      sectionsUnlocked.push({
+        sectionId: nextSection.id,
+        title: nextSection.title,
+        cost: nextSection.unlockCost,
+        reachedAtMinute: round(minute, 1),
+      });
+      nextSection = boardExpansionSystem.nextLockedSection();
+    }
+
     const occupied = state.board.allCells().filter((cell) => cell.state === "OCCUPIED").length;
     peakOccupiedCells = Math.max(peakOccupiedCells, occupied);
 
@@ -240,6 +265,8 @@ export function simulate(options: SimulationOptions): SimulationReport {
     blocked,
     ticks: totalTicks,
     peakOccupiedCells,
+    sectionsUnlocked,
+    finalUnlockedCells: boardExpansionSystem.unlockedCellCount(),
     energyPerCoin: coinsEarned > 0 ? round(energySpent / coinsEarned, 3) : 0,
   };
 }
@@ -363,9 +390,19 @@ export function formatReport(report: SimulationReport): string {
     lines.push(`  ${reason.padEnd(12)}${String(count).padStart(7)} ticks  ${share}%`);
   }
   lines.push(
-    `  Peak board use      ${report.peakOccupiedCells}/` +
-      `${runtimeConfig.boardCols * runtimeConfig.boardRows} cells`,
+    `  Peak board use      ${report.peakOccupiedCells}/${report.finalUnlockedCells} unlocked ` +
+      `(${runtimeConfig.boardCols * runtimeConfig.boardRows} cells on the full board)`,
   );
+  if (report.sectionsUnlocked.length > 0) {
+    for (const section of report.sectionsUnlocked) {
+      lines.push(
+        `  Opened ${section.title.padEnd(22)} -${String(section.cost).padStart(5)} coins ` +
+          `at ${String(section.reachedAtMinute)} min`,
+      );
+    }
+  } else {
+    lines.push("  No board section was opened in this run.");
+  }
   lines.push("");
 
   return lines.join("\n");

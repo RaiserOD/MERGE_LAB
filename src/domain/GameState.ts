@@ -1,4 +1,6 @@
 import { Board } from "@domain/board/Board";
+import type { BoardCell } from "@domain/board/BoardCell";
+import type { BoardSectionCell } from "@domain/board/BoardSectionDefinition";
 import type {
   CurrencySave,
   EventSave,
@@ -54,9 +56,21 @@ export class GameState {
     );
   }
 
-  static createNew(): GameState {
+  /**
+   * A brand-new game. `initiallyLockedCells` comes from the board-section
+   * content (canon §39: the board opens progressively), so a fresh board
+   * starts with only the starter area usable. Defaulting to none keeps
+   * every existing caller — and every test that doesn't care — working.
+   */
+  static createNew(initiallyLockedCells: readonly BoardSectionCell[] = []): GameState {
+    const lockedCells: BoardCell[] = initiallyLockedCells.map((cell) => ({
+      x: cell.x,
+      y: cell.y,
+      state: "LOCKED",
+    }));
+
     return new GameState(
-      Board.createEmpty(runtimeConfig.boardCols, runtimeConfig.boardRows),
+      new Board(runtimeConfig.boardCols, runtimeConfig.boardRows, lockedCells),
       { level: 1, xp: 0 },
       {
         coins: 0,

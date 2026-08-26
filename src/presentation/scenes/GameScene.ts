@@ -5,6 +5,7 @@ import { MergeError } from "@systems/MergeSystem";
 import { GeneratorError } from "@systems/GeneratorSystem";
 import { OrderError } from "@systems/OrderSystem";
 import { ProgressionError } from "@systems/ProgressionSystem";
+import { BoardExpansionError } from "@systems/BoardExpansionSystem";
 import { BoardView } from "@presentation/board/BoardView";
 import { Hud } from "@presentation/ui/Hud";
 import { ActionBar } from "@presentation/ui/ActionBar";
@@ -61,6 +62,9 @@ export class GameScene extends Phaser.Scene {
       },
       onUpgradeLab: () => {
         this.upgradeLab();
+      },
+      onUnlockBoardSection: (sectionId) => {
+        this.unlockBoardSection(sectionId);
       },
     });
 
@@ -243,6 +247,18 @@ export class GameScene extends Phaser.Scene {
       this.playCurrentChapterIntro();
     } catch (error) {
       this.hud.setStatus(error instanceof ProgressionError ? error.message : String(error));
+    }
+    this.afterStateChange();
+  }
+
+  private unlockBoardSection(sectionId: string): void {
+    const section = this.context.boardSections.getById(sectionId);
+
+    try {
+      this.context.boardExpansionSystem.unlockSection(sectionId);
+      this.hud.setStatus(`Opened the ${section?.title ?? "next section"}`);
+    } catch (error) {
+      this.hud.setStatus(error instanceof BoardExpansionError ? error.message : String(error));
     }
     this.afterStateChange();
   }

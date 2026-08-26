@@ -6,9 +6,11 @@ import type { QuestRegistry } from "@domain/quests/QuestRegistry";
 import type { DialogueRegistry } from "@domain/dialogues/DialogueRegistry";
 import type { TutorialRegistry } from "@domain/tutorial/TutorialRegistry";
 import type { ChapterRegistry, LabStageRegistry } from "@domain/progression/ChapterRegistry";
+import type { BoardSectionRegistry } from "@domain/board/BoardSectionRegistry";
 import { EventBus } from "@systems/events/EventBus";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import { BoardSystem } from "@systems/BoardSystem";
+import { BoardExpansionSystem } from "@systems/BoardExpansionSystem";
 import { MergeSystem } from "@systems/MergeSystem";
 import { EnergySystem } from "@systems/EnergySystem";
 import { GeneratorSystem } from "@systems/GeneratorSystem";
@@ -31,6 +33,7 @@ import { NoopRewardedAdAdapter } from "@infrastructure/ads/NoopRewardedAdAdapter
 import type { BillingAdapter } from "@infrastructure/billing/BillingAdapter";
 import { NoopBillingAdapter } from "@infrastructure/billing/NoopBillingAdapter";
 import {
+  loadBoardSectionRegistry,
   loadChapterRegistry,
   loadGeneratorRegistry,
   loadItemRegistry,
@@ -66,8 +69,10 @@ export class GameContext {
   readonly dialogues: DialogueRegistry;
   readonly tutorial: TutorialRegistry;
   readonly chapters: ChapterRegistry;
+  readonly boardSections: BoardSectionRegistry;
   readonly labStages: LabStageRegistry;
   readonly boardSystem: BoardSystem;
+  readonly boardExpansionSystem: BoardExpansionSystem;
   readonly mergeSystem: MergeSystem;
   readonly energySystem: EnergySystem;
   readonly generatorSystem: GeneratorSystem;
@@ -99,11 +104,14 @@ export class GameContext {
     this.dialogues = loadDialogueRegistry();
     this.tutorial = loadTutorialRegistry();
     this.chapters = loadChapterRegistry();
+    this.boardSections = loadBoardSectionRegistry();
     this.labStages = loadLabStageRegistry();
 
     this.saveSystem = new SaveSystem(storage, clock);
     this.isFirstLaunch = !this.saveSystem.hasExistingSave();
-    this.state = this.saveSystem.load();
+    // A fresh board opens only the starter section; a loaded save keeps the
+    // cell states it recorded. See ADR-0011.
+    this.state = this.saveSystem.load(this.boardSections.initiallyLockedCells());
     this.eventBus = new EventBus<DomainEvent>();
 
     this.boardSystem = new BoardSystem(this.state.board, this.items, this.eventBus);
@@ -136,6 +144,13 @@ export class GameContext {
       this.chapters,
       this.labStages,
       this.economySystem,
+      this.eventBus,
+    );
+    this.boardExpansionSystem = new BoardExpansionSystem(
+      this.state.board,
+      this.boardSections,
+      this.economySystem,
+      this.progressionSystem.unlockContext(),
       this.eventBus,
     );
     this.questSystem = new QuestSystem(

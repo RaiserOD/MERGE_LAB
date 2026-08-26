@@ -88,9 +88,12 @@ export class BoardView {
       const x = originX + cell.x * cellSize;
       const y = originY + cell.y * cellSize;
       const inset = layout.cellGap / 2;
+      // A locked cell is drawn as unlit lab floor rather than hidden, so the
+      // player can see the space the laboratory will grow into (canon §39).
+      const locked = cell.state === "LOCKED";
 
-      this.gridLayer.fillStyle(palette.cellEmpty, 1);
-      this.gridLayer.lineStyle(1, palette.cellStroke, 1);
+      this.gridLayer.fillStyle(locked ? palette.cellLocked : palette.cellEmpty, 1);
+      this.gridLayer.lineStyle(1, locked ? palette.cellLockedStroke : palette.cellStroke, 1);
       this.gridLayer.fillRoundedRect(
         x + inset,
         y + inset,
