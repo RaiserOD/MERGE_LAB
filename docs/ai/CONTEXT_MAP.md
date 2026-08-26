@@ -64,6 +64,16 @@ check `docs/architecture/ADR/` for a binding prior decision.
 - Tests: `tests/unit/OrderSystem.test.ts`, `tests/unit/OrderRegistry.test.ts`,
   `tests/integration/first-order.test.ts`
 
+## Campaign (levels 1–20)
+
+- Canon: `MASTER_SPEC.md` §2–§6 (model), §7–§26 (per level), §28–§33
+  (contracts), §39–§43 (progression), §49–§55 (acceptance tests)
+- Docs: `design/campaign-gap-analysis.md` — **read this first**: what canon
+  requires vs what exists, the open conflicts, and the build order
+- Code: nothing yet. The nearest existing pieces are
+  `src/systems/ProgressionSystem.ts`, `src/domain/progression/`,
+  `src/systems/QuestSystem.ts` (requirement evaluation)
+
 ## Progression, lab stages, chapters
 
 - Spec: A11, A12
