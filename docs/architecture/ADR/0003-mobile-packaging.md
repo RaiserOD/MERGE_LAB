@@ -1,7 +1,14 @@
 ```text
 ADR-ID: 0003
 TITLE: Mobile packaging via Capacitor (B2 step 20)
-STATUS: Accepted
+STATUS: Accepted, amended by ADR-0005
+NOTE:
+  ADR-0005 narrows the platform commitment this ADR assumed. Where this
+  document refers to the roadmap as "Web/PWA -> Android -> iOS", read
+  ADR-0005 instead: Android is the release target, the web build is the
+  shared bundle rather than a separate release, and iOS is kept reachable
+  but is not planned. Everything else here — the Capacitor decision, the
+  committed `android/` project, the CI job — stands unchanged.
 CONTEXT:
   ADR-0001 deferred Capacitor to "Stage 8" of the spec's own B2 staging and
   flagged this ADR for revisiting once that stage starts. The product

@@ -9,7 +9,10 @@ routes to.
 
 - **Name:** Merge Lab
 - **Genre:** hybrid casual — merge-2 + collection + light simulation + narrative
-- **Platform roadmap:** Web/PWA → Android → iOS
+- **Platform:** Android is the release target. The web build is the shared
+  bundle every platform runs (and the dev/QA surface), not a separate release
+  commitment. iOS is deliberately kept reachable but **not planned** — see
+  ADR-0005 for the constraints that keep it cheap.
 - **Stack:** Phaser 3 + TypeScript (strict) + Vite, pnpm, Node 22
 
 ## Product promise
@@ -59,6 +62,9 @@ Break any of these and the change is wrong, however well it reads:
 - Analytics is called only by `AnalyticsBridge`; ads/billing only by
   `MonetizationService`. Domain and systems call neither.
 - Monetization is gated behind `FeatureFlags` and ships default-off.
+- One bundle serves every platform. No platform-specific UI path, and no
+  Android-only plugin without an iOS equivalent or a clean capability check —
+  that's what keeps iOS reachable (ADR-0005).
 - Mechanics are never invented. If it isn't in the spec, an ADR, or existing
   code, it needs human approval first.
 
