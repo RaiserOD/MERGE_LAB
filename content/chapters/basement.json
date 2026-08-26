@@ -1,5 +1,6 @@
 {
   "id": "chapter.basement",
+  "chapterNumber": 1,
   "title": "The Basement",
   "unlockConditions": [],
   "availableItemGroups": ["chemistry.water"],

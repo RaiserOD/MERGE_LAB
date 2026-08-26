@@ -1,5 +1,6 @@
 {
   "id": "chapter.chemistry",
+  "chapterNumber": 2,
   "title": "Chemistry",
   "unlockConditions": ["chapterUnlocked:chapter.basement", "labStage>=2"],
   "availableItemGroups": ["chemistry.water"],

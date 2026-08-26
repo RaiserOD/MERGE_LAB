@@ -5,12 +5,12 @@
  * dialogues), then checks the cross-reference rules: unique IDs, resolvable
  * resultItemId chains, generator outputs and order requirements pointing at
  * real items, chapter references to real generators/lab stages/dialogues,
- * quest filters naming real content, no circular chapter unlocks, and an
- * unbroken 1..N lab stage run.
+ * quest filters naming real content, no circular chapter unlocks, unique and
+ * unbroken 1..N chapter numbering, and an unbroken 1..N lab stage run.
  */
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import type { z } from "zod";
 import { ItemDefinitionSchema, type ItemDefinition } from "../../src/domain/items/ItemDefinition";
 import {
@@ -270,7 +270,7 @@ function validateQuests(
   return errors;
 }
 
-function validateChapters(
+export function validateChapters(
   chapters: ChapterDefinition[],
   chapterIds: Set<string>,
   generatorIds: Set<string>,
@@ -279,6 +279,8 @@ function validateChapters(
 ): string[] {
   const errors: string[] = [];
   const seen = new Set<string>();
+  /** chapterNumber -> the first chapter that claimed it, so a clash names both sides. */
+  const numbering = new Map<number, string>();
   /** chapterId -> chapters it depends on, built from "chapterUnlocked:<id>" conditions. */
   const dependencies = new Map<string, string[]>();
 
@@ -287,6 +289,15 @@ function validateChapters(
       errors.push(`Duplicate chapter id: ${chapter.id}`);
     }
     seen.add(chapter.id);
+
+    const claimedBy = numbering.get(chapter.chapterNumber);
+    if (claimedBy !== undefined) {
+      errors.push(
+        `${chapter.id}: chapterNumber ${chapter.chapterNumber} is already used by ${claimedBy}`,
+      );
+    } else {
+      numbering.set(chapter.chapterNumber, chapter.id);
+    }
 
     if (!labStageNumbers.has(chapter.labStage)) {
       errors.push(`${chapter.id}: labStage ${chapter.labStage} has no definition`);
@@ -323,8 +334,28 @@ function validateChapters(
     dependencies.set(chapter.id, chapterDeps);
   }
 
+  errors.push(...findNumberingGaps(numbering));
   errors.push(...findUnlockCycles(dependencies));
 
+  return errors;
+}
+
+/**
+ * Chapter numbers must run 1..N with no gaps. The number is the campaign's
+ * running order (ADR-0010), so a gap means either a chapter is missing or
+ * someone renumbered half of them — both are content bugs, not layouts we
+ * want to support.
+ */
+function findNumberingGaps(numbering: Map<number, string>): string[] {
+  const errors: string[] = [];
+  for (let expected = 1; expected <= numbering.size; expected += 1) {
+    if (!numbering.has(expected)) {
+      errors.push(
+        `Chapter numbering has a gap: ${numbering.size} chapter(s) defined, but none has ` +
+          `chapterNumber ${expected}`,
+      );
+    }
+  }
   return errors;
 }
 
@@ -417,4 +448,12 @@ async function main(): Promise<void> {
   );
 }
 
-await main();
+/**
+ * Run only when invoked as a script. The rule functions above are imported
+ * by unit tests, and a top-level `await main()` would make every such import
+ * re-validate the whole content tree as a side effect.
+ */
+const entryPoint = process.argv[1];
+if (entryPoint !== undefined && import.meta.url === pathToFileURL(entryPoint).href) {
+  await main();
+}

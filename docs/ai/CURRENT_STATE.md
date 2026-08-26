@@ -35,17 +35,18 @@ The full B2 order, in the order the spec sets:
 
 Post-B2 work, in the order it landed:
 
-| What landed                                          | Commit    | PR  |
-| ---------------------------------------------------- | --------- | --- |
-| AI memory layer (`docs/ai/`, `CLAUDE.md`, ADR-0004)  | `9ec50e7` | #17 |
-| Android-only platform scope (ADR-0005)               | `d0e86e2` | #18 |
-| Economy simulator (`pnpm economy:simulate`)          | `f07352b` | #19 |
-| Campaign canon gap analysis                          | `4983968` | #21 |
-| Canonical save shape ahead of its systems (ADR-0006) | `2285905` | #22 |
-| Shared `ProgressionRequirement` predicate (ADR-0007) | `a35234b` | #23 |
-| Duplicate ADR-0005 resolved; numbering rule added    | `a35234b` | #24 |
-| XP on merges (ADR-0009) + simulator level reporting  | `9bdeb3a` | #25 |
-| Audit fixes: energy invariant, layout deduplication  | pending   | —   |
+| What landed                                             | Commit    | PR  |
+| ------------------------------------------------------- | --------- | --- |
+| AI memory layer (`docs/ai/`, `CLAUDE.md`, ADR-0004)     | `9ec50e7` | #17 |
+| Android-only platform scope (ADR-0005)                  | `d0e86e2` | #18 |
+| Economy simulator (`pnpm economy:simulate`)             | `f07352b` | #19 |
+| Campaign canon gap analysis                             | `4983968` | #21 |
+| Canonical save shape ahead of its systems (ADR-0006)    | `2285905` | #22 |
+| Shared `ProgressionRequirement` predicate (ADR-0007)    | `a35234b` | #23 |
+| Duplicate ADR-0005 resolved; numbering rule added       | `a35234b` | #24 |
+| XP on merges (ADR-0009) + simulator level reporting     | `9bdeb3a` | #25 |
+| Audit fixes: energy invariant, layout deduplication     | pending   | —   |
+| Chapter ids stay order-free; `chapterNumber` (ADR-0010) | pending   | —   |
 
 ## In progress
 
@@ -142,8 +143,10 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
   up; the campaign layer that turns it into a game is almost entirely absent.
   There is no `CampaignLevelDefinition`, no level completion, no research
   system, no board-cell unlocking, no narrative beats, and 10 of canon's 12
-  required domain events are missing. Six conflicts need a PM decision before
-  building; a 10-step build order is proposed at the end of that document.
+  required domain events are missing. Three of the six reported conflicts are
+  now decided (ADR-0007, ADR-0009, ADR-0010); the other three still need a PM
+  decision before building. A 10-step build order is proposed at the end of
+  that document.
 - The canon is numbered §0–§60 by level and topic; the `A5`/`A16`/`B2`
   references in the docs and in source comments came from an earlier spec
   revision and do not resolve against it. Reconciling them is unfinished.
@@ -160,6 +163,10 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Recent decisions
 
+- ADR-0010: chapter ids stay order-free (`chapter.basement`); the campaign
+  ordinal is canon §30's `chapterNumber` field, validated unique and
+  contiguous. Closes gap-analysis conflict #3 with no save migration; canon's
+  `chapter_01_*` naming example is a reported divergence.
 - ADR-0008 (**Proposed**, not accepted): mechanic design pipeline.
 - ADR-0005: Android is the release target; the web build is the shared bundle
   rather than a separate release, and iOS is kept reachable but not planned.
