@@ -80,11 +80,13 @@ should start it — see "Blocked on human decisions".
 
 Each needs an ADR before implementation, per `AI_RULES.md`:
 
-- **Mechanic design pipeline (ADR-0005).** Whether to adopt the
-  narrative-beat → classification → mechanic-spec → approval process, whether
-  to backfill specs for already-shipped mechanics, and whether to build
-  `pnpm mechanics:validate`. Also open: the pipeline's section number in
-  MASTER_SPEC, where the proposed numbering conflicts with `CONTEXT_MAP.md`.
+- **Mechanic design pipeline (ADR-0005).** Which route to take, not just
+  whether: rules-only (classification in `AI_RULES.md`), the full spec catalog
+  proposed here, chapter beat sheets first, machine-checked specs, or a
+  MASTER_SPEC index. ADR-0005's ALTERNATIVES lists all of them with what each
+  costs and buys; several are complementary rather than exclusive. Also open:
+  the pipeline's section number, where the proposed numbering conflicts with
+  `CONTEXT_MAP.md`.
 - **Analytics vendor.** The A24 event vocabulary is implemented; nothing is
   sent anywhere. Picking a vendor is a data-processing decision.
 - **Ad network and billing vendor**, plus the rewards and IAP catalog.

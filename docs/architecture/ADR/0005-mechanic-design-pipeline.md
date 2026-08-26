@@ -66,6 +66,39 @@ ALTERNATIVES:
   - Track mechanic status in CURRENT_STATE.md only, with no per-mechanic
     files: rejected. It recreates the monolith problem ADR-0004 exists to
     avoid, and CURRENT_STATE is a journal of reality, not of intent.
+  - Rules only, no catalog: OPEN, not rejected. Put the M0-M4
+    classification in AI_RULES.md and add a MECHANIC_CLASS field to
+    ACTIVE_TASK.md, and stop there. ACTIVE_TASK already carries GOAL,
+    REQUIREMENTS, NON_REQUIREMENTS and ACCEPTANCE_CRITERIA, which is most of
+    a short-form spec. Costs one edit and no retrieval weight; buys the part
+    that actually closes the gap (an agent must classify before coding and
+    stop at M3-M4). What it does not buy is a design artifact that outlives
+    the task: ACTIVE_TASK is reset by design, so the reasoning survives only
+    in git history and CURRENT_STATE. Right choice if the next months are
+    content work and M3-M4 stays rare.
+  - Chapter beat sheets instead of mechanic specs: OPEN, not rejected, and
+    complementary. The project's actual bottleneck is content volume, not
+    mechanics: every system is done, while content is 2 items, 1 generator,
+    2 orders, 3 quests, 2 chapters. The next real work is chapter 2, which is
+    almost entirely M0-M1. A per-chapter template (beat -> decision: content /
+    existing mechanic / M2 / M3) is exercised ten times where a mechanic spec
+    is exercised once, and the classification step lives naturally inside it.
+    It does not answer "what is an approved mechanic" for M3-M4, so it pairs
+    with the rules-only option rather than replacing this one.
+  - Specs as machine-checked data: OPEN, deferred to phase 2. A structured
+    header parsed by pnpm mechanics:validate in CI, checking that referenced
+    systems, events, content IDs and test paths resolve. It is the only
+    variant that does not rot, and it matches how everything else here is
+    enforced. Deferred rather than rejected because tooling for a process
+    with zero specs written is premature, and because a validator checks
+    form, never whether a design is good.
+  - Write MASTER_SPEC first: OPEN, and arguably the root fix, but not an
+    agent's work. Canon cannot be authored by an agent without inventing it,
+    which PROJECT_MEMORY forbids. A cheap intermediate does exist: a
+    MASTER_SPEC index - section numbers and one line each, no content -
+    which would make CONTEXT_MAP's A5/A16/A23 references resolve and settle
+    the A14A numbering conflict for a fraction of the cost. Recommended
+    independently of this ADR.
   - Do nothing: rejected. The status quo is enforceable only as a refusal,
     and the project is about to enter exactly the phase (content volume,
     chapters 2+) where the seam gets exercised.
@@ -88,6 +121,11 @@ CONSEQUENCES:
     CONTEXT_MAP row is included here, pointing at the proposal. The
     AI_RULES and PROJECT_MEMORY edits are deliberately left unmade until
     this ADR is Accepted, since they would read as binding rules.
+  - The first M3-M4 mechanic carrying persistent state will need
+    SaveDataV2 and a migration, and tools/save-migrator/ is an empty
+    placeholder. Whichever variant is adopted, that debt is on the critical
+    path of the first mechanic this process would govern - either close it
+    first, or keep early mechanics off the save schema deliberately.
   - The spec-numbering conflict above stays open and is a question for the
     human PM.
 MIGRATION:
