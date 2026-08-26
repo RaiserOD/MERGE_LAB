@@ -10,6 +10,7 @@ export const testLabStages: LabStageDefinition[] = [
 
 export const basementChapter: ChapterDefinition = {
   id: "chapter.basement",
+  chapterNumber: 1,
   title: "The Basement",
   unlockConditions: [],
   availableItemGroups: ["chemistry.water"],
@@ -20,6 +21,7 @@ export const basementChapter: ChapterDefinition = {
 
 export const chemistryChapter: ChapterDefinition = {
   id: "chapter.chemistry",
+  chapterNumber: 2,
   title: "Chemistry",
   unlockConditions: ["chapterUnlocked:chapter.basement", "labStage>=2"],
   availableItemGroups: ["chemistry.water"],
@@ -30,6 +32,7 @@ export const chemistryChapter: ChapterDefinition = {
 
 export const levelGatedChapter: ChapterDefinition = {
   id: "chapter.level_gated",
+  chapterNumber: 3,
   title: "Level Gated",
   unlockConditions: ["playerLevel>=3"],
   availableItemGroups: [],

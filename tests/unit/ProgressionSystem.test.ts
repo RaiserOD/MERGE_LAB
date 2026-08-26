@@ -238,6 +238,7 @@ describe("ProgressionSystem", () => {
     const registry = new ChapterRegistry([
       {
         id: "chapter.broken",
+        chapterNumber: 1,
         title: "Broken",
         unlockConditions: ["someUnknownCondition"],
         availableItemGroups: [],
