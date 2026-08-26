@@ -109,16 +109,19 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Known gaps and debt
 
-- **The campaign canon landed and most of it is unbuilt.**
-  `docs/MASTER_SPEC.md` (20-level campaign canon, v1.0) arrived in commit
-  `e9efdaf`. It specifies a `PlayerLevelDefinition` contract — XP thresholds,
-  per-level unlocks, `ProgressionRequirement`s, order/quest pools, narrative
-  beats, per-level rewards — that has no counterpart in the code. This is now
-  the largest open work item in the project and needs a proper audit of canon
-  against implementation before anything is built against it.
-- The canon is numbered by level (§0–§27); the `A5`/`A16`/`B2` references in
-  the docs and in source comments came from an earlier spec revision and do
-  not resolve against it. Reconciling them is unfinished.
+- **The campaign canon landed and most of it is unbuilt.** Audited in
+  `docs/design/campaign-gap-analysis.md` — read that before planning any
+  campaign work. Summary: the engine canon assumes is largely built and holds
+  up; the campaign layer that turns it into a game is almost entirely absent.
+  There is no `CampaignLevelDefinition`, no level completion, no research
+  system, no board-cell unlocking, no narrative beats, and 10 of canon's 12
+  required domain events are missing. Six conflicts need a PM decision before
+  building; a 10-step build order is proposed at the end of that document.
+- The canon is numbered §0–§60 by level and topic; the `A5`/`A16`/`B2`
+  references in the docs and in source comments came from an earlier spec
+  revision and do not resolve against it. Reconciling them is unfinished.
+  Canon §57's approval list also supersedes — and is stricter than — the
+  stop-list in `AI_RULES.md`.
 - `tests/property/` exists but is empty — no property-based tests despite the
   deterministic-state invariant being a natural fit.
 - `tools/save-migrator/` is an empty placeholder. It matters as soon as a
