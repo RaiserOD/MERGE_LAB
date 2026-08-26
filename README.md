@@ -87,10 +87,18 @@ new version is waiting. Verified in a real browser: after the first visit,
 going offline and reloading still boots the game from the service worker's
 cache.
 
+The Android build is a thin Capacitor shell around the same `dist/` output
+web/PWA use (see `docs/architecture/ADR/0003-mobile-packaging.md`):
+`pnpm cap:sync` builds and copies the web bundle into `android/`, and CI
+builds a real debug APK (`./gradlew assembleDebug`) on every push. Not yet
+verified: an actual boot on a device or emulator — this project's
+environments have no Android SDK/emulator available to check that locally.
+
 Not built yet (per the master spec's A26 staging): a live analytics
-vendor, a real ad network/billing vendor and rewards/IAP catalog,
-mobile packaging (Capacitor, per ADR-0001), temporary events, and real
-art/audio — items currently render as rarity-tinted placeholder tiles.
+vendor, a real ad network/billing vendor and rewards/IAP catalog, an iOS
+build (`@capacitor/ios`, deferred until there's an environment that can
+build/verify it), temporary events, and real art/audio — items currently
+render as rarity-tinted placeholder tiles.
 
 ## Security
 
