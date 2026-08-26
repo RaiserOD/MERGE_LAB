@@ -80,10 +80,17 @@ screenshot capture attached to the HTML report for human review. It's not
 pixel-diff regression yet — see `docs/architecture/ADR/
 0002-playwright-visual-qa-scope.md` for why and what would change that.
 
+The production build is a real installable, offline-capable PWA: `main.ts`
+registers the service worker `vite-plugin-pwa` generates
+(`registerType: "prompt"`), and a small DOM banner offers a reload when a
+new version is waiting. Verified in a real browser: after the first visit,
+going offline and reloading still boots the game from the service worker's
+cache.
+
 Not built yet (per the master spec's A26 staging): a live analytics
 vendor, a real ad network/billing vendor and rewards/IAP catalog,
-temporary events, and real art/audio — items currently render as
-rarity-tinted placeholder tiles.
+mobile packaging (Capacitor, per ADR-0001), temporary events, and real
+art/audio — items currently render as rarity-tinted placeholder tiles.
 
 ## Security
 
