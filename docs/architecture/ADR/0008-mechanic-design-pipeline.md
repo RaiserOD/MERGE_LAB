@@ -1,5 +1,5 @@
 ```text
-ADR-ID: 0005
+ADR-ID: 0008
 TITLE: Mechanic design pipeline and per-mechanic specifications
 STATUS: Proposed
 CONTEXT:
