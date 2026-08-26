@@ -109,9 +109,16 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Known gaps and debt
 
-- `docs/MASTER_SPEC.md` is absent from the repo, so the top of the
-  source-of-truth precedence chain is unavailable to agents and the section
-  references in `CONTEXT_MAP.md` don't resolve.
+- **The campaign canon landed and most of it is unbuilt.**
+  `docs/MASTER_SPEC.md` (20-level campaign canon, v1.0) arrived in commit
+  `e9efdaf`. It specifies a `PlayerLevelDefinition` contract — XP thresholds,
+  per-level unlocks, `ProgressionRequirement`s, order/quest pools, narrative
+  beats, per-level rewards — that has no counterpart in the code. This is now
+  the largest open work item in the project and needs a proper audit of canon
+  against implementation before anything is built against it.
+- The canon is numbered by level (§0–§27); the `A5`/`A16`/`B2` references in
+  the docs and in source comments came from an earlier spec revision and do
+  not resolve against it. Reconciling them is unfinished.
 - `tests/property/` exists but is empty — no property-based tests despite the
   deterministic-state invariant being a natural fit.
 - `tools/save-migrator/` is an empty placeholder. It matters as soon as a

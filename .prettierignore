@@ -3,3 +3,7 @@ dev-dist/
 coverage/
 pnpm-lock.yaml
 android/
+# Canon, authored outside this repo and re-uploaded whole. Formatting it
+# here would produce a spurious diff against the PM's copy and break CI
+# again on the next revision — this project does not own its formatting.
+docs/MASTER_SPEC.md
