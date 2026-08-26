@@ -51,6 +51,8 @@ check `docs/architecture/ADR/` for a binding prior decision.
 - Code: `src/systems/EconomySystem.ts`, `src/systems/events/DomainEvent.ts`
   (`CurrencyKind`)
 - Tests: `tests/unit/EconomySystem.test.ts`
+- Tooling: `tools/economy-simulator/` (`pnpm economy:simulate`) — run it
+  before and after any balance change and quote the numbers
 
 ## Orders
 

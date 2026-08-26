@@ -33,14 +33,30 @@ The full B2 order, in the order the spec sets:
 
 (PR #11 was closed unmerged and reopened as #12; PR numbers are not contiguous.)
 
+Post-B2 work, in the order it landed:
+
+| What landed                                         | Commit    | PR  |
+| --------------------------------------------------- | --------- | --- |
+| AI memory layer (`docs/ai/`, `CLAUDE.md`, ADR-0004) | `9ec50e7` | #17 |
+| Android-only platform scope (ADR-0005)              | `d0e86e2` | #18 |
+| Economy simulator (`pnpm economy:simulate`)         | pending   | —   |
+
 ## In progress
 
 Nothing. `ACTIVE_TASK.md` is idle.
 
 ## Next
 
-No B2 work remains. Everything below needs a human decision before an agent
-should start it — see "Blocked on human decisions".
+No B2 work remains. Most of what's left needs a human decision — see "Blocked
+on human decisions". The exceptions, which an agent can pick up unblocked, are
+under "Known gaps and debt": property-based tests, and the duplicated board
+geometry in the e2e smoke test.
+
+**Three balance findings are waiting on a PM decision** (measured, see
+`docs/design/economy.md`): the 500-coin stage-3 gate is cleared by the
+starting energy bar before the tutorial ends; `order.water_delivery` is
+strictly dominated by `order.first_sample` and is never worth delivering; and
+the 7×9 board peaks at 4 of 63 cells in use.
 
 ## System coverage
 
@@ -67,10 +83,10 @@ should start it — see "Blocked on human decisions".
 
 ## Verification status
 
-- 165 unit + integration tests (Vitest), 28 files — green.
+- 171 unit + integration tests (Vitest), 29 files — green.
 - 2 Playwright e2e tests — green (functional smoke + screenshot capture).
 - CI: `build`, `e2e`, `android`, `security` — all green on `main`.
-- Last full pipeline pass: PR #16, 2026-08-26.
+- Last full pipeline pass: PR #19, 2026-08-26.
 
 ## Blocked on human decisions
 
@@ -98,8 +114,8 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
   references in `CONTEXT_MAP.md` don't resolve.
 - `tests/property/` exists but is empty — no property-based tests despite the
   deterministic-state invariant being a natural fit.
-- `tools/economy-simulator/` and `tools/save-migrator/` are empty
-  placeholders. The migrator matters as soon as a `SaveDataV2` exists.
+- `tools/save-migrator/` is an empty placeholder. It matters as soon as a
+  `SaveDataV2` exists.
 - `tests/e2e/smoke.spec.ts` duplicates `BoardView`'s layout math inline to
   compute cell centers; a layout change in the view silently desyncs it.
 - No save migration path has been exercised — `SaveDataV1` is still v1.
