@@ -86,7 +86,9 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 - Spec: A13
 - Docs: `design/game-design.md`
-- Code: `src/systems/QuestSystem.ts`, `src/domain/quests/`, `content/quests/`
+- Code: `src/systems/QuestSystem.ts`, `src/domain/quests/`, `content/quests/`,
+  `src/domain/progression/ProgressionRequirement.ts` (the shared predicate)
+- ADR: 0007 (one predicate for quests and campaign levels)
 - Tests: `tests/unit/QuestSystem.test.ts`
 
 ## Narrative and dialogue

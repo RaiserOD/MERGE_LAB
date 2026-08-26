@@ -5,7 +5,7 @@ import { EventBus } from "@systems/events/EventBus";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import { EconomySystem } from "@systems/EconomySystem";
 import { QuestSystem } from "@systems/QuestSystem";
-import { testQuests } from "../fixtures/testQuests";
+import { chainedQuest, mergeQuest, testQuests } from "../fixtures/testQuests";
 
 const somePosition = { x: 0, y: 0 };
 
@@ -131,11 +131,25 @@ describe("QuestSystem", () => {
     expect(questSystem.getState("quest.earn_coins").progress).toBe(0);
   });
 
-  it("advances UPGRADE_LAB on a lab upgrade", () => {
+  it("completes UPGRADE_LAB on reaching the stage it names", () => {
     eventBus.emit({ type: "LAB_UPGRADED", newStage: 2, title: "Chemistry Lab", coinCost: 150 });
 
     expect(questSystem.isCompleted("quest.upgrade_lab")).toBe(true);
     expect(currencies.researchPoints).toBe(2);
+  });
+
+  // UPGRADE_LAB is a threshold (canon §4), not a count of upgrades: an
+  // earlier stage leaves it unsatisfied however many upgrades happened.
+  it("leaves UPGRADE_LAB unsatisfied below the stage it names", () => {
+    eventBus.emit({ type: "LAB_UPGRADED", newStage: 1, title: "Basement Lab", coinCost: 0 });
+
+    expect(questSystem.isCompleted("quest.upgrade_lab")).toBe(false);
+  });
+
+  it("completes UPGRADE_LAB when the stage is overshot in one jump", () => {
+    eventBus.emit({ type: "LAB_UPGRADED", newStage: 4, title: "Robotics Lab", coinCost: 1200 });
+
+    expect(questSystem.isCompleted("quest.upgrade_lab")).toBe(true);
   });
 
   it("accrues SPEND_ENERGY by the amount spent", () => {
@@ -155,6 +169,26 @@ describe("QuestSystem", () => {
       progress: 1,
       completed: false,
     });
+  });
+
+  it("completes a COMPLETE_QUEST requirement when the quest it names finishes", () => {
+    stop();
+    const chainSaves: QuestSave[] = [];
+    const chainSystem = new QuestSystem(
+      chainSaves,
+      new QuestRegistry([mergeQuest, chainedQuest]),
+      new EconomySystem(currencies, eventBus),
+      eventBus,
+    );
+    const chainStop = chainSystem.start();
+
+    emitMerge();
+    emitMerge();
+    emitMerge();
+
+    expect(chainSystem.isCompleted("quest.merge_three")).toBe(true);
+    expect(chainSystem.isCompleted("quest.after_merges")).toBe(true);
+    chainStop();
   });
 
   it("stops listening once unsubscribed", () => {

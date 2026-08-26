@@ -8,23 +8,29 @@ _which_ file and _what rules govern changing it_.
 
 ## Where each contract lives
 
-| Contract         | Schema                                           | Content                             |
-| ---------------- | ------------------------------------------------ | ----------------------------------- |
-| Save data (v1)   | `src/domain/save/SaveDataV1.ts`                  | `localStorage`, key `mergeLab.save` |
-| Items            | `src/domain/items/ItemDefinition.ts`             | `content/items/*.json`              |
-| Generators       | `src/domain/generators/GeneratorDefinition.ts`   | `content/generators/*.json`         |
-| Orders           | `src/domain/orders/OrderDefinition.ts`           | `content/orders/*.json`             |
-| Quests           | `src/domain/quests/QuestDefinition.ts`           | `content/quests/*.json`             |
-| Chapters         | `src/domain/progression/ChapterDefinition.ts`    | `content/chapters/*.json`           |
-| Lab stages       | `src/domain/progression/LabStageDefinition.ts`   | `content/lab-stages/stages.json`    |
-| Dialogues        | `src/domain/dialogues/DialogueDefinition.ts`     | `content/dialogues/*.json`          |
-| Tutorial steps   | `src/domain/tutorial/TutorialStepDefinition.ts`  | `content/tutorial/steps.json`       |
-| Domain events    | `src/systems/events/DomainEvent.ts`              | — (TypeScript union, not Zod)       |
-| Analytics events | `src/infrastructure/analytics/AnalyticsEvent.ts` | —                                   |
-| Runtime config   | `src/config/runtime.ts`                          | —                                   |
+| Contract         | Schema                                             | Content                             |
+| ---------------- | -------------------------------------------------- | ----------------------------------- |
+| Save data (v1)   | `src/domain/save/SaveDataV1.ts`                    | `localStorage`, key `mergeLab.save` |
+| Items            | `src/domain/items/ItemDefinition.ts`               | `content/items/*.json`              |
+| Generators       | `src/domain/generators/GeneratorDefinition.ts`     | `content/generators/*.json`         |
+| Orders           | `src/domain/orders/OrderDefinition.ts`             | `content/orders/*.json`             |
+| Quests           | `src/domain/quests/QuestDefinition.ts`             | `content/quests/*.json`             |
+| Requirements     | `src/domain/progression/ProgressionRequirement.ts` | — (shared predicate, ADR-0007)      |
+| Chapters         | `src/domain/progression/ChapterDefinition.ts`      | `content/chapters/*.json`           |
+| Lab stages       | `src/domain/progression/LabStageDefinition.ts`     | `content/lab-stages/stages.json`    |
+| Dialogues        | `src/domain/dialogues/DialogueDefinition.ts`       | `content/dialogues/*.json`          |
+| Tutorial steps   | `src/domain/tutorial/TutorialStepDefinition.ts`    | `content/tutorial/steps.json`       |
+| Domain events    | `src/systems/events/DomainEvent.ts`                | — (TypeScript union, not Zod)       |
+| Analytics events | `src/infrastructure/analytics/AnalyticsEvent.ts`   | —                                   |
+| Runtime config   | `src/config/runtime.ts`                            | —                                   |
 
 Loading and registry construction: `src/infrastructure/content/ContentLoader.ts`.
 Build-time validation: `tools/content-validator/` (`pnpm content:validate`).
+
+The validator runs under `tsx`, which needs `--tsconfig tsconfig.app.json` to
+resolve the `@domain/*` aliases — the root tsconfig is solution-style and
+carries no `paths`. A schema file importing another schema file fails at
+runtime without it, while still type-checking fine.
 
 ## Two validation gates
 

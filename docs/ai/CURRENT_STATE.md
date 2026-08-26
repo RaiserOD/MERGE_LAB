@@ -60,26 +60,26 @@ the 7×9 board peaks at 4 of 63 cells in use.
 
 ## System coverage
 
-| Area                 | Status                | Note                                                                |
-| -------------------- | --------------------- | ------------------------------------------------------------------- |
-| Board                | Done                  | 7×9 fixed, `runtimeConfig`                                          |
-| Items / registry     | Done                  | 2 items, one chain (Water → Steam) — thin content, not thin code    |
-| Merge                | Done                  | Atomic, emits `ITEM_MERGED`                                         |
-| Generators           | Done                  | 1 generator defined                                                 |
-| Energy               | Done                  | Clock-driven regen, 1/60 per second                                 |
-| Economy              | Done                  | Sole currency mutator                                               |
-| Orders               | Done                  | 2 orders defined                                                    |
-| Progression          | Done                  | XP curve, lab stages, chapter unlocks                               |
-| Quests               | Done                  | 3 quests defined                                                    |
-| Dialogue / narrative | Done                  | 5 dialogues; two voices (`narrator`, `professor`)                   |
-| Tutorial             | Done                  | Event-gated steps, full run verified in browser                     |
-| Save                 | Done                  | Zod-validated on load, backup slot, `clear()`                       |
-| UI                   | Done, placeholder art | Rarity-tinted rectangles, no sprites                                |
-| Analytics            | Wired, no vendor      | `NoopAnalyticsAdapter` by default                                   |
-| Monetization         | Wired, no vendor      | Flags default-off; `Noop` ads/billing                               |
-| Web / PWA            | Done, not a release   | Shared bundle + dev/QA surface; offline boot verified by hand       |
-| Android              | Builds in CI          | The release target; `assembleDebug` green, never booted on a device |
-| iOS                  | Not planned           | Kept reachable, not committed — ADR-0005                            |
+| Area                 | Status                | Note                                                                 |
+| -------------------- | --------------------- | -------------------------------------------------------------------- |
+| Board                | Done                  | 7×9 fixed, `runtimeConfig`                                           |
+| Items / registry     | Done                  | 2 items, one chain (Water → Steam) — thin content, not thin code     |
+| Merge                | Done                  | Atomic, emits `ITEM_MERGED`                                          |
+| Generators           | Done                  | 1 generator defined                                                  |
+| Energy               | Done                  | Clock-driven regen, 1/60 per second                                  |
+| Economy              | Done                  | Sole currency mutator                                                |
+| Orders               | Done                  | 2 orders defined                                                     |
+| Progression          | Done                  | XP curve, lab stages, chapter unlocks                                |
+| Quests               | Done                  | 3 quests; conditions are shared `ProgressionRequirement`s (ADR-0007) |
+| Dialogue / narrative | Done                  | 5 dialogues; two voices (`narrator`, `professor`)                    |
+| Tutorial             | Done                  | Event-gated steps, full run verified in browser                      |
+| Save                 | Done                  | Zod-validated on load, backup slot, `clear()`                        |
+| UI                   | Done, placeholder art | Rarity-tinted rectangles, no sprites                                 |
+| Analytics            | Wired, no vendor      | `NoopAnalyticsAdapter` by default                                    |
+| Monetization         | Wired, no vendor      | Flags default-off; `Noop` ads/billing                                |
+| Web / PWA            | Done, not a release   | Shared bundle + dev/QA surface; offline boot verified by hand        |
+| Android              | Builds in CI          | The release target; `assembleDebug` green, never booted on a device  |
+| iOS                  | Not planned           | Kept reachable, not committed — ADR-0005                             |
 
 ## Verification status
 
