@@ -86,11 +86,13 @@ When two sources disagree, the higher one wins — and the disagreement gets
 5. source code
 6. AI assumptions (lowest — never a basis for a design decision)
 
-> **MASTER_SPEC is not currently checked into this repo.** It belongs at
-> `docs/MASTER_SPEC.md`; section references throughout these docs (A5, A16,
-> A23, B2…) are written against it and resolve once it lands. Until then,
-> ADRs and code are the highest available authority, and anything canon-level
-> that is genuinely unclear is a question for the human PM.
+> **`docs/MASTER_SPEC.md` is now in the repo** — "MERGE LAB — 20-LEVEL
+> CAMPAIGN CANON", v1.0. It is numbered by level (§0–§27), **not** with the
+> A5/A16/B2 scheme that older doc cross-references and source comments use.
+> Those references came from an earlier spec revision and do not resolve
+> against this document; treat one as a pointer to a topic, not a location,
+> until they are reconciled. The campaign it defines is largely unbuilt —
+> see `CURRENT_STATE.md`.
 
 ## Where to go next
 

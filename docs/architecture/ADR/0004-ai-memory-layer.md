@@ -2,6 +2,12 @@
 ADR-ID: 0004
 TITLE: Hierarchical AI memory layer over the master spec
 STATUS: Accepted
+NOTE:
+  The consequence below about MASTER_SPEC.md being absent is resolved as
+  of commit `e9efdaf`: the canon is now at docs/MASTER_SPEC.md. It is the
+  20-level campaign canon, numbered by level, so the A5/A16/B2 references
+  this ADR expected to resolve still do not — they came from an earlier
+  spec revision. The decision itself is unaffected.
 CONTEXT:
   Project knowledge lives almost entirely in one monolithic MASTER_SPEC
   document. Every AI-assisted task therefore either re-reads a large

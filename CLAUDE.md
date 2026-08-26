@@ -30,6 +30,7 @@ pnpm test:e2e         # Playwright (needs Chromium; see README)
 pnpm lint             # ESLint
 pnpm typecheck        # tsc -b --noEmit
 pnpm content:validate # validate content/**/*.json
+pnpm economy:simulate # measure what the balance numbers actually produce
 pnpm build            # production build
 pnpm cap:sync         # build + copy web bundle into android/
 ```

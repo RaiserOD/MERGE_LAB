@@ -19,6 +19,7 @@ pnpm test            # unit tests (Vitest)
 pnpm lint            # ESLint
 pnpm typecheck        # tsc -b --noEmit
 pnpm content:validate # validate content/**/*.json against domain schemas
+pnpm economy:simulate # simulate the economy headlessly (see docs/design/economy.md)
 pnpm build            # production build
 pnpm test:e2e         # Playwright end-to-end/visual QA (needs Chromium — see below)
 ```

@@ -3,9 +3,11 @@
 Retrieval map: classify the task, load only the rows below it. This is the
 file that keeps a scoped change from costing a full-spec read.
 
-Spec section references (A5, A16, …) point into `docs/MASTER_SPEC.md`, which
-is **not yet checked into this repo** — see the note in `PROJECT_MEMORY.md`.
-Everything else below is a path that exists today.
+`docs/MASTER_SPEC.md` is now in the repo, but it is the **20-level campaign
+canon**, numbered by level (§0–§27). The `A5` / `A16` / `B2` references below
+came from an earlier spec revision and **do not resolve against it** — read
+them as "the topic this row is about", not as a location, until they are
+reconciled. Everything else below is a path that exists today.
 
 Every task also implicitly loads `PROJECT_MEMORY.md` (automatic) and should
 check `docs/architecture/ADR/` for a binding prior decision.
@@ -51,6 +53,8 @@ check `docs/architecture/ADR/` for a binding prior decision.
 - Code: `src/systems/EconomySystem.ts`, `src/systems/events/DomainEvent.ts`
   (`CurrencyKind`)
 - Tests: `tests/unit/EconomySystem.test.ts`
+- Tooling: `tools/economy-simulator/` (`pnpm economy:simulate`) — run it
+  before and after any balance change and quote the numbers
 
 ## Orders
 
