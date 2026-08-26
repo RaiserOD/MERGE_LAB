@@ -20,6 +20,9 @@ export type AnalyticsEvent =
   | { name: "order_completed"; orderId: string }
   | { name: "quest_completed"; questId: string }
   | { name: "chapter_unlocked"; chapterId: string }
+  // Canon §48 requires content_unlocked. Board sections are its first
+  // producer; the campaign layer will add items, generators and research.
+  | { name: "content_unlocked"; contentId: string }
   | { name: "lab_upgraded"; newStage: number }
   | { name: "energy_empty" }
   | { name: "rewarded_ad_started" }

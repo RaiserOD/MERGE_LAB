@@ -2,6 +2,7 @@ import type { PlayerSave, ProgressionSave } from "@domain/save/SaveDataV1";
 import type { ItemRegistry } from "@domain/items/ItemRegistry";
 import type { ChapterRegistry, LabStageRegistry } from "@domain/progression/ChapterRegistry";
 import { levelForXp } from "@domain/progression/LevelCurve";
+import { evaluateUnlockCondition, type UnlockContext } from "@domain/progression/UnlockCondition";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import type { EventBus } from "@systems/events/EventBus";
 import type { EconomySystem } from "@systems/EconomySystem";
@@ -156,24 +157,26 @@ export class ProgressionSystem {
   }
 
   /**
-   * Supported condition vocabulary (see ChapterDefinition): "labStage>=N",
-   * "playerLevel>=N", "chapterUnlocked:<id>". Anything else throws rather
-   * than silently evaluating false, so a content typo surfaces immediately.
+   * A live view of the progression facts unlock conditions are evaluated
+   * against. Board sections use the same vocabulary, so the evaluator itself
+   * lives in the domain (`UnlockCondition.ts`) and this is what feeds it.
    */
+  unlockContext(): UnlockContext {
+    const progression = this.progression;
+    const player = this.player;
+
+    return {
+      get labStage(): number {
+        return progression.labStage;
+      },
+      get playerLevel(): number {
+        return player.level;
+      },
+      isChapterUnlocked: (chapterId: string) => this.isChapterUnlocked(chapterId),
+    };
+  }
+
   private evaluateCondition(condition: string): boolean {
-    const threshold = /^(labStage|playerLevel)>=(\d+)$/.exec(condition);
-    if (threshold) {
-      const value = Number(threshold[2]);
-      return threshold[1] === "labStage"
-        ? this.progression.labStage >= value
-        : this.player.level >= value;
-    }
-
-    const chapterRef = /^chapterUnlocked:(.+)$/.exec(condition);
-    if (chapterRef?.[1]) {
-      return this.isChapterUnlocked(chapterRef[1]);
-    }
-
-    throw new ProgressionError(`Unsupported unlock condition: "${condition}"`);
+    return evaluateUnlockCondition(condition, this.unlockContext());
   }
 }

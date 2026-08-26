@@ -9,6 +9,11 @@ import { GeneratorRegistry } from "@domain/generators/GeneratorRegistry";
 import { OrderDefinitionSchema, type OrderDefinition } from "@domain/orders/OrderDefinition";
 import { OrderRegistry } from "@domain/orders/OrderRegistry";
 import {
+  BoardSectionDefinitionSchema,
+  type BoardSectionDefinition,
+} from "@domain/board/BoardSectionDefinition";
+import { BoardSectionRegistry } from "@domain/board/BoardSectionRegistry";
+import {
   ChapterDefinitionSchema,
   type ChapterDefinition,
 } from "@domain/progression/ChapterDefinition";
@@ -50,6 +55,11 @@ const orderModules = import.meta.glob<{ default: unknown }>("/content/orders/*.j
 const chapterModules = import.meta.glob<{ default: unknown }>("/content/chapters/*.json", {
   eager: true,
 });
+
+const boardSectionModules = import.meta.glob<{ default: unknown }>(
+  "/content/board-sections/*.json",
+  { eager: true },
+);
 
 // Lab stages are a single ordered list rather than one file per stage.
 const labStageModules = import.meta.glob<{ default: unknown }>("/content/lab-stages/*.json", {
@@ -104,6 +114,10 @@ export function loadChapterDefinitions(): ChapterDefinition[] {
   return parseAll(chapterModules, ChapterDefinitionSchema);
 }
 
+export function loadBoardSectionDefinitions(): BoardSectionDefinition[] {
+  return parseAll(boardSectionModules, BoardSectionDefinitionSchema);
+}
+
 export function loadLabStageDefinitions(): LabStageDefinition[] {
   return parseAll(labStageModules, LabStageDefinitionSchema.array()).flat();
 }
@@ -134,6 +148,10 @@ export function loadOrderRegistry(): OrderRegistry {
 
 export function loadChapterRegistry(): ChapterRegistry {
   return new ChapterRegistry(loadChapterDefinitions());
+}
+
+export function loadBoardSectionRegistry(): BoardSectionRegistry {
+  return new BoardSectionRegistry(loadBoardSectionDefinitions());
 }
 
 export function loadLabStageRegistry(): LabStageRegistry {

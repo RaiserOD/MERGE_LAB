@@ -6,6 +6,7 @@ export interface ActionBarHandlers {
   onUseGenerator: (generatorId: string) => void;
   onCompleteOrder: (orderId: string) => void;
   onUpgradeLab: () => void;
+  onUnlockBoardSection: (sectionId: string) => void;
 }
 
 /** Bottom bar: generator buttons, the first fulfillable order, and an affordable lab upgrade. */
@@ -79,6 +80,20 @@ export class ActionBar {
         `Restore ${nextStage.title} (-${String(nextStage.upgradeCost)})`,
         () => {
           this.handlers.onUpgradeLab();
+        },
+      );
+      this.buttons.push(button);
+      x += button.width + 12;
+    }
+
+    const nextSection = this.context.boardExpansionSystem.nextLockedSection();
+    if (nextSection && this.context.boardExpansionSystem.canUnlock(nextSection.id)) {
+      const button = this.createButton(
+        x,
+        top + 16,
+        `Open ${nextSection.title} (-${String(nextSection.unlockCost)})`,
+        () => {
+          this.handlers.onUnlockBoardSection(nextSection.id);
         },
       );
       this.buttons.push(button);

@@ -27,12 +27,25 @@ describe("economy simulator", () => {
     expect(Object.values(report.ordersCompleted).reduce((sum, n) => sum + n, 0)).toBeGreaterThan(0);
   });
 
-  it("spends only what the lab stages it reached actually cost", () => {
+  // Coins have exactly two sinks: lab stages and board sections (ADR-0011).
+  // If a third ever appears, this fails — which is the point.
+  it("spends only what the lab stages and board sections it bought cost", () => {
     const report = simulate({ minutes: 30, tickSeconds: 30 });
 
     const stageCosts = report.stages.reduce((sum, stage) => sum + stage.cost, 0);
-    expect(report.coinsSpent).toBe(stageCosts);
+    const sectionCosts = report.sectionsUnlocked.reduce((sum, section) => sum + section.cost, 0);
+
+    expect(report.coinsSpent).toBe(stageCosts + sectionCosts);
     expect(report.coinsSpent).toBeLessThanOrEqual(report.coinsEarned);
+  });
+
+  it("opens board sections in order and never past the full board", () => {
+    const report = simulate({ minutes: 240, tickSeconds: 30 });
+
+    const opened = report.sectionsUnlocked.map((section) => section.sectionId);
+    expect(opened).toEqual([...new Set(opened)]);
+    expect(report.finalUnlockedCells).toBeLessThanOrEqual(63);
+    expect(report.peakOccupiedCells).toBeLessThanOrEqual(report.finalUnlockedCells);
   });
 
   it("reaches lab stages in order, without skipping one", () => {

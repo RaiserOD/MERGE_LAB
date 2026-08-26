@@ -226,9 +226,11 @@ and repair, and nothing advances a player level on requirements today.
 
 ## 5. Conflicts needing a PM decision
 
-Per `AI_RULES.md` these are reported, not resolved. Three of the six have
+Per `AI_RULES.md` these are reported, not resolved. Four of the six have
 since been decided and carry an ADR; they are struck through rather than
-deleted, so the record of what was asked stays readable.
+deleted, so the record of what was asked stays readable. ADR-0011 opened a
+_new_ one in the process — canon §4's requirement union cannot express canon
+§10's own "UNLOCK first board section" action.
 
 1. ~~**XP from merges.**~~ Resolved by ADR-0009: canon is right, merges award
    the result item's `xpValue`. Measured at +40% total XP over a 15-hour
@@ -250,8 +252,12 @@ deleted, so the record of what was asked stays readable.
    requirements describe the same opening beats through two different
    mechanisms. Whether the tutorial becomes Level 1's requirement set, or stays
    a parallel layer, is unresolved.
-6. **Board starts fully open.** Canon expects progressive cell unlocking from
-   Level 1. Changing this alters every existing balance measurement.
+6. ~~**Board starts fully open.**~~ Resolved by ADR-0011: cells now open a
+   section at a time, gated and priced in content, on a fixed 7×9 grid. The
+   _schedule_ canon §39 recommends is keyed to campaign levels and ships
+   gated on lab stages instead, because the campaign-level layer does not
+   exist — see the conflict note in ADR-0011. Re-measured: the economy is
+   unchanged apart from the new coin sink.
 
 ---
 

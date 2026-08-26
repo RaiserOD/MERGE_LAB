@@ -10,6 +10,8 @@ export const palette = {
   boardBackground: 0x18222c,
   cellEmpty: 0x22303d,
   cellStroke: 0x2d3f4f,
+  cellLocked: 0x161d25,
+  cellLockedStroke: 0x232f3b,
   highlight: 0x3d8bfd,
   text: "#e8eef4",
   textMuted: "#94a7b8",

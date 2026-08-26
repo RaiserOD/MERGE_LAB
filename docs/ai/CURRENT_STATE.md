@@ -48,6 +48,7 @@ Post-B2 work, in the order it landed:
 | Audit fixes: energy invariant, layout deduplication         | `d67b2a6` | #26 |
 | Chapter ids stay order-free; `chapterNumber` (ADR-0010)     | `99a84f1` | #27 |
 | Dead slots: optional `sellValue`, `content/events/` removed | `663bd7a` | #28 |
+| Progressive board unlocking, canon §39 (ADR-0011)           | pending   | —   |
 
 ## In progress
 
@@ -70,19 +71,18 @@ starting energy bar before the tutorial ends; `order.water_delivery` is
 strictly dominated by `order.first_sample` and is never worth delivering; and
 the 7×9 board peaks at 4 of 63 cells in use.
 
-**The integrity audit is closed except for one item.** Five of its six
-findings landed (PRs #26, #27, #28). The sixth — the mechanism for
-progressive board-cell unlocking — is not an implementation gap an agent may
-close on its own: canon §57 puts board dimensions on the approval list, and
-the schedule for which cells open when belongs to the campaign layer that
-does not exist yet. `BoardCellSave.state` already has `LOCKED`, so the save
-shape is ready; nothing sets it.
+**The integrity audit is closed.** All six findings landed (PRs #26, #27,
+#28 and progressive board unlocking). The board now opens a section at a
+time, on the same fixed 7×9 grid — dimensions never changed, so canon §57's
+approval gate was never crossed. Canon §39's _recommended schedule_ is keyed
+to campaign levels and is not implemented; the shipped sections gate on lab
+stages instead. See ADR-0011.
 
 ## System coverage
 
 | Area                 | Status                | Note                                                                 |
 | -------------------- | --------------------- | -------------------------------------------------------------------- |
-| Board                | Done                  | 7×9 fixed, `runtimeConfig`                                           |
+| Board                | Done                  | 7×9 fixed; opens by section, canon §39 (ADR-0011)                    |
 | Items / registry     | Done                  | 2 items, one chain (Water → Steam) — thin content, not thin code     |
 | Merge                | Done                  | Atomic, emits `ITEM_MERGED`                                          |
 | Generators           | Done                  | 1 generator defined                                                  |
@@ -139,6 +139,14 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 - **Pixel-diff visual regression.** Currently screenshots are captured for
   human review, not compared — see ADR-0002 for what would change that.
 - **Real art and audio.** Items render as placeholder tiles.
+- **Canon §4 cannot express canon §10's board-unlock requirement.** Level 4
+  requires "UNLOCK first board section", but §4's `ProgressionRequirement`
+  union has no such type. Reported by ADR-0011, not resolved — the same shape
+  as the open `SPEND_ENERGY` conflict.
+- **Board section costs and sizes.** 40/300/800 coins over a 21-cell starter
+  area is a first pass. It produces no board pressure (peak use is 4 cells),
+  which canon §10 wants as a Level 4 beat — that needs content volume, not a
+  smaller starter. Now measurable via `pnpm economy:simulate`.
 - **Temporary events.** The save's `EventSave` slot exists and round-trips; no
   system consumes it, and there is no content format. The empty
   `content/events/` directory that used to sit beside it is gone — it implied
@@ -174,6 +182,10 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Recent decisions
 
+- ADR-0011: the board opens progressively by section, per canon §39, on the
+  unchanged 7×9 grid. Cell state stays the only record of what is unlocked —
+  no new save field. Measured: identical coins earned, level and peak board
+  use; the only change is a new coin sink worth ~3 hours of lab progression.
 - ADR-0010: chapter ids stay order-free (`chapter.basement`); the campaign
   ordinal is canon §30's `chapterNumber` field, validated unique and
   contiguous. Closes gap-analysis conflict #3 with no save migration; canon's

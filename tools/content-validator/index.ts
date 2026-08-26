@@ -26,6 +26,15 @@ import {
   type ChapterDefinition,
 } from "../../src/domain/progression/ChapterDefinition";
 import {
+  BoardSectionDefinitionSchema,
+  type BoardSectionDefinition,
+} from "../../src/domain/board/BoardSectionDefinition";
+import {
+  isSupportedUnlockCondition,
+  referencedChapterId,
+} from "../../src/domain/progression/UnlockCondition";
+import { runtimeConfig } from "../../src/config/runtime";
+import {
   LabStageDefinitionSchema,
   type LabStageDefinition,
 } from "../../src/domain/progression/LabStageDefinition";
@@ -71,6 +80,7 @@ async function loadDir<TOut>(
 
 interface ContentSet {
   items: ItemDefinition[];
+  boardSections: BoardSectionDefinition[];
   generators: GeneratorDefinition[];
   orders: OrderDefinition[];
   chapters: ChapterDefinition[];
@@ -82,6 +92,7 @@ interface ContentSet {
 
 function validateCrossReferences({
   items,
+  boardSections,
   generators,
   orders,
   chapters,
@@ -153,6 +164,7 @@ function validateCrossReferences({
 
   errors.push(
     ...validateChapters(chapters, chapterIds, generatorIds, labStageNumbers, dialogueIds),
+    ...validateBoardSections(boardSections, chapterIds),
   );
   errors.push(...validateLabStages(labStages));
   errors.push(...validateQuests(quests, itemIds, generatorIds, orderIds));
@@ -317,18 +329,10 @@ export function validateChapters(
 
     const chapterDeps: string[] = [];
     for (const condition of chapter.unlockConditions) {
-      const chapterRef = /^chapterUnlocked:(.+)$/.exec(condition);
-      if (chapterRef?.[1]) {
-        if (!chapterIds.has(chapterRef[1])) {
-          errors.push(
-            `${chapter.id}: unlock condition references unknown chapter "${chapterRef[1]}"`,
-          );
-        }
-        chapterDeps.push(chapterRef[1]);
-        continue;
-      }
-      if (!/^(labStage|playerLevel)>=\d+$/.test(condition)) {
-        errors.push(`${chapter.id}: unsupported unlock condition "${condition}"`);
+      errors.push(...validateUnlockCondition(chapter.id, condition, chapterIds));
+      const chapterRef = referencedChapterId(condition);
+      if (chapterRef !== undefined) {
+        chapterDeps.push(chapterRef);
       }
     }
     dependencies.set(chapter.id, chapterDeps);
@@ -411,17 +415,139 @@ function validateLabStages(labStages: LabStageDefinition[]): string[] {
   return errors;
 }
 
+/**
+ * One condition, checked against the shared vocabulary in
+ * `UnlockCondition.ts`. The validator used to carry its own copy of those
+ * patterns; two copies of a rule is one copy too many.
+ */
+function validateUnlockCondition(
+  ownerId: string,
+  condition: string,
+  chapterIds: Set<string>,
+): string[] {
+  if (!isSupportedUnlockCondition(condition)) {
+    return [`${ownerId}: unsupported unlock condition "${condition}"`];
+  }
+
+  const chapterRef = referencedChapterId(condition);
+  if (chapterRef !== undefined && !chapterIds.has(chapterRef)) {
+    return [`${ownerId}: unlock condition references unknown chapter "${chapterRef}"`];
+  }
+
+  return [];
+}
+
+/**
+ * Board sections must partition the grid exactly: canon §39 keeps the board
+ * at a fixed size and opens it progressively, so every one of the 63 cells
+ * belongs to exactly one section. A missing cell would be unreachable
+ * forever; an overlapping one would be unlocked by two different purchases.
+ */
+export function validateBoardSections(
+  sections: BoardSectionDefinition[],
+  chapterIds: Set<string>,
+): string[] {
+  const errors: string[] = [];
+  const seenIds = new Set<string>();
+  const numbering = new Map<number, string>();
+  const owningSection = new Map<string, string>();
+
+  for (const section of sections) {
+    if (seenIds.has(section.id)) {
+      errors.push(`Duplicate board section id: ${section.id}`);
+    }
+    seenIds.add(section.id);
+
+    const claimedBy = numbering.get(section.sectionNumber);
+    if (claimedBy !== undefined) {
+      errors.push(
+        `${section.id}: sectionNumber ${section.sectionNumber} is already used by ${claimedBy}`,
+      );
+    } else {
+      numbering.set(section.sectionNumber, section.id);
+    }
+
+    for (const cell of section.cells) {
+      if (cell.x >= runtimeConfig.boardCols || cell.y >= runtimeConfig.boardRows) {
+        errors.push(
+          `${section.id}: cell (${cell.x},${cell.y}) is outside the ` +
+            `${runtimeConfig.boardCols}x${runtimeConfig.boardRows} board`,
+        );
+        continue;
+      }
+
+      const key = `${cell.x},${cell.y}`;
+      const owner = owningSection.get(key);
+      if (owner !== undefined) {
+        errors.push(
+          `Board cell (${cell.x},${cell.y}) is claimed by both ${owner} and ${section.id}`,
+        );
+      } else {
+        owningSection.set(key, section.id);
+      }
+    }
+
+    for (const condition of section.unlockConditions) {
+      errors.push(...validateUnlockCondition(section.id, condition, chapterIds));
+    }
+  }
+
+  errors.push(...findSectionNumberingGaps(numbering));
+
+  if (sections.length > 0) {
+    for (let y = 0; y < runtimeConfig.boardRows; y += 1) {
+      for (let x = 0; x < runtimeConfig.boardCols; x += 1) {
+        if (!owningSection.has(`${x},${y}`)) {
+          errors.push(`Board cell (${x},${y}) belongs to no section`);
+        }
+      }
+    }
+
+    const starter = sections.find((section) => section.sectionNumber === 1);
+    if (starter && starter.unlockConditions.length > 0) {
+      errors.push(
+        `${starter.id}: the starter section (sectionNumber 1) opens on a new game, ` +
+          `so it cannot carry unlock conditions`,
+      );
+    }
+    if (starter && starter.unlockCost > 0) {
+      errors.push(
+        `${starter.id}: the starter section (sectionNumber 1) opens on a new game, ` +
+          `so its unlockCost must be 0`,
+      );
+    }
+  }
+
+  return errors;
+}
+
+/** Section numbers run 1..N without gaps, for the same reason chapter numbers do. */
+function findSectionNumberingGaps(numbering: Map<number, string>): string[] {
+  const errors: string[] = [];
+  for (let expected = 1; expected <= numbering.size; expected += 1) {
+    if (!numbering.has(expected)) {
+      errors.push(
+        `Board section numbering has a gap: ${numbering.size} section(s) defined, but none ` +
+          `has sectionNumber ${expected}`,
+      );
+    }
+  }
+  return errors;
+}
+
 async function main(): Promise<void> {
   const items = await loadDir("items", ItemDefinitionSchema);
   const generators = await loadDir("generators", GeneratorDefinitionSchema);
   const orders = await loadDir("orders", OrderDefinitionSchema);
   const chapters = await loadDir("chapters", ChapterDefinitionSchema);
+  const boardSections = await loadDir("board-sections", BoardSectionDefinitionSchema);
   const labStages = (await loadDir("lab-stages", LabStageDefinitionSchema.array())).flat();
   const quests = await loadDir("quests", QuestDefinitionSchema);
   const dialogues = await loadDir("dialogues", DialogueDefinitionSchema);
   const tutorialSteps = (await loadDir("tutorial", TutorialStepDefinitionSchema.array())).flat();
   const errors = validateCrossReferences({
     items,
+    boardSections,
     generators,
     orders,
     chapters,
@@ -442,7 +568,8 @@ async function main(): Promise<void> {
 
   console.log(
     `Content validation passed: ${items.length} item(s), ${generators.length} generator(s), ` +
-      `${orders.length} order(s), ${chapters.length} chapter(s), ${labStages.length} lab stage(s), ` +
+      `${orders.length} order(s), ${chapters.length} chapter(s), ` +
+      `${boardSections.length} board section(s), ${labStages.length} lab stage(s), ` +
       `${quests.length} quest(s), ${dialogues.length} dialogue(s), ` +
       `${tutorialSteps.length} tutorial step(s) OK.`,
   );

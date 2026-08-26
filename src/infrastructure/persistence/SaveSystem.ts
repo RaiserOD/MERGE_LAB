@@ -1,4 +1,5 @@
 import { GameState } from "@domain/GameState";
+import type { BoardSectionCell } from "@domain/board/BoardSectionDefinition";
 import { SaveDataV1Schema } from "@domain/save/SaveDataV1";
 import type { Clock } from "@infrastructure/clock/Clock";
 
@@ -48,8 +49,13 @@ export class SaveSystem {
     this.storage.removeItem(BACKUP_KEY);
   }
 
-  /** Never throws: falls back to backup, then to a fresh game (deterministic recovery). */
-  load(): GameState {
+  /**
+   * Never throws: falls back to backup, then to a fresh game (deterministic
+   * recovery). `initiallyLockedCells` only affects the fresh-game path — a
+   * loaded save carries its own cell states, which are the source of truth
+   * for what the player has already unlocked.
+   */
+  load(initiallyLockedCells: readonly BoardSectionCell[] = []): GameState {
     const primary = this.tryLoadFrom(SAVE_KEY);
     if (primary) {
       return primary;
@@ -60,7 +66,7 @@ export class SaveSystem {
       return backup;
     }
 
-    return GameState.createNew();
+    return GameState.createNew(initiallyLockedCells);
   }
 
   private tryLoadFrom(key: string): GameState | undefined {
