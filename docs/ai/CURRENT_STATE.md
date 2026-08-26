@@ -45,9 +45,9 @@ Post-B2 work, in the order it landed:
 | Shared `ProgressionRequirement` predicate (ADR-0007)        | `a35234b` | #23 |
 | Duplicate ADR-0005 resolved; numbering rule added           | `a35234b` | #24 |
 | XP on merges (ADR-0009) + simulator level reporting         | `9bdeb3a` | #25 |
-| Audit fixes: energy invariant, layout deduplication         | pending   | —   |
+| Audit fixes: energy invariant, layout deduplication         | `d67b2a6` | #26 |
 | Chapter ids stay order-free; `chapterNumber` (ADR-0010)     | `99a84f1` | #27 |
-| Dead slots: optional `sellValue`, `content/events/` removed | pending   | —   |
+| Dead slots: optional `sellValue`, `content/events/` removed | `663bd7a` | #28 |
 
 ## In progress
 
@@ -69,6 +69,14 @@ volume within the mechanics that already exist.
 starting energy bar before the tutorial ends; `order.water_delivery` is
 strictly dominated by `order.first_sample` and is never worth delivering; and
 the 7×9 board peaks at 4 of 63 cells in use.
+
+**The integrity audit is closed except for one item.** Five of its six
+findings landed (PRs #26, #27, #28). The sixth — the mechanism for
+progressive board-cell unlocking — is not an implementation gap an agent may
+close on its own: canon §57 puts board dimensions on the approval list, and
+the schedule for which cells open when belongs to the campaign layer that
+does not exist yet. `BoardCellSave.state` already has `LOCKED`, so the save
+shape is ready; nothing sets it.
 
 ## System coverage
 
@@ -95,12 +103,12 @@ the 7×9 board peaks at 4 of 63 cells in use.
 
 ## Verification status
 
-- 187 unit + integration tests (Vitest), 29 files — green.
+- 192 unit + integration tests (Vitest), 30 files — green.
 - 2 Playwright e2e tests — green (functional smoke + screenshot capture).
-- CI: `build`, `e2e`, `android`, `security` — all green on `main` (run #58).
-  Actions stopped triggering for ~4 hours on 2026-08-26 and has since
-  recovered; PR #22 merged during that window without a CI run.
-- Last full pipeline pass: PR #25, 2026-08-26.
+- CI: `build`, `e2e`, `android`, `security` — all green on `main`, last
+  verified on PR #28. Actions stopped triggering for ~4 hours on 2026-08-26
+  and has since recovered; PR #22 merged during that window without a CI run.
+- Last full pipeline pass: PR #28, 2026-08-26.
 
 ## Blocked on human decisions
 
