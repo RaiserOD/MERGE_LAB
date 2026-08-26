@@ -111,7 +111,7 @@ export class DebugPanel {
   }
 
   private refillEnergy(): void {
-    this.context.state.currencies.energy = this.context.state.currencies.maxEnergy;
+    this.context.energySystem.refill();
     this.handlers.onStateChanged();
   }
 

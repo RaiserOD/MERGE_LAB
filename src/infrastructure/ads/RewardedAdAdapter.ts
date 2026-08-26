@@ -5,7 +5,7 @@ export interface RewardedAdResult {
 
 /**
  * The only interface gameplay/application code should need for rewarded
- * video (B4: third-party ad SDKs load only from src/infrastructure/**).
+ * video — third-party ad SDKs load only from src/infrastructure/**.
  * `placementId` identifies which ad slot is being shown (content-owned,
  * like item/order ids) so a future vendor adapter can map it to its own
  * ad-unit configuration.

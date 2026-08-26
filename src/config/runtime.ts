@@ -6,7 +6,7 @@ export interface RuntimeConfig {
   readonly boardCols: number;
   readonly boardRows: number;
   readonly maxEnergy: number;
-  /** Energy restored per second of elapsed real time (A8). */
+  /** Energy restored per second of elapsed real time. */
   readonly energyRegenPerSecond: number;
 }
 

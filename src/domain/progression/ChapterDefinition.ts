@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Chapter content container (A14).
+ * Chapter content container.
  *
  * `unlockConditions` is a list of strings, as specified. ProgressionSystem
  * understands exactly three forms and throws on anything else, so a typo

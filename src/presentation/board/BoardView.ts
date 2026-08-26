@@ -33,7 +33,7 @@ export class BoardView {
     return this.geometry;
   }
 
-  /** Recomputes cell size for the current viewport (A18: responsive on desktop and mobile). */
+  /** Recomputes cell size for the current viewport — responsive on desktop and mobile. */
   layoutFor(width: number, height: number): void {
     // The banner strip is reserved whether or not it is currently showing,
     // so the board keeps the same position once the tutorial finishes.

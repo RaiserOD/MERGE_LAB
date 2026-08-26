@@ -5,7 +5,7 @@
  *
  * rewarded_ad_started/completed and iap_started/completed are produced by
  * MonetizationService, gated behind their feature flags — both flags
- * default off until a vendor is chosen (B9), so neither fires in practice
+ * default off until a vendor is chosen, so neither fires in practice
  * yet, but the wiring is real.
  */
 export type AnalyticsEvent =

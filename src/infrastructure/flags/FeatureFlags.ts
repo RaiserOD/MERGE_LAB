@@ -1,5 +1,5 @@
 /**
- * Monetization features stay off until a vendor is chosen (B9) — a flag
+ * Monetization features stay off until a vendor is chosen — a flag
  * lets that switch happen without a code change once one is, and lets it
  * be pulled back per-platform if a store review rejects it.
  */

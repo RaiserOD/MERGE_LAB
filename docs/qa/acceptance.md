@@ -47,8 +47,8 @@ CI enforces 1–6 (`build`, `e2e`, `android`, `security` jobs). Nothing enforces
 
 - No gameplay logic in scenes; they render and dispatch.
 - E2E smoke passes with **zero console errors**.
-- If board layout constants changed, `tests/e2e/smoke.spec.ts`'s duplicated
-  geometry changed with them.
+- Board layout constants live in `src/presentation/layout.ts` and are
+  imported by both `BoardView` and the e2e test — don't reintroduce copies.
 
 **Analytics / monetization**
 

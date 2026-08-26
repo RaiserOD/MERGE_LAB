@@ -1,11 +1,11 @@
 /**
- * XP -> player level (A11). Pure function of total XP so the level can
+ * XP -> player level. Pure function of total XP so the level can
  * always be recomputed from the save rather than drifting out of sync with
  * it.
  *
  * Curve: level N requires `xpForLevel(N)` total XP, growing quadratically
  * so early levels come fast and later ones pace out. Balance values belong
- * in content eventually (A16 puts balance in JSON); this stays code-side
+ * in content eventually — balance belongs in JSON; this stays code-side
  * until there's a balance file to hold it.
  */
 const XP_BASE = 50;

@@ -11,7 +11,7 @@ import type { EventBus } from "@systems/events/EventBus";
 import type { EconomySystem } from "@systems/EconomySystem";
 
 /**
- * Quest progress is entirely event-driven (A10): the system listens to what
+ * Quest progress is entirely event-driven: the system listens to what
  * other systems already announce rather than being called by them, so
  * gameplay systems stay unaware that quests exist.
  *

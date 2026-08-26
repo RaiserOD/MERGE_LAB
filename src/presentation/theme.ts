@@ -1,8 +1,8 @@
 import type { ItemRarity } from "@domain/items/ItemDefinition";
 
 /**
- * Placeholder visual language. No art assets exist yet (A19 puts polish
- * after the vertical slice), so items render as tinted tiles keyed by
+ * Placeholder visual language. No art assets exist yet — polish comes
+ * after the vertical slice, so items render as tinted tiles keyed by
  * rarity — readable silhouettes first, art later.
  */
 export const palette = {
@@ -25,14 +25,7 @@ export const rarityColors: Record<ItemRarity, number> = {
   legendary: 0xc9902f,
 };
 
-export const layout = {
-  hudHeight: 72,
-  /**
-   * Reserved for the tutorial banner. Always reserved, even after the
-   * tutorial finishes, so the board doesn't reflow under the player.
-   */
-  bannerHeight: 42,
-  footerHeight: 88,
-  boardPadding: 12,
-  cellGap: 4,
-} as const;
+// Re-exported so existing `@presentation/theme` imports keep working. The
+// values live in an import-free module because the e2e test needs them and
+// cannot resolve this file's aliased import — see layout.ts.
+export { layout } from "@presentation/layout";

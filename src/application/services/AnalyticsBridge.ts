@@ -7,7 +7,7 @@ import type { AnalyticsAdapter } from "@infrastructure/analytics/AnalyticsAdapte
  * Translates domain events into the fixed A24 analytics vocabulary. This is
  * the only place that calls `AnalyticsAdapter.track` — every gameplay
  * system stays exactly as unaware of analytics as it is of quests or the
- * tutorial (B4: no direct analytics calls from domain/systems).
+ * tutorial — no direct analytics calls from domain/systems.
  */
 export class AnalyticsBridge {
   constructor(

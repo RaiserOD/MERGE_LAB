@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Content validator (B5). Validates every content directory that has a
+ * Content validator. Validates every content directory that has a
  * domain schema (items, generators, orders, chapters, lab-stages, quests,
  * dialogues), then checks the cross-reference rules: unique IDs, resolvable
  * resultItemId chains, generator outputs and order requirements pointing at

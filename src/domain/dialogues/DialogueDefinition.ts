@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 /**
- * Dialogue content (A13: "dialogues are content JSON, not code").
+ * Dialogue content: dialogues are content JSON, not code.
  *
  * Speakers are the MVP NPC roster from A12 plus `narrator` for lines with
  * no on-screen character. A line carries only text — no branching, since
- * MVP narrative is explicitly linear (A13) and branching narrative is a
- * stated non-goal (A1.5).
+ * MVP narrative is explicitly linear and branching narrative is a
+ * stated non-goal.
  */
 export const DialogueSpeakerSchema = z.enum(["professor", "assistant", "customer", "narrator"]);
 

@@ -15,7 +15,7 @@ export interface CompleteOrderResult {
 }
 
 /**
- * Order completion (A9): validate -> consume items -> grant rewards -> emit.
+ * Order completion: validate -> consume items -> grant rewards -> emit.
  * Requirements are collected across the whole board before anything is
  * removed, so an order the player can't afford leaves board and balances
  * untouched.
@@ -23,7 +23,7 @@ export interface CompleteOrderResult {
  * XP is not granted here — ORDER_COMPLETED carries xpReward and
  * ProgressionSystem owns player XP/levelling. Coins and research points go
  * through EconomySystem, which is the only system allowed to move
- * currencies (A16).
+ * currencies.
  */
 export class OrderSystem {
   constructor(

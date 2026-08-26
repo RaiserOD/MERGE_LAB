@@ -15,7 +15,7 @@ export interface UseGeneratorResult {
 }
 
 /**
- * Generator actions are atomic (A7): everything is validated — charges,
+ * Generator actions are atomic: everything is validated — charges,
  * energy, board space — before any state is mutated, so a rejected action
  * leaves charges, energy and board untouched.
  *

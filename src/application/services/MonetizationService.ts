@@ -11,10 +11,10 @@ export type PurchaseOutcome = "success" | "failed" | "unavailable";
  * Gates ad/billing calls behind their feature flags and emits the domain
  * events AnalyticsBridge translates into A24's rewarded-ad/IAP vocabulary
  * — this is the only place that calls RewardedAdAdapter/BillingAdapter, the
- * same way AnalyticsBridge is the only caller of AnalyticsAdapter (B4).
+ * same way AnalyticsBridge is the only caller of AnalyticsAdapter.
  *
  * What a granted ad or a completed purchase actually rewards the player
- * with is a product/economy decision (A16/B9) with no catalog yet, so this
+ * with is a product/economy decision with no catalog yet, so this
  * stops at reporting the outcome — callers decide what to grant once that
  * catalog exists.
  */
