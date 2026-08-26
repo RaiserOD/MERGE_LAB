@@ -150,6 +150,15 @@ check `docs/architecture/ADR/` for a binding prior decision.
 - Code: `src/systems/events/DomainEvent.ts`, `src/systems/events/EventBus.ts`,
   `src/app/GameContext.ts`
 
+## Mechanic design (proposed)
+
+- Spec: not yet in canon — see the open question in `design/mechanic-pipeline.md`
+- Docs: `design/mechanic-pipeline.md`, `design/mechanics/README.md`,
+  `design/mechanics/TEMPLATE.md`
+- ADR: 0005 (**Proposed** — not binding until Accepted)
+- Load this row when a task asks for a _new or changed gameplay rule_ rather
+  than new content. Classification (M0–M4) comes before design.
+
 ## Content pipeline
 
 - Spec: A25
