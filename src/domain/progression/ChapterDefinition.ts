@@ -17,6 +17,14 @@ import { z } from "zod";
  */
 export const ChapterDefinitionSchema = z.object({
   id: z.string().min(1),
+  /**
+   * Position in the campaign, 1-based. Canon §30 specifies this field *and*
+   * names chapters `chapter_01_basement`, which would store the ordinal
+   * twice — once as data, once inside a persisted id. Ids in saves cannot be
+   * corrected without a migration, so the number lives here only and the id
+   * stays order-free. See ADR-0010.
+   */
+  chapterNumber: z.number().int().positive(),
   title: z.string().min(1),
   unlockConditions: z.array(z.string().min(1)),
   availableItemGroups: z.array(z.string().min(1)),

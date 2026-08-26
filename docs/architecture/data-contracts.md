@@ -100,9 +100,15 @@ renaming an ID breaks saves that recorded it (`discoveredItemIds`,
 `unlockedChapterIds`, `completedTutorialStepIds`, generator state). Treat an
 ID rename as a save-migration event, not a refactor.
 
+IDs carry no ordering information. A chapter's position in the campaign is
+`chapterNumber`, a separate field, precisely so that reordering the campaign
+never touches a persisted string (ADR-0010).
+
 Cross-file references — an order requiring an item, a quest naming an order, a
 chapter's unlock condition — are checked by the content validator. Adding a
 new reference kind means teaching the validator about it in the same change.
+So are within-file invariants that content alone can violate: chapter numbers
+must be unique and run 1..N with no gaps.
 
 ## Domain events
 

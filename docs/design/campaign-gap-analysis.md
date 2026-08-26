@@ -108,10 +108,14 @@ Canon §30 wants `chapterNumber`, `firstLevel`, `lastLevel`, `researchNodeIds`,
 `availableItemGroups`, `availableGenerators`, `labStage`, and — already —
 optional `orderPoolId` / `questPoolId`.
 
-Overlapping but not the same. Also an **ID convention mismatch**: content uses
-`chapter.basement`, canon writes `chapter_01_basement`. Chapter IDs are
-persisted in `unlockedChapterIds`, so per `data-contracts.md` a rename is a
-save-migration event, not a refactor.
+Overlapping but not the same. `chapterNumber` is now implemented (ADR-0010),
+required, and checked by the validator for uniqueness and contiguity.
+
+The **ID convention mismatch** — content uses `chapter.basement`, canon writes
+`chapter_01_basement` — is settled the other way: ids stay order-free. Chapter
+IDs are persisted in `unlockedChapterIds`, so per `data-contracts.md` a rename
+is a save-migration event, and the ordinal already has a home in
+`chapterNumber`. Canon's naming example stands as a reported divergence.
 
 Only 2 of 5 chapters exist (`basement`, `chemistry`).
 
@@ -222,24 +226,26 @@ and repair, and nothing advances a player level on requirements today.
 
 ## 5. Conflicts needing a PM decision
 
-Per `AI_RULES.md` these are reported, not resolved.
+Per `AI_RULES.md` these are reported, not resolved. Three of the six have
+since been decided and carry an ADR; they are struck through rather than
+deleted, so the record of what was asked stays readable.
 
-1. **XP from merges.** Canon §5 lists merges and first discoveries as XP
-   sources. The code grants XP only from `ORDER_COMPLETED.xpReward`.
-   `ItemDefinition.xpValue` exists, is validated, and is read by nothing.
-   Either the code is missing a faucet or canon over-specifies — but the
-   economy simulation's numbers assume the current behaviour, so this changes
-   pacing.
+1. ~~**XP from merges.**~~ Resolved by ADR-0009: canon is right, merges award
+   the result item's `xpValue`. Measured at +40% total XP over a 15-hour
+   optimal run. First-discovery and quest XP stay unwired — both need a
+   content field or an explicit ruling, and are listed in `CURRENT_STATE.md`.
 2. **`SPEND_ENERGY`.** Level 3 requires spending energy, but §4's
    `ProgressionRequirement` union has no such type. The code has it as a quest
    type. Either canon's list is incomplete or Level 3's action maps onto
    something else.
-3. **Chapter ID convention.** `chapter.basement` (code) vs
-   `chapter_01_basement` (canon §30). Persisted, so aligning them is a
-   migration.
-4. **Requirements vs quests.** Canon treats them as separate contracts that
-   share 6 of 7 predicate shapes. One shared predicate type or two parallel
-   ones is an architecture call — ADR required either way.
+3. ~~**Chapter ID convention.**~~ Resolved by ADR-0010: ids keep the
+   project's dot convention and stay order-free; canon's `chapterNumber`
+   field is adopted instead, avoiding a save migration for a cosmetic
+   rename. Canon §30's `chapter_01_basement` example is reported upward as
+   a proposed amendment.
+4. ~~**Requirements vs quests.**~~ Resolved by ADR-0007: one shared
+   `ProgressionRequirement` predicate, in `src/domain/progression/`. Quests
+   now carry a `requirement`; campaign levels will carry the same shape.
 5. **Tutorial vs Level 1.** The implemented 4-step tutorial and canon's Level 1
    requirements describe the same opening beats through two different
    mechanisms. Whether the tutorial becomes Level 1's requirement set, or stays
