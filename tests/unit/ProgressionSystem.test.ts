@@ -6,7 +6,7 @@ import { EventBus } from "@systems/events/EventBus";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import { EconomySystem } from "@systems/EconomySystem";
 import { ProgressionError, ProgressionSystem } from "@systems/ProgressionSystem";
-import { testChapters, testLabStages } from "../fixtures/testProgression";
+import { makeProgressionSave, testChapters, testLabStages } from "../fixtures/testProgression";
 
 describe("ProgressionSystem", () => {
   let player: PlayerSave;
@@ -18,13 +18,7 @@ describe("ProgressionSystem", () => {
 
   beforeEach(() => {
     player = { level: 1, xp: 0 };
-    progression = {
-      labStage: 1,
-      unlockedChapterIds: ["chapter.basement"],
-      discoveredItemIds: [],
-      seenDialogueIds: [],
-      completedTutorialStepIds: [],
-    };
+    progression = makeProgressionSave();
     currencies = { coins: 0, gems: 0, researchPoints: 0, energy: 100, maxEnergy: 100 };
     eventBus = new EventBus<DomainEvent>();
     emitted = [];

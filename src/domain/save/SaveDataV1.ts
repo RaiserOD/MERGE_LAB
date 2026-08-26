@@ -63,6 +63,27 @@ export const ProgressionSaveSchema = z.object({
    * mid-tutorial. Defaults to empty like the fields above.
    */
   completedTutorialStepIds: z.array(z.string().min(1)).default([]),
+  /**
+   * Campaign levels whose completion reward has been granted. Canon §32
+   * requires level rewards to be granted exactly once, and this is what
+   * makes that decidable after a reload.
+   *
+   * Written ahead of the system that fills it — see ADR-0006. While v1 is
+   * unreleased a defaulted field is free; once it ships the same field
+   * costs a version bump and a migration.
+   */
+  completedLevelIds: z.array(z.string().min(1)).default([]),
+  /**
+   * Content ids unlocked by level completion (canon §33). The unlock list
+   * is data on the level definition; this records what has been applied,
+   * so unlocking stays idempotent across reloads.
+   */
+  unlockedContentIds: z.array(z.string().min(1)).default([]),
+  /**
+   * Research nodes the player has bought (canon §32, §42). Research points
+   * are already a currency; this is the record of what they were spent on.
+   */
+  purchasedResearchNodeIds: z.array(z.string().min(1)).default([]),
 });
 
 export const QuestSaveSchema = z.object({

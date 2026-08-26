@@ -4,17 +4,12 @@ import { EventBus } from "@systems/events/EventBus";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import { AnalyticsBridge } from "@application/services/AnalyticsBridge";
 import type { AnalyticsEvent } from "@infrastructure/analytics/AnalyticsEvent";
+import { makeProgressionSave } from "../fixtures/testProgression";
 
 const somePosition = { x: 0, y: 0 };
 
 function makeProgression(completedTutorialStepIds: string[] = []): ProgressionSave {
-  return {
-    labStage: 1,
-    unlockedChapterIds: ["chapter.basement"],
-    discoveredItemIds: [],
-    seenDialogueIds: [],
-    completedTutorialStepIds,
-  };
+  return makeProgressionSave({ completedTutorialStepIds });
 }
 
 describe("AnalyticsBridge", () => {

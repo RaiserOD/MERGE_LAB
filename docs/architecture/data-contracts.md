@@ -77,6 +77,21 @@ Several v1 fields (`discoveredItemIds`, `seenDialogueIds`,
 added while v1 was still unreleased. Once v1 ships, that trick is no longer
 available.
 
+Three more (`completedLevelIds`, `unlockedContentIds`,
+`purchasedResearchNodeIds`) were added ahead of the systems that will fill
+them, deliberately, for the same reason — see ADR-0006. They are currently
+written by nothing. That is not dead code to clean up: deleting one costs a
+migration to restore.
+
+Board-cell unlocking (canon §39) deliberately has **no** save field.
+`BoardCellSave.state` already includes `LOCKED`, so opening a cell is an
+existing state transition. A parallel `unlockedCellIds` would give the same
+fact two homes and let them disagree.
+
+When adding a save field, add it to `makeProgressionSave()` in
+`tests/fixtures/testProgression.ts` too — tests build progression state
+through that builder so a new field doesn't break every one of them.
+
 ## Content ID conventions
 
 IDs are namespaced strings and are referenced across content files
