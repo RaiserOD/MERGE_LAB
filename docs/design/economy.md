@@ -5,23 +5,35 @@ implementation does and what is still undecided.
 
 ## Currencies
 
-| Currency         | Faucet                 | Sink               | Mutated by      |
-| ---------------- | ---------------------- | ------------------ | --------------- |
-| `coins`          | orders, quests         | lab stage upgrades | `EconomySystem` |
-| `gems`           | _none yet_             | _none yet_         | `EconomySystem` |
-| `researchPoints` | orders, quests         | _none yet_         | `EconomySystem` |
-| `energy`         | time (1/60 per second) | generator use      | `EnergySystem`  |
+| Currency         | Faucet                      | Sink                     | Mutated by      |
+| ---------------- | --------------------------- | ------------------------ | --------------- |
+| `coins`          | orders, quests              | lab stage upgrades       | `EconomySystem` |
+| `gems`           | quests (no content uses it) | _none yet_               | `EconomySystem` |
+| `researchPoints` | orders, quests              | research nodes — unbuilt | `EconomySystem` |
+| `energy`         | time (1/60 per second)      | generator use            | `EnergySystem`  |
 
 Energy lives in the same `CurrencySave` block but is **not** an economy
 currency: it never passes through `EconomySystem`, and it regenerates rather
 than being earned. Treating it as a currency is the most common way to break
 the pacing model.
 
-Research points have no sink. Gems have neither a faucet nor a sink: the
-schema, the HUD slot and `QuestDefinition.gemReward` all exist, but no content
-grants them and nothing spends them. That's a live design gap, not a bug —
-gems are the natural premium currency, and both ends of that loop are part of
-the undecided monetization design (`monetization.md`).
+Neither of the two secondary currencies is fully closed yet, but for
+different reasons — worth keeping apart, because only one of them is waiting
+on a decision.
+
+**Research points have a specified sink that isn't built.** Canon §11
+introduces Research at Level 5 and §42 defines the node tree it is spent on.
+Orders and quests already pay research points out; the tree, the
+`UNLOCK_RESEARCH` requirement and the spend path are step 7 of the build order
+in `campaign-gap-analysis.md`. Nothing is undecided here — it is unimplemented,
+which is why the currency is already a faucet.
+
+**Gems have a faucet nothing uses and no sink at all.** `QuestDefinition`
+carries `gemReward` and `QuestSystem` grants it, so the faucet exists in code;
+no content sets it above 0, and nothing spends gems. Canon is silent because
+it does not cover monetization at all. Gems are the natural premium currency,
+and both ends of that loop are part of the undecided monetization design
+(`monetization.md`) — a decision, not a backlog item.
 
 ## The one mutator rule
 

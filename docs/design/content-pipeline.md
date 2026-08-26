@@ -74,10 +74,15 @@ new item.
 
 ## Empty directories
 
-`content/economy/`, `content/events/` and `content/localization/` exist with
-`.gitkeep` and no schema behind them. They are placeholders for decisions not
-yet made — don't infer a format from the directory name and start authoring
-into them.
+`content/economy/` and `content/localization/` exist with `.gitkeep` and no
+schema behind them. They are placeholders for decisions not yet made — don't
+infer a format from the directory name and start authoring into them.
+
+`content/events/` was one of them and is gone. It sat next to the save's
+`events: EventSave[]` slot and implied the two were wired together; they never
+were, and neither has a format. The save slot stays (removing a persisted
+field is a schema change); the directory comes back when temporary events are
+actually designed, together with the schema that makes it loadable.
 
 ## Current volume
 

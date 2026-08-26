@@ -103,6 +103,8 @@ No energy purchase, no timers beyond generator cooldowns, no board expansion,
 no item selling, no temporary events. Each is a design decision that hasn't
 been made — not an oversight to fill in.
 
-Two content fields are declared and validated but unread by any system:
-`ItemDefinition.sellValue` and `ItemDefinition.xpValue`. They're forward
-declarations for selling and merge-XP; don't assume they're live.
+`ItemDefinition.xpValue` used to sit here as an unread forward declaration; it
+is live now — merges pay it (ADR-0009). `ItemDefinition.sellValue` is still
+unread, and is now **optional**: with no selling mechanic there is nothing to
+balance it against, so a new item shouldn't have to invent a number for it.
+The two existing items keep the values they already carry.

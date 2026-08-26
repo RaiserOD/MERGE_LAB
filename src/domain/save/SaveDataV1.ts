@@ -92,6 +92,14 @@ export const QuestSaveSchema = z.object({
   completed: z.boolean(),
 });
 
+/**
+ * A timed in-game event ("Alien Samples" and the like). Persisted and
+ * round-tripped, but no system reads or writes it — temporary events are an
+ * undecided mechanic (`CURRENT_STATE.md`). The slot stays because removing a
+ * persisted field is a save-schema change; there is deliberately no
+ * `content/events/` directory, since the content format is part of the
+ * decision nobody has made.
+ */
 export const EventSaveSchema = z.object({
   eventId: z.string().min(1),
   startsAt: z.number().int().nonnegative(),
