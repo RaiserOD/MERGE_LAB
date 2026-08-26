@@ -1,7 +1,9 @@
 {
   "id": "quest.first_merges",
-  "type": "MERGE_COUNT",
   "title": "Combine three pairs",
-  "target": 3,
+  "requirement": {
+    "type": "MERGE_COUNT",
+    "target": 3
+  },
   "coinReward": 15
 }
