@@ -2,8 +2,8 @@
 
 Merge-2 / collection / light-simulation game. The player restores an
 abandoned laboratory by generating, merging and discovering materials.
-Full product/design/technical spec: see the master spec doc referenced in
-`docs/`.
+Full product/design/technical spec belongs at `docs/MASTER_SPEC.md` — see
+"Documentation" below for how the docs are laid out.
 
 Platform roadmap: Web/PWA → Android → iOS. Stack: Phaser 3 + TypeScript +
 Vite.
@@ -48,57 +48,45 @@ Phaser**.
 See `docs/architecture/ADR/` for the decisions behind this structure,
 starting with `0001-stack-and-trust-boundary.md`.
 
+## Documentation
+
+Docs are organized as a retrieval layer so a scoped change doesn't require
+reading everything — see `docs/architecture/ADR/0004-ai-memory-layer.md`.
+
+| Where                       | What it answers                                         |
+| --------------------------- | ------------------------------------------------------- |
+| `docs/MASTER_SPEC.md`       | Canon: what the game should be _(not yet in this repo)_ |
+| `docs/ai/PROJECT_MEMORY.md` | The fundamentals and invariants, always loaded          |
+| `docs/ai/CURRENT_STATE.md`  | What's built, what's blocked, known gaps                |
+| `docs/ai/CONTEXT_MAP.md`    | Which docs and files a given task needs                 |
+| `docs/ai/AI_RULES.md`       | Working rules and what requires human approval          |
+| `docs/ai/ACTIVE_TASK.md`    | The task in flight                                      |
+| `docs/architecture/`        | System map, data contracts, ADRs                        |
+| `docs/design/`              | Game design, economy, monetization, narrative, content  |
+| `docs/qa/`                  | Test strategy and acceptance criteria                   |
+
+Start at `CLAUDE.md` in the repo root. Precedence when sources disagree:
+spec → ADR → docs → `docs/ai/CURRENT_STATE.md` → code. Report conflicts rather than
+resolving them silently.
+
 ## Current state
 
 The core loop is playable end to end: `pnpm dev` opens a board where you
 drag items to merge them, run the generator, deliver orders, restore lab
 stages, and follow a Professor-narrated tutorial through all of it — with
-progress saved to `localStorage` between reloads.
+progress saved to `localStorage` between reloads. The production build is
+an installable, offline-capable PWA, and the Android build is a Capacitor
+shell around the same bundle, compiled as a debug APK in CI.
 
-Analytics is wired to the A24 event vocabulary via `AnalyticsBridge`, but
-no vendor is chosen yet: the default adapter (`NoopAnalyticsAdapter`)
-discards every event, so the game ships with zero analytics footprint
-until that product decision is made.
+Analytics and monetization are wired but inert: both sit behind adapters
+with `Noop` defaults, and monetization additionally behind feature flags
+that ship off — so the game has zero analytics footprint and zero ad/IAP
+surface until a vendor is chosen. A dev-only QA panel (`import.meta.env
+.DEV`-gated, tree-shaken from production) gives testers cheats.
 
-Monetization (rewarded video + IAP) follows the same pattern:
-`MonetizationService` gates both behind feature flags (`FeatureFlags`,
-default off) and talks to `RewardedAdAdapter`/`BillingAdapter`. No ad
-network or billing vendor is chosen yet, so the default `Noop*` adapters
-never grant a reward or complete a purchase, and both flags stay off —
-the game ships fully playable with zero ad/IAP surface until a vendor and
-a rewards/product catalog are decided.
-
-A dev-only QA panel (top-right "QA" toggle in `pnpm dev`) gives testers
-cheats — add currency, refill energy, skip the tutorial, force-unlock the
-next chapter, wipe the save — without grinding. It's tree-shaken out of
-production builds entirely (`import.meta.env.DEV`-gated), so it ships with
-zero footprint.
-
-`pnpm test:e2e` runs Playwright against a real browser: a functional smoke
-test (boot, merge, tutorial progress, zero console errors) plus a
-screenshot capture attached to the HTML report for human review. It's not
-pixel-diff regression yet — see `docs/architecture/ADR/
-0002-playwright-visual-qa-scope.md` for why and what would change that.
-
-The production build is a real installable, offline-capable PWA: `main.ts`
-registers the service worker `vite-plugin-pwa` generates
-(`registerType: "prompt"`), and a small DOM banner offers a reload when a
-new version is waiting. Verified in a real browser: after the first visit,
-going offline and reloading still boots the game from the service worker's
-cache.
-
-The Android build is a thin Capacitor shell around the same `dist/` output
-web/PWA use (see `docs/architecture/ADR/0003-mobile-packaging.md`):
-`pnpm cap:sync` builds and copies the web bundle into `android/`, and CI
-builds a real debug APK (`./gradlew assembleDebug`) on every push. Not yet
-verified: an actual boot on a device or emulator — this project's
-environments have no Android SDK/emulator available to check that locally.
-
-Not built yet (per the master spec's A26 staging): a live analytics
-vendor, a real ad network/billing vendor and rewards/IAP catalog, an iOS
-build (`@capacitor/ios`, deferred until there's an environment that can
-build/verify it), temporary events, and real art/audio — items currently
-render as rarity-tinted placeholder tiles.
+**For the detailed, maintained status** — what's done, what's blocked on a
+decision, known gaps and debt — see `docs/ai/CURRENT_STATE.md`. It is kept
+current; this paragraph is orientation only.
 
 ## Security
 
