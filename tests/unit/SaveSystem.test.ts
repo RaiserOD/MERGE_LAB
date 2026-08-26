@@ -82,6 +82,28 @@ describe("SaveSystem", () => {
     expect(loaded.currencies.coins).toBe(0);
   });
 
+  describe("clear", () => {
+    it("wipes both the primary and backup entries", () => {
+      const storage = new InMemoryStorage();
+      const saveSystem = new SaveSystem(storage, new FixedClock());
+      saveSystem.save(GameState.createNew());
+      saveSystem.save(GameState.createNew());
+
+      saveSystem.clear();
+
+      expect(storage.getItem("mergeLab.save")).toBeNull();
+      expect(storage.getItem("mergeLab.save.backup")).toBeNull();
+      expect(saveSystem.hasExistingSave()).toBe(false);
+    });
+
+    it("is safe to call when nothing has ever been saved", () => {
+      const saveSystem = new SaveSystem(new InMemoryStorage(), new FixedClock());
+      expect(() => {
+        saveSystem.clear();
+      }).not.toThrow();
+    });
+  });
+
   describe("hasExistingSave", () => {
     it("is false before anything has ever been saved", () => {
       const saveSystem = new SaveSystem(new InMemoryStorage(), new FixedClock());

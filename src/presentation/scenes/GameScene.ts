@@ -10,6 +10,7 @@ import { Hud } from "@presentation/ui/Hud";
 import { ActionBar } from "@presentation/ui/ActionBar";
 import { DialogueView } from "@presentation/npc/DialogueView";
 import { TutorialBanner } from "@presentation/ui/TutorialBanner";
+import { DebugPanel } from "@presentation/debug/DebugPanel";
 import { palette } from "@presentation/theme";
 import { SCENE_KEYS } from "@presentation/scenes/BootScene";
 
@@ -34,6 +35,7 @@ export class GameScene extends Phaser.Scene {
   private actionBar!: ActionBar;
   private dialogueView!: DialogueView;
   private tutorialBanner!: TutorialBanner;
+  private debugPanel: DebugPanel | undefined;
   private drag: DragState | undefined;
   private readonly sceneUnsubscribes: (() => void)[] = [];
 
@@ -64,6 +66,15 @@ export class GameScene extends Phaser.Scene {
 
     this.dialogueView = new DialogueView(this, this.context);
     this.tutorialBanner = new TutorialBanner(this, this.context);
+
+    // Tree-shaken out of production builds — see DebugPanel's own doc comment.
+    if (import.meta.env.DEV) {
+      this.debugPanel = new DebugPanel(this, this.context, {
+        onStateChanged: () => {
+          this.afterStateChange();
+        },
+      });
+    }
 
     this.relayout();
     this.scale.on(Phaser.Scale.Events.RESIZE, this.relayout);
@@ -122,6 +133,7 @@ export class GameScene extends Phaser.Scene {
     this.actionBar.layoutFor(width, height);
     this.dialogueView.layoutFor(width, height);
     this.tutorialBanner.layoutFor(width);
+    this.debugPanel?.layoutFor(width);
   };
 
   private readonly onPointerDown = (pointer: Phaser.Input.Pointer): void => {
@@ -255,6 +267,7 @@ export class GameScene extends Phaser.Scene {
     this.actionBar.destroy();
     this.dialogueView.destroy();
     this.tutorialBanner.destroy();
+    this.debugPanel?.destroy();
     this.boardView.destroy();
   };
 }
