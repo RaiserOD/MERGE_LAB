@@ -6,7 +6,14 @@ import prettierConfig from "eslint-config-prettier";
 
 export default tseslint.config(
   {
-    ignores: ["dist/**", "dev-dist/**", "coverage/**", "node_modules/**"],
+    ignores: [
+      "dist/**",
+      "dev-dist/**",
+      "coverage/**",
+      "node_modules/**",
+      // Generated native project (Capacitor) — not TS/JS this project owns.
+      "android/**",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,

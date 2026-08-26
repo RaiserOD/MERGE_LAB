@@ -2,3 +2,4 @@ dist/
 dev-dist/
 coverage/
 pnpm-lock.yaml
+android/

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Merge Lab</string>
+    <string name="title_activity_main">Merge Lab</string>
+    <string name="package_name">com.mergelab.app</string>
+    <string name="custom_url_scheme">com.mergelab.app</string>
+</resources>
