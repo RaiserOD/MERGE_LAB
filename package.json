@@ -20,7 +20,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "content:validate": "tsx tools/content-validator/index.ts",
+    "content:validate": "tsx --tsconfig tsconfig.app.json tools/content-validator/index.ts",
     "economy:simulate": "tsx tools/economy-simulator/index.ts",
     "cap:sync": "pnpm build && cap sync",
     "prepare": "husky"

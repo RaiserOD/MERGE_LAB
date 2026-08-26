@@ -1,11 +1,11 @@
 import { z } from "zod";
+import { ProgressionRequirementSchema } from "@domain/progression/ProgressionRequirement";
 
 /**
- * The seven quest types from A10. Each carries a numeric `target`; the
- * types that can be scoped to specific content carry an optional filter
- * (itemId / generatorId / orderId). Omitting the filter counts any
- * qualifying action — e.g. USE_GENERATOR with no generatorId counts every
- * generator use.
+ * A quest is a `ProgressionRequirement` plus an identity and a payout
+ * (A10). The condition itself is the shared predicate, so quests and
+ * campaign level requirements express the same things the same way and are
+ * evaluated by the same rules — see ADR-0007.
  */
 const questRewardShape = {
   coinReward: z.number().int().nonnegative().default(0),
@@ -13,34 +13,12 @@ const questRewardShape = {
   researchReward: z.number().int().nonnegative().default(0),
 };
 
-const questBaseShape = {
+export const QuestDefinitionSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
-  target: z.number().int().positive(),
+  requirement: ProgressionRequirementSchema,
   ...questRewardShape,
-};
-
-export const QuestDefinitionSchema = z.discriminatedUnion("type", [
-  z.object({ ...questBaseShape, type: z.literal("MERGE_COUNT") }),
-  z.object({
-    ...questBaseShape,
-    type: z.literal("DISCOVER_ITEM"),
-    itemId: z.string().min(1).optional(),
-  }),
-  z.object({
-    ...questBaseShape,
-    type: z.literal("COMPLETE_ORDER"),
-    orderId: z.string().min(1).optional(),
-  }),
-  z.object({ ...questBaseShape, type: z.literal("EARN_COINS") }),
-  z.object({ ...questBaseShape, type: z.literal("UPGRADE_LAB") }),
-  z.object({
-    ...questBaseShape,
-    type: z.literal("USE_GENERATOR"),
-    generatorId: z.string().min(1).optional(),
-  }),
-  z.object({ ...questBaseShape, type: z.literal("SPEND_ENERGY") }),
-]);
+});
 
 export type QuestDefinition = z.infer<typeof QuestDefinitionSchema>;
-export type QuestType = QuestDefinition["type"];
+export type QuestType = QuestDefinition["requirement"]["type"];

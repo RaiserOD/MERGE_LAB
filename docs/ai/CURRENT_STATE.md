@@ -47,9 +47,9 @@ Post-B2 work, in the order it landed:
 
 Nothing implemented. One documentation proposal is awaiting a PM decision:
 the mechanic design pipeline (`docs/design/mechanic-pipeline.md`,
-`docs/design/mechanics/`, ADR-0005 **Proposed**). It is additive docs only —
+`docs/design/mechanics/`, ADR-0008 **Proposed**). It is additive docs only —
 no code, content or runtime change — and no agent should treat it as binding
-until ADR-0005 is Accepted. `ACTIVE_TASK.md` is idle.
+until ADR-0008 is Accepted. `ACTIVE_TASK.md` is idle.
 
 ## Next
 
@@ -66,26 +66,26 @@ the 7×9 board peaks at 4 of 63 cells in use.
 
 ## System coverage
 
-| Area                 | Status                | Note                                                                |
-| -------------------- | --------------------- | ------------------------------------------------------------------- |
-| Board                | Done                  | 7×9 fixed, `runtimeConfig`                                          |
-| Items / registry     | Done                  | 2 items, one chain (Water → Steam) — thin content, not thin code    |
-| Merge                | Done                  | Atomic, emits `ITEM_MERGED`                                         |
-| Generators           | Done                  | 1 generator defined                                                 |
-| Energy               | Done                  | Clock-driven regen, 1/60 per second                                 |
-| Economy              | Done                  | Sole currency mutator                                               |
-| Orders               | Done                  | 2 orders defined                                                    |
-| Progression          | Done                  | XP curve, lab stages, chapter unlocks                               |
-| Quests               | Done                  | 3 quests defined                                                    |
-| Dialogue / narrative | Done                  | 5 dialogues; two voices (`narrator`, `professor`)                   |
-| Tutorial             | Done                  | Event-gated steps, full run verified in browser                     |
-| Save                 | Done                  | Zod-validated on load, backup slot, `clear()`                       |
-| UI                   | Done, placeholder art | Rarity-tinted rectangles, no sprites                                |
-| Analytics            | Wired, no vendor      | `NoopAnalyticsAdapter` by default                                   |
-| Monetization         | Wired, no vendor      | Flags default-off; `Noop` ads/billing                               |
-| Web / PWA            | Done, not a release   | Shared bundle + dev/QA surface; offline boot verified by hand       |
-| Android              | Builds in CI          | The release target; `assembleDebug` green, never booted on a device |
-| iOS                  | Not planned           | Kept reachable, not committed — ADR-0005                            |
+| Area                 | Status                | Note                                                                 |
+| -------------------- | --------------------- | -------------------------------------------------------------------- |
+| Board                | Done                  | 7×9 fixed, `runtimeConfig`                                           |
+| Items / registry     | Done                  | 2 items, one chain (Water → Steam) — thin content, not thin code     |
+| Merge                | Done                  | Atomic, emits `ITEM_MERGED`                                          |
+| Generators           | Done                  | 1 generator defined                                                  |
+| Energy               | Done                  | Clock-driven regen, 1/60 per second                                  |
+| Economy              | Done                  | Sole currency mutator                                                |
+| Orders               | Done                  | 2 orders defined                                                     |
+| Progression          | Done                  | XP curve, lab stages, chapter unlocks                                |
+| Quests               | Done                  | 3 quests; conditions are shared `ProgressionRequirement`s (ADR-0007) |
+| Dialogue / narrative | Done                  | 5 dialogues; two voices (`narrator`, `professor`)                    |
+| Tutorial             | Done                  | Event-gated steps, full run verified in browser                      |
+| Save                 | Done                  | Zod-validated on load, backup slot, `clear()`                        |
+| UI                   | Done, placeholder art | Rarity-tinted rectangles, no sprites                                 |
+| Analytics            | Wired, no vendor      | `NoopAnalyticsAdapter` by default                                    |
+| Monetization         | Wired, no vendor      | Flags default-off; `Noop` ads/billing                                |
+| Web / PWA            | Done, not a release   | Shared bundle + dev/QA surface; offline boot verified by hand        |
+| Android              | Builds in CI          | The release target; `assembleDebug` green, never booted on a device  |
+| iOS                  | Not planned           | Kept reachable, not committed — ADR-0005                             |
 
 ## Verification status
 
@@ -106,10 +106,10 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
   Discovery XP would need either a second content field or a ruling that
   reusing `xpValue` (and so double-paying the first merge of each item) is
   intended. Quests have no XP reward field at all.
-- **Mechanic design pipeline (ADR-0005).** Which route to take, not just
+- **Mechanic design pipeline (ADR-0008).** Which route to take, not just
   whether: rules-only (classification in `AI_RULES.md`), the full spec catalog
   proposed here, chapter beat sheets first, machine-checked specs, or a
-  MASTER_SPEC index. ADR-0005's ALTERNATIVES lists all of them with what each
+  MASTER_SPEC index. ADR-0008's ALTERNATIVES lists all of them with what each
   costs and buys; several are complementary rather than exclusive. Also open:
   the pipeline's section number, where the proposed numbering conflicts with
   `CONTEXT_MAP.md`.
@@ -153,7 +153,7 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Recent decisions
 
-- ADR-0005 (**Proposed**, not accepted): mechanic design pipeline.
+- ADR-0008 (**Proposed**, not accepted): mechanic design pipeline.
 - ADR-0005: Android is the release target; the web build is the shared bundle
   rather than a separate release, and iOS is kept reachable but not planned.
   Amends ADR-0003's roadmap assumption.

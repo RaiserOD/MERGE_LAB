@@ -232,6 +232,7 @@ function validateQuests(
 ): string[] {
   const errors: string[] = [];
   const seen = new Set<string>();
+  const questIds = new Set(quests.map((quest) => quest.id));
 
   for (const quest of quests) {
     if (seen.has(quest.id)) {
@@ -240,18 +241,29 @@ function validateQuests(
     seen.add(quest.id);
 
     // Filters are optional; when present they must name real content.
-    if (quest.type === "DISCOVER_ITEM" && quest.itemId && !itemIds.has(quest.itemId)) {
-      errors.push(`${quest.id}: itemId "${quest.itemId}" does not exist`);
+    const requirement = quest.requirement;
+    if (requirement.type === "DISCOVER_ITEM" && requirement.itemId) {
+      if (!itemIds.has(requirement.itemId)) {
+        errors.push(`${quest.id}: itemId "${requirement.itemId}" does not exist`);
+      }
     }
-    if (
-      quest.type === "USE_GENERATOR" &&
-      quest.generatorId &&
-      !generatorIds.has(quest.generatorId)
-    ) {
-      errors.push(`${quest.id}: generatorId "${quest.generatorId}" does not exist`);
+    if (requirement.type === "USE_GENERATOR" && requirement.generatorId) {
+      if (!generatorIds.has(requirement.generatorId)) {
+        errors.push(`${quest.id}: generatorId "${requirement.generatorId}" does not exist`);
+      }
     }
-    if (quest.type === "COMPLETE_ORDER" && quest.orderId && !orderIds.has(quest.orderId)) {
-      errors.push(`${quest.id}: orderId "${quest.orderId}" does not exist`);
+    if (requirement.type === "COMPLETE_ORDER" && requirement.orderId) {
+      if (!orderIds.has(requirement.orderId)) {
+        errors.push(`${quest.id}: orderId "${requirement.orderId}" does not exist`);
+      }
+    }
+    if (requirement.type === "COMPLETE_QUEST" && requirement.questId) {
+      if (!questIds.has(requirement.questId)) {
+        errors.push(`${quest.id}: questId "${requirement.questId}" does not exist`);
+      }
+      if (requirement.questId === quest.id) {
+        errors.push(`${quest.id}: COMPLETE_QUEST cannot require itself`);
+      }
     }
   }
 

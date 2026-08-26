@@ -66,6 +66,13 @@ These are not judgment calls. Stop, state the options, and wait:
 Approved decisions in these categories get an ADR in
 `docs/architecture/ADR/` before the code lands.
 
+**Numbering.** Take the next free number by listing the directory on the
+branch you are about to push from, not from memory and not from a number you
+read earlier in the session. Two sessions working in parallel will otherwise
+pick the same one — it has already happened once, and a duplicate number
+makes every "see ADR-NNNN" ambiguous. If your number is taken by the time you
+push, renumber yours: gaps are harmless, collisions are not.
+
 ## Spec/implementation conflicts
 
 If canon and code disagree — say the spec sets a merge cost of 0 and the code
