@@ -1,7 +1,7 @@
 import type { CurrencySave } from "@domain/save/SaveDataV1";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import type { EventBus } from "@systems/events/EventBus";
-import type { Clock } from "@infrastructure/clock/Clock";
+import type { Clock } from "@domain/time/Clock";
 
 export class InsufficientEnergyError extends Error {}
 

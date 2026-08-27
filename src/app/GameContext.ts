@@ -23,7 +23,8 @@ import { TutorialSystem } from "@systems/TutorialSystem";
 import { AnalyticsBridge } from "@application/services/AnalyticsBridge";
 import { MonetizationService } from "@application/services/MonetizationService";
 import { SaveSystem, type KeyValueStorage } from "@infrastructure/persistence/SaveSystem";
-import { SystemClock, type Clock } from "@infrastructure/clock/Clock";
+import type { Clock } from "@domain/time/Clock";
+import { SystemClock } from "@infrastructure/clock/Clock";
 import type { AnalyticsAdapter } from "@infrastructure/analytics/AnalyticsAdapter";
 import { NoopAnalyticsAdapter } from "@infrastructure/analytics/NoopAnalyticsAdapter";
 import type { FeatureFlags } from "@infrastructure/flags/FeatureFlags";
@@ -186,7 +187,45 @@ export class GameContext {
     }
   }
 
-  save(): void {
-    this.saveSystem.save(this.state);
+  /**
+   * Persists the session. Never throws.
+   *
+   * `SaveSystem.save` deliberately does throw — it validates against
+   * SaveDataV1 and calls `storage.setItem`, either of which can fail. But
+   * this is called after every player action from the render path, and a
+   * storage quota error (a full profile, a WebView with storage disabled,
+   * a private-mode browser) must cost the player a warning, not their
+   * session. Callers that care report the outcome; callers that do not
+   * stay crash-free either way.
+   */
+  save(): SaveOutcome {
+    try {
+      this.saveSystem.save(this.state);
+      return { ok: true };
+    } catch (error) {
+      return {
+        ok: false,
+        message: isQuotaExceeded(error)
+          ? "Out of storage space — progress can't be saved"
+          : "Progress could not be saved",
+        error,
+      };
+    }
   }
+}
+
+export type SaveOutcome = { ok: true } | { ok: false; message: string; error: unknown };
+
+/** Browsers disagree on the name and code; match on both rather than one. */
+function isQuotaExceeded(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  const code = (error as { code?: number }).code;
+  return (
+    error.name === "QuotaExceededError" ||
+    error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+    code === 22 ||
+    code === 1014
+  );
 }

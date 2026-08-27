@@ -38,6 +38,22 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        /**
+         * Split the engine from the game. Phaser is ~1.4 MB and changes
+         * only when the dependency is bumped; game code changes every
+         * release. In one chunk every content tweak re-downloads the whole
+         * engine — on Android, the release target, that is the difference
+         * between a small patch and a full first-load every time.
+         */
+        manualChunks: {
+          phaser: ["phaser"],
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@app": "/src/app",
@@ -57,6 +73,19 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "html"],
       include: ["src/domain/**", "src/systems/**", "src/application/**"],
+      /**
+       * A ratchet, not a target. These sit just under the real numbers at
+       * the time of writing (95/94/92/95), so they fail on a genuine
+       * regression without tripping on a file that legitimately dips.
+       * Raise them when the real numbers rise; never lower them to make a
+       * red build green.
+       */
+      thresholds: {
+        statements: 90,
+        branches: 88,
+        functions: 85,
+        lines: 90,
+      },
     },
   },
 });

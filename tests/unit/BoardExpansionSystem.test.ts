@@ -132,3 +132,32 @@ describe("BoardExpansionSystem", () => {
     expect(board.getCell(1, 0).itemId).toBe("item.water");
   });
 });
+
+/**
+ * Regression: ActionBar calls nextLockedSection() on every redraw, so a
+ * board that does not match the section content used to throw from deep
+ * inside a UI refresh — breaking rendering on every interaction rather
+ * than failing once at validation time.
+ */
+describe("BoardExpansionSystem — board smaller than its section content", () => {
+  it("does not throw when a section names cells the board does not have", () => {
+    const sections = new BoardSectionRegistry(testBoardSections);
+    const board = new Board(2, 2); // content expects 3x3
+    const bus = new EventBus<DomainEvent>();
+    const economy = new EconomySystem(
+      { coins: 0, gems: 0, researchPoints: 0, energy: 1, maxEnergy: 1 },
+      bus,
+    );
+    const system = new BoardExpansionSystem(
+      board,
+      sections,
+      economy,
+      { labStage: 9, playerLevel: 9, isChapterUnlocked: () => false },
+      bus,
+    );
+
+    expect(() => system.nextLockedSection()).not.toThrow();
+    expect(() => system.isUnlocked("board.far")).not.toThrow();
+    expect(() => system.unlockedCellCount()).not.toThrow();
+  });
+});

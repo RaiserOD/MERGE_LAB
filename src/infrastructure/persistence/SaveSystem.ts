@@ -1,7 +1,8 @@
 import { GameState } from "@domain/GameState";
 import type { BoardSectionCell } from "@domain/board/BoardSectionDefinition";
 import { SaveDataV1Schema } from "@domain/save/SaveDataV1";
-import type { Clock } from "@infrastructure/clock/Clock";
+import { runtimeConfig } from "@config/runtime";
+import type { Clock } from "@domain/time/Clock";
 
 /** Subset of the DOM Storage interface actually used — lets tests pass an in-memory fake with no DOM. */
 export interface KeyValueStorage {
@@ -77,7 +78,21 @@ export class SaveSystem {
 
     try {
       const parsed = SaveDataV1Schema.safeParse(migrateToLatest(JSON.parse(raw)));
-      return parsed.success ? GameState.fromSaveData(parsed.data) : undefined;
+      if (!parsed.success) {
+        return undefined;
+      }
+
+      // The board is a fixed 7x9 (canon §39), and canon §57 puts its
+      // dimensions behind PM approval. A save is player-controlled input
+      // (ADR-0001), so a save claiming any other grid is rejected rather
+      // than believed: believing it silently breaks the invariant, and
+      // leaves board-section content pointing at cells that do not exist.
+      const { cols, rows } = parsed.data.board;
+      if (cols !== runtimeConfig.boardCols || rows !== runtimeConfig.boardRows) {
+        return undefined;
+      }
+
+      return GameState.fromSaveData(parsed.data);
     } catch {
       return undefined;
     }
