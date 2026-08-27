@@ -1,6 +1,6 @@
 import type { QuestDefinition } from "@domain/quests/QuestDefinition";
 import type { QuestRegistry } from "@domain/quests/QuestRegistry";
-import type { QuestSave } from "@domain/save/SaveDataV1";
+import type { ProgressionSave, QuestSave } from "@domain/save/SaveDataV1";
 import {
   matchesFilter,
   type ProgressionRequirement,
@@ -96,6 +96,53 @@ export class QuestSystem {
     };
   }
 
+  /**
+   * Completes quests whose requirement the player has *already* satisfied,
+   * for cases where the event that would have completed them fired before
+   * the quest existed — a quest added to content after a player had already
+   * upgraded the lab, or already discovered the item it asks for.
+   *
+   * Two deliberate limits:
+   *
+   * 1. **Only requirements answerable from persisted state.** `labStage` and
+   *    `discoveredItemIds` are saved, so UPGRADE_LAB and DISCOVER_ITEM can
+   *    be settled honestly. Nothing persists lifetime merges, coins earned,
+   *    generator uses or energy spent, so MERGE_COUNT, EARN_COINS,
+   *    USE_GENERATOR, SPEND_ENERGY, COMPLETE_ORDER and COMPLETE_QUEST are
+   *    left alone. Crediting those would mean inventing a history.
+   *
+   * 2. **Only quests available to the player.** `isAvailable` is the gate:
+   *    a quest the player never had access to must not pay out for progress
+   *    they made before it was offered. Nothing gates quests today — every
+   *    quest is live from first launch — so the default predicate says yes
+   *    to all of them, which is accurate rather than permissive. When quest
+   *    pools arrive (`ChapterDefinition.questPoolId` is reserved for them),
+   *    they plug in here and the rule starts biting without this code
+   *    changing.
+   *
+   * Returns the ids it completed, so a caller can report them.
+   */
+  reconcile(
+    progression: Pick<ProgressionSave, "labStage" | "discoveredItemIds">,
+    isAvailable: (quest: QuestDefinition) => boolean = () => true,
+  ): string[] {
+    const completed: string[] = [];
+
+    for (const quest of this.registry.all()) {
+      if (this.getState(quest.id).completed || !isAvailable(quest)) {
+        continue;
+      }
+      if (!satisfiedByState(quest.requirement, progression)) {
+        continue;
+      }
+
+      this.complete(quest);
+      completed.push(quest.id);
+    }
+
+    return completed;
+  }
+
   /** Quest state, creating a zeroed entry the first time a quest is touched. */
   getState(questId: string): QuestSave {
     this.registry.requireById(questId);
@@ -171,5 +218,31 @@ export class QuestSystem {
       gemReward: quest.gemReward,
       researchReward: quest.researchReward,
     });
+  }
+}
+
+/**
+ * Whether persisted progression already satisfies a requirement.
+ *
+ * Returns false for every counting requirement — not because they cannot be
+ * satisfied, but because the save holds no lifetime counter to check them
+ * against. A guess here would pay out for progress that may never have
+ * happened.
+ */
+function satisfiedByState(
+  requirement: ProgressionRequirement,
+  progression: Pick<ProgressionSave, "labStage" | "discoveredItemIds">,
+): boolean {
+  switch (requirement.type) {
+    case "UPGRADE_LAB":
+      return progression.labStage >= requirement.labStage;
+
+    case "DISCOVER_ITEM":
+      return requirement.itemId === undefined
+        ? progression.discoveredItemIds.length >= requirement.target
+        : progression.discoveredItemIds.includes(requirement.itemId);
+
+    default:
+      return false;
   }
 }

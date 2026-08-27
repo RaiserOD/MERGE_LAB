@@ -174,6 +174,13 @@ export class GameContext {
       this.tutorialSystem.start(),
       this.analyticsBridge.start(this.isFirstLaunch),
     );
+
+    // Quests only advance on live events, so one whose condition was met
+    // before it existed in content would never complete. Settle those now,
+    // after the subscriptions are attached so the payouts are observed like
+    // any other completion. See QuestSystem.reconcile for what it will and
+    // will not credit.
+    this.questSystem.reconcile(this.state.progression);
   }
 
   /** Call from a browser unload hook — session_ended has no domain event to hang off. */
