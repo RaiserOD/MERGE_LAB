@@ -16,9 +16,19 @@ export const BoardCellSaveSchema = z.object({
   itemId: z.string().min(1).optional(),
 });
 
+/**
+ * Defence in depth against a hand-edited save. The board's real dimensions
+ * come from `runtimeConfig` and are cross-checked on load
+ * (`SaveSystem.load`); this bound only stops a save claiming a grid so large
+ * that merely constructing it hangs the tab before that check can run.
+ * Canon §39 fixes the board at 7x9, so anything near this ceiling is
+ * already nonsense.
+ */
+const MAX_BOARD_DIMENSION = 64;
+
 export const BoardSaveSchema = z.object({
-  cols: z.number().int().positive(),
-  rows: z.number().int().positive(),
+  cols: z.number().int().positive().max(MAX_BOARD_DIMENSION),
+  rows: z.number().int().positive().max(MAX_BOARD_DIMENSION),
   cells: z.array(BoardCellSaveSchema),
 });
 

@@ -4,6 +4,7 @@ import type {
   TutorialStepDefinition,
 } from "@domain/tutorial/TutorialStepDefinition";
 import type { TutorialRegistry } from "@domain/tutorial/TutorialRegistry";
+import { matchesFilter } from "@domain/progression/ProgressionRequirement";
 import type { DomainEvent } from "@systems/events/DomainEvent";
 import type { EventBus } from "@systems/events/EventBus";
 
@@ -103,9 +104,4 @@ export class TutorialSystem {
       this.eventBus.emit({ type: "TUTORIAL_COMPLETED" });
     }
   }
-}
-
-/** An absent filter matches anything; a present one must match exactly. */
-function matchesFilter(filter: string | undefined, actual: string): boolean {
-  return filter === undefined || filter === actual;
 }

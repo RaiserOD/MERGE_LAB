@@ -92,6 +92,19 @@ When adding a save field, add it to `makeProgressionSave()` in
 `tests/fixtures/testProgression.ts` too — tests build progression state
 through that builder so a new field doesn't break every one of them.
 
+## Board dimensions are not player-controlled
+
+`SaveDataV1` carries `board.cols`/`board.rows`, but they are **not** the
+source of truth — `runtimeConfig` is. `SaveSystem.load` rejects any save
+whose grid differs from the configured one, falling back to the backup slot
+and then to a fresh game.
+
+Canon §39 fixes the board at 7x9 and canon §57 puts its dimensions behind PM
+approval; a save is player-controlled input (ADR-0001), so believing it
+would let untrusted data move an approval-gated invariant. The schema also
+caps each dimension, so a nonsense value is rejected before a grid that
+large is ever constructed.
+
 ## Content ID conventions
 
 IDs are namespaced strings and are referenced across content files

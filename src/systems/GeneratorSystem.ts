@@ -1,10 +1,11 @@
+import type { GeneratorDefinition } from "@domain/generators/GeneratorDefinition";
 import type { GeneratorRegistry } from "@domain/generators/GeneratorRegistry";
 import type { GeneratorSave } from "@domain/save/SaveDataV1";
 import type { BoardPosition, DomainEvent } from "@systems/events/DomainEvent";
 import type { EventBus } from "@systems/events/EventBus";
 import type { BoardSystem } from "@systems/BoardSystem";
 import type { EnergySystem } from "@systems/EnergySystem";
-import type { Clock } from "@infrastructure/clock/Clock";
+import type { Clock } from "@domain/time/Clock";
 
 export class GeneratorError extends Error {}
 
@@ -70,11 +71,17 @@ export class GeneratorSystem {
     if (!target) {
       throw new GeneratorError("Board is full — no space for generator output");
     }
+    // Checked before anything is spent so the "validate everything first"
+    // promise above holds literally. The content validator makes this
+    // unreachable, but energy already spent on a throw would be a real loss.
+    if (!this.boardSystem.canSpawn(definition.outputItemId)) {
+      throw new GeneratorError(`${generatorId} produces unknown item "${definition.outputItemId}"`);
+    }
 
     this.energySystem.spend(definition.energyCost);
     state.chargesRemaining -= 1;
     if (state.chargesRemaining <= 0) {
-      state.cooldownEndsAt = this.clock.now() + definition.cooldownSeconds * 1000;
+      state.cooldownEndsAt = cooldownDeadline(definition, this.clock.now());
     }
 
     const position = this.boardSystem.spawnItem(definition.outputItemId, target);
@@ -94,7 +101,19 @@ export class GeneratorSystem {
     };
   }
 
-  /** Refills charges once the cooldown has elapsed. */
+  /**
+   * Refills one cycle's worth of charges once the cooldown has elapsed, and
+   * re-arms the cooldown while the generator is still short of its cap.
+   *
+   * Re-arming is what makes `maxCharges` mean what it says. Clearing the
+   * cooldown after a single cycle capped a generator at `chargesPerCycle`
+   * forever: the cooldown was only ever set again when charges hit zero, so
+   * a 5-charge generator refilling 2 at a time never held more than 2.
+   *
+   * Exactly one cycle is credited per expiry, however long the game was
+   * closed. Crediting elapsed time offline is a separate feature, and
+   * EnergySystem deliberately does not do it either.
+   */
   private refreshCharges(state: GeneratorSave): void {
     if (state.cooldownEndsAt === null || this.clock.now() < state.cooldownEndsAt) {
       return;
@@ -105,6 +124,19 @@ export class GeneratorSystem {
       definition.maxCharges,
       state.chargesRemaining + definition.chargesPerCycle,
     );
-    state.cooldownEndsAt = null;
+    state.cooldownEndsAt =
+      state.chargesRemaining >= definition.maxCharges
+        ? null
+        : cooldownDeadline(definition, this.clock.now());
   }
+}
+
+/**
+ * An absolute cooldown deadline, rounded to a whole millisecond.
+ * `cooldownSeconds` is content data and may be fractional, but
+ * `GeneratorSave.cooldownEndsAt` is an integer in the save schema — an
+ * unrounded deadline would fail validation on the very next write.
+ */
+function cooldownDeadline(definition: GeneratorDefinition, now: number): number {
+  return Math.round(now + definition.cooldownSeconds * 1000);
 }

@@ -49,6 +49,7 @@ Post-B2 work, in the order it landed:
 | Chapter ids stay order-free; `chapterNumber` (ADR-0010)     | `99a84f1` | #27 |
 | Dead slots: optional `sellValue`, `content/events/` removed | `663bd7a` | #28 |
 | Progressive board unlocking, canon §39 (ADR-0011)           | `cf50e41` | #30 |
+| Review hardening: save trust boundary, layering, bundle     | pending   | —   |
 
 ## In progress
 
@@ -103,7 +104,8 @@ stages instead. See ADR-0011.
 
 ## Verification status
 
-- 223 unit + integration tests (Vitest), 34 files — green.
+- 241 unit + integration tests (Vitest), 38 files — green; coverage 95%
+  statements / 94% branches, now gated in CI by a threshold ratchet.
 - 2 Playwright e2e tests — green (functional smoke + screenshot capture).
 - CI: `build`, `e2e`, `android`, `security` — all green on `main`, last
   verified on PR #30. Actions stopped triggering for ~4 hours on 2026-08-26
@@ -147,6 +149,11 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
   area is a first pass. It produces no board pressure (peak use is 4 cells),
   which canon §10 wants as a Level 4 beat — that needs content volume, not a
   smaller starter. Now measurable via `pnpm economy:simulate`.
+- **State is never reconciled on load.** Quests and chapters advance only on
+  live event _transitions_, so content added after a player already passed
+  its condition can never complete. Fixing it means deciding whether such a
+  quest should pay out retroactively — a design call, not a bug fix, so it
+  is reported rather than implemented.
 - **Temporary events.** The save's `EventSave` slot exists and round-trips; no
   system consumes it, and there is no content format. The empty
   `content/events/` directory that used to sit beside it is gone — it implied
@@ -182,6 +189,10 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Recent decisions
 
+- Architecture + code review (two passes, see the PR for the merged
+  findings). Nine items fixed; three left as decisions: load-time state
+  reconciliation, the `A5`/`B2` doc-numbering reconciliation, and canon §4's
+  missing board-unlock requirement type.
 - ADR-0011: the board opens progressively by section, per canon §39, on the
   unchanged 7×9 grid. Cell state stays the only record of what is unlocked —
   no new save field. Measured: identical coins earned, level and peak board

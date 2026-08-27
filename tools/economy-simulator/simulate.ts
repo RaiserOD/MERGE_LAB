@@ -13,7 +13,7 @@
  */
 import { GameContext } from "@app/GameContext";
 import type { KeyValueStorage } from "@infrastructure/persistence/SaveSystem";
-import type { Clock } from "@infrastructure/clock/Clock";
+import type { Clock } from "@domain/time/Clock";
 import type { BoardPosition } from "@systems/events/DomainEvent";
 import { runtimeConfig } from "@config/runtime";
 

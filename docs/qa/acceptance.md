@@ -37,15 +37,30 @@ CI enforces 1–6 (`build`, `e2e`, `android`, `security` jobs). Nothing enforces
 - No renamed ID without accounting for saves that recorded it.
 - New content needs no code change, or the reason is stated.
 
+**Layering**
+
+- Dependencies point inward: domain imports nothing outward, systems import
+  domain only, infrastructure implements ports rather than importing systems.
+  All of it is enforced by `no-restricted-imports` in `eslint.config.js` —
+  the Phaser edge is no longer the only one that is machine-checked.
+- A port the domain needs (a `Clock`, a storage interface) is declared in
+  `src/domain/` and implemented outside it.
+
 **Save schema**
 
 - Optional-with-default only while v1 is unreleased.
+- Persisting a value the schema constrains? Check the write path can only
+  produce values it accepts — a fractional timestamp against an `.int()`
+  field fails on the next save, not on the change that introduced it.
 - Anything else means `SaveDataV2` + a migration + a test loading a real v1
   payload.
 
 **Presentation**
 
 - No gameplay logic in scenes; they render and dispatch.
+- Nothing in the render path may throw on a recoverable failure.
+  `GameContext.save()` returns an outcome rather than throwing, and the
+  scene surfaces a failure through the status line.
 - E2E smoke passes with **zero console errors**.
 - Board layout constants live in `src/presentation/layout.ts` and are
   imported by both `BoardView` and the e2e test — don't reintroduce copies.

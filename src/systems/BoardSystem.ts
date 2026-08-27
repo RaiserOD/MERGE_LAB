@@ -25,6 +25,11 @@ export class BoardSystem {
     return undefined;
   }
 
+  /** Whether `itemId` is a real item — lets callers validate before spending anything. */
+  canSpawn(itemId: string): boolean {
+    return this.registry.has(itemId);
+  }
+
   spawnItem(itemId: string, at?: BoardPosition): BoardPosition {
     if (!this.registry.has(itemId)) {
       throw new Error(`Cannot spawn unknown item: ${itemId}`);

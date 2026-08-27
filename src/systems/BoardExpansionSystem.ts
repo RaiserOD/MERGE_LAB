@@ -1,5 +1,8 @@
 import type { Board } from "@domain/board/Board";
-import type { BoardSectionDefinition } from "@domain/board/BoardSectionDefinition";
+import type {
+  BoardSectionCell,
+  BoardSectionDefinition,
+} from "@domain/board/BoardSectionDefinition";
 import type { BoardSectionRegistry } from "@domain/board/BoardSectionRegistry";
 import { evaluateUnlockConditions, type UnlockContext } from "@domain/progression/UnlockCondition";
 import type { DomainEvent } from "@systems/events/DomainEvent";
@@ -27,9 +30,27 @@ export class BoardExpansionSystem {
     private readonly eventBus: EventBus<DomainEvent>,
   ) {}
 
+  /**
+   * Section cells that actually exist on this board.
+   *
+   * The content validator enforces that sections partition the configured
+   * grid exactly, so this filter should never drop anything. It exists
+   * because the alternative is throwing from `getCell` deep inside a UI
+   * refresh: `ActionBar` calls `nextLockedSection()` on every redraw, so a
+   * board/content mismatch would break rendering on every interaction
+   * rather than failing once, loudly, at validation time.
+   */
+  private cellsOnBoard(section: BoardSectionDefinition): BoardSectionCell[] {
+    return section.cells.filter((cell) => this.board.isValidCoordinate(cell.x, cell.y));
+  }
+
   isUnlocked(sectionId: string): boolean {
     const section = this.sections.requireById(sectionId);
-    return section.cells.every((cell) => this.board.getCell(cell.x, cell.y).state !== "LOCKED");
+    const cells = this.cellsOnBoard(section);
+
+    // A section with no cells on this board cannot be "not yet unlocked" —
+    // treating it as unlocked keeps it out of the player's way.
+    return cells.every((cell) => this.board.getCell(cell.x, cell.y).state !== "LOCKED");
   }
 
   /** Conditions only — affordability is reported separately so the UI can show a priced button. */
@@ -76,7 +97,7 @@ export class BoardExpansionSystem {
     this.economySystem.spend("coins", section.unlockCost);
 
     let unlockedCells = 0;
-    for (const cell of section.cells) {
+    for (const cell of this.cellsOnBoard(section)) {
       const target = this.board.getCell(cell.x, cell.y);
       if (target.state === "LOCKED") {
         target.state = "EMPTY";

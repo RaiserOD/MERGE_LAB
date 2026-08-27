@@ -1,4 +1,4 @@
-import type { Clock } from "@infrastructure/clock/Clock";
+import type { Clock } from "@domain/time/Clock";
 
 export class FixedClock implements Clock {
   constructor(private time: number = 0) {}

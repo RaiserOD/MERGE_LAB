@@ -90,11 +90,11 @@ export class GameScene extends Phaser.Scene {
     this.sceneUnsubscribes.push(
       // Persist the "seen" flag so a one-shot intro survives a reload.
       this.context.eventBus.on("DIALOGUE_COMPLETED", () => {
-        this.context.save();
+        this.persist();
       }),
       // Each tutorial step can introduce itself through the Professor.
       this.context.eventBus.on("TUTORIAL_STEP_COMPLETED", () => {
-        this.context.save();
+        this.persist();
         this.playCurrentTutorialDialogue();
       }),
     );
@@ -267,7 +267,19 @@ export class GameScene extends Phaser.Scene {
     this.boardView.render();
     this.hud.refresh();
     this.actionBar.refresh();
-    this.context.save();
+    this.persist();
+  }
+
+  /**
+   * Saves, and surfaces a failure instead of swallowing it. The status line
+   * is already how every other recoverable failure in this scene reaches
+   * the player, so a failed write reads the same way as a rejected merge.
+   */
+  private persist(): void {
+    const outcome = this.context.save();
+    if (!outcome.ok) {
+      this.hud.setStatus(outcome.message);
+    }
   }
 
   private readonly teardown = (): void => {

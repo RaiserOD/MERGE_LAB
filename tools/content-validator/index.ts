@@ -236,7 +236,7 @@ function validateDialogues(dialogues: DialogueDefinition[]): string[] {
   return errors;
 }
 
-function validateQuests(
+export function validateQuests(
   quests: QuestDefinition[],
   itemIds: Set<string>,
   generatorIds: Set<string>,
@@ -277,6 +277,53 @@ function validateQuests(
         errors.push(`${quest.id}: COMPLETE_QUEST cannot require itself`);
       }
     }
+  }
+
+  errors.push(...findQuestCycles(quests));
+
+  return errors;
+}
+
+/**
+ * COMPLETE_QUEST chains must not form a cycle. A -> B -> A is not a crash
+ * (QuestSystem marks a quest completed before emitting, so re-entry
+ * terminates) but neither quest can ever complete, because each is waiting
+ * on the other. Chapters have had this check since B5; quests only checked
+ * direct self-reference, which missed every cycle longer than one.
+ */
+function findQuestCycles(quests: QuestDefinition[]): string[] {
+  const dependencies = new Map<string, string[]>();
+  for (const quest of quests) {
+    const requirement = quest.requirement;
+    dependencies.set(
+      quest.id,
+      requirement.type === "COMPLETE_QUEST" && requirement.questId ? [requirement.questId] : [],
+    );
+  }
+
+  const errors: string[] = [];
+  const visiting = new Set<string>();
+  const done = new Set<string>();
+
+  const visit = (questId: string, path: string[]): void => {
+    if (done.has(questId)) {
+      return;
+    }
+    if (visiting.has(questId)) {
+      errors.push(`Circular quest requirement: ${[...path, questId].join(" -> ")}`);
+      return;
+    }
+
+    visiting.add(questId);
+    for (const dependency of dependencies.get(questId) ?? []) {
+      visit(dependency, [...path, questId]);
+    }
+    visiting.delete(questId);
+    done.add(questId);
+  };
+
+  for (const questId of dependencies.keys()) {
+    visit(questId, []);
   }
 
   return errors;
