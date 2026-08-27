@@ -1,0 +1,37 @@
+{
+  "id": "board.robotics_bay",
+  "sectionNumber": 6,
+  "title": "Robotics Bay",
+  "cells": [
+    {
+      "x": 0,
+      "y": 6
+    },
+    {
+      "x": 1,
+      "y": 6
+    },
+    {
+      "x": 2,
+      "y": 6
+    },
+    {
+      "x": 3,
+      "y": 6
+    },
+    {
+      "x": 4,
+      "y": 6
+    },
+    {
+      "x": 5,
+      "y": 6
+    },
+    {
+      "x": 6,
+      "y": 6
+    }
+  ],
+  "unlockConditions": ["labStage>=4"],
+  "unlockCost": 260
+}

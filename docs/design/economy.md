@@ -107,25 +107,101 @@ The chain is rigid: 1 energy/min ÷ 2 energy per generator use = 0.5 Water/min
 → 0.25 Steam/min → 0.25 × 25 coins. Every coin number in the game is a
 multiple of the energy regen rate.
 
-## Three findings the simulation surfaced
+## The balance pass (measured)
 
-These are reported, not fixed — balance is a PM decision (see the rules
-below), and each is a real property of the current content, not a simulator
-artefact.
+The three findings below were fixed by tuning content only. Every number was
+derived from the energy budget and then verified with `pnpm economy:simulate`
+— the before/after is in the PR that landed them.
 
-1. **The 500-coin stage-3 gate does nothing.** A new player starts with a
-   full 100-energy bar, which converts to ~625 coins — so stages 2 and 3 both
-   fall inside the first few minutes, before the tutorial has finished. Only
-   stage 4 onwards is actually paced by anything.
-2. **`order.water_delivery` is dead content.** It pays 10 coins for 2 Water;
-   merging those same 2 Water into 1 Steam and delivering `order.first_sample`
-   pays 25. No rational player ever delivers it, and the simulation completed
-   it zero times across every run. It is arithmetic, not strategy — the
-   dominated order can never be worth taking while those numbers hold.
-3. **The 7×9 board is 94% idle.** Peak occupancy is 4 of 63 cells. Board size
-   is not a constraint on anything at this content volume, so any design that
-   assumes board pressure (a merge-space squeeze, a storage upgrade) currently
-   has nothing to push against.
+### The constant that shapes everything
+
+The opening energy bar is 100, and regen is 1/minute. **The bar is worth 100
+minutes of income.** Anything costing less than one bar is therefore cleared
+before regen matters at all — no amount of coin tuning changes that, because
+the ratio comes from the energy rules, which are PM-approval territory.
+
+So lab stages are priced in _bars_, not in round numbers:
+
+| Stage | Cost | Bars | Reached (optimal play) |
+| ----- | ---- | ---- | ---------------------- |
+| 2     | 50   | 0.08 | immediately            |
+| 3     | 750  | 1.20 | 0.5 h                  |
+| 4     | 1450 | 2.32 | 5.3 h                  |
+| 5     | 2400 | 3.84 | 12.4 h                 |
+
+**Stage 2 is deliberately not a pacing gate.** It is the tutorial's "restore
+the next wing" beat, and a minimal tutorial run yields 65 coins — 25 from the
+first order plus 40 from the discovery quest. Price it above that and the
+tutorial cannot finish, which is what the earlier rebalance to 25 was
+avoiding. 50 keeps the beat while doubling its weight. Stage 3 is where
+pacing actually starts, and it moved from 6 minutes to 30.
+
+### Orders: the merge has to pay
+
+`order.water_delivery` was strictly dominated at 2.5 coins/energy against
+`order.first_sample`'s 6.25. The first attempt at a fix made it worse in a
+way worth recording, because the arithmetic is not obvious:
+
+> Dropping it to **1 water for 12 coins** made two raw waters worth 24 while
+> merging them into steam paid 25. A merge earned **one coin** for an extra
+> action, so the simulation stopped merging almost entirely — 384 merges fell
+> to 18, and 733 waters were delivered raw. The core loop died on a
+> one-coin margin.
+
+The rule that came out of it: **a merge must pay a clear premium over
+delivering the same items raw.** Current numbers:
+
+| Order                  | Cost    | Coins | Coins/energy |
+| ---------------------- | ------- | ----- | ------------ |
+| `order.water_delivery` | 2 water | 16    | 4.00         |
+| `order.first_sample`   | 1 steam | 25    | 6.25         |
+
+Two waters raw pay 16; merged and delivered they pay 25 — a **+56% merge
+premium**. `water_delivery` is the fallback when a pair is inconvenient to
+merge, not a competitor. It is still rarely optimal, and that is honest:
+with one merge chain and two orders consuming the same resource, one of them
+is always second-best. That is a content-volume limit, not an arithmetic bug.
+
+### Quests
+
+Quests were paying about 2 coins per energy they asked for while orders paid
+6.25, so a quest read as a rounding error next to the delivery it
+interrupted. They now total 115 coins against a 50-coin stage 2, making the
+opening quests a real assist rather than decoration.
+
+### Board: cells are computed, not guessed
+
+The starter area is **14 cells**, derived from what the content actually
+needs to avoid blocking:
+
+```text
+ 3  one full generator cycle (chargesPerCycle)
+ 3  a second cycle before merging is forced
+ 2  one item held per chain level (water, steam)
+ 2  staging the largest order requirement
+ 4  headroom for two more chain levels
+--
+14
+```
+
+Eight sections follow canon §39's eight unlock steps, keyed to the gates that
+exist (lab stage, player level) since campaign levels do not — see ADR-0011
+for why that mapping is stated rather than silent.
+
+| Section         | Cells | Gate            | Cost | Opened |
+| --------------- | ----- | --------------- | ---- | ------ |
+| Starter Bench   | 14    | —               | 0    | start  |
+| Power Console   | 7     | playerLevel ≥ 2 | 40   | 5 min  |
+| The Locked Room | 7     | labStage ≥ 2    | 80   | 5 min  |
+| Chemistry Bay   | 7     | labStage ≥ 3    | 140  | 53 min |
+| Biology Bay     | 7     | playerLevel ≥ 4 | 200  | 4.1 h  |
+| Robotics Bay    | 7     | labStage ≥ 4    | 260  | 6.0 h  |
+| Advanced Bay    | 7     | playerLevel ≥ 6 | 320  | 13.2 h |
+| HELIX Vault     | 7     | labStage ≥ 5    | 400  | 14.3 h |
+
+Peak occupancy is still 4 cells and `boardFull` blocks are still zero, so the
+board never binds — as decided, board pressure waits for content volume
+rather than being manufactured by shrinking the starter.
 
 ## Rules for changing the economy
 

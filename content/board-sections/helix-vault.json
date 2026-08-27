@@ -1,0 +1,37 @@
+{
+  "id": "board.helix_vault",
+  "sectionNumber": 8,
+  "title": "HELIX Vault",
+  "cells": [
+    {
+      "x": 0,
+      "y": 8
+    },
+    {
+      "x": 1,
+      "y": 8
+    },
+    {
+      "x": 2,
+      "y": 8
+    },
+    {
+      "x": 3,
+      "y": 8
+    },
+    {
+      "x": 4,
+      "y": 8
+    },
+    {
+      "x": 5,
+      "y": 8
+    },
+    {
+      "x": 6,
+      "y": 8
+    }
+  ],
+  "unlockConditions": ["labStage>=5"],
+  "unlockCost": 400
+}
