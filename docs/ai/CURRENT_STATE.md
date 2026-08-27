@@ -50,6 +50,7 @@ Post-B2 work, in the order it landed:
 | Dead slots: optional `sellValue`, `content/events/` removed | `663bd7a` | #28 |
 | Progressive board unlocking, canon §39 (ADR-0011)           | `cf50e41` | #30 |
 | Review hardening: save trust boundary, layering, bundle     | `63ce722` | #32 |
+| Quest reconciliation on load (PM rule: only if available)   | pending   | —   |
 
 ## In progress
 
@@ -150,11 +151,15 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
   area is a first pass. It produces no board pressure (peak use is 4 cells),
   which canon §10 wants as a Level 4 beat — that needs content volume, not a
   smaller starter. Now measurable via `pnpm economy:simulate`.
-- **State is never reconciled on load.** Quests and chapters advance only on
-  live event _transitions_, so content added after a player already passed
-  its condition can never complete. Fixing it means deciding whether such a
-  quest should pay out retroactively — a design call, not a bug fix, so it
-  is reported rather than implemented.
+- **Chapters are still not reconciled on load.** Quests now are
+  (`QuestSystem.reconcile`), but chapter unlocks still depend on an explicit
+  `unlockEligibleChapters()` call at specific sites rather than a systematic
+  pass. Same class of hazard, smaller blast radius.
+- **Quest availability has no mechanism.** `reconcile` takes an `isAvailable`
+  predicate so the PM's rule — progress made before a quest was offered must
+  not pay out — is expressible, but nothing gates quests today, so the
+  predicate is a seam rather than a filter. It starts biting when quest pools
+  land (`ChapterDefinition.questPoolId` is reserved for them).
 - **Temporary events.** The save's `EventSave` slot exists and round-trips; no
   system consumes it, and there is no content format. The empty
   `content/events/` directory that used to sit beside it is gone — it implied
