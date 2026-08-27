@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "demo": "vite build --config vite.demo.config.ts && tsx --tsconfig tsconfig.node.json tools/demo-build/inline.ts",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",

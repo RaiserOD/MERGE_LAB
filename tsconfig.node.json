@@ -10,5 +10,12 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["vite.config.ts", "eslint.config.js", "playwright.config.ts", "capacitor.config.ts"]
+  "include": [
+    "vite.config.ts",
+    "vite.demo.config.ts",
+    "eslint.config.js",
+    "playwright.config.ts",
+    "capacitor.config.ts",
+    "tools/demo-build/**/*.ts"
+  ]
 }
