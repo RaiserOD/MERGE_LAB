@@ -8,7 +8,7 @@ import { FixedClock } from "../fixtures/FixedClock";
  * Builds a real GameContext — real content via ContentLoader, real systems,
  * only storage/clock/analytics swapped for test doubles — and drives the
  * actual tutorial loop through it, asserting the exact analytics sequence
- * A24 promises. This exercises the full composition root, not a mock of it.
+ * canon §48 requires. This exercises the full composition root, not a mock of it.
  */
 describe("Analytics through a real session (integration)", () => {
   it("tracks the full first-session sequence in order", () => {

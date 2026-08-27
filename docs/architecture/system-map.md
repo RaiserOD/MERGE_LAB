@@ -87,12 +87,12 @@ Emitters: `BoardSystem`, `BoardExpansionSystem`, `MergeSystem`,
 
 Observers, attached by `GameContext.start()`:
 
-| Observer            | Reacts to                                                | Does                                       |
-| ------------------- | -------------------------------------------------------- | ------------------------------------------ |
-| `ProgressionSystem` | merges, order completions                                | records discoveries, grants XP             |
-| `QuestSystem`       | discoveries, orders, coin gains, generator use           | advances and completes quests              |
-| `TutorialSystem`    | merges, discoveries, generator use, orders, lab upgrades | gates tutorial steps                       |
-| `AnalyticsBridge`   | most of the union                                        | translates to the A24 analytics vocabulary |
+| Observer            | Reacts to                                                | Does                                           |
+| ------------------- | -------------------------------------------------------- | ---------------------------------------------- |
+| `ProgressionSystem` | merges, order completions                                | records discoveries, grants XP                 |
+| `QuestSystem`       | discoveries, orders, coin gains, generator use           | advances and completes quests                  |
+| `TutorialSystem`    | merges, discoveries, generator use, orders, lab upgrades | gates tutorial steps                           |
+| `AnalyticsBridge`   | most of the union                                        | translates to canon §48's analytics vocabulary |
 
 This is why analytics, quests and tutorial add no calls to gameplay code: they
 observe. Adding a new cross-cutting concern should follow the same shape.

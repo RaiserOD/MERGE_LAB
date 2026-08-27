@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Tutorial steps (ML-027) walking the player through the A3 "first 60
+ * Tutorial steps (ML-027) walking the player through canon §7's "first 60
  * seconds": merge, discover, fulfil an order, restore the lab.
  *
  * A step completes when the domain event it watches fires — the tutorial

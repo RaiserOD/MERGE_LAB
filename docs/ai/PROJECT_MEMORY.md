@@ -86,13 +86,13 @@ When two sources disagree, the higher one wins — and the disagreement gets
 5. source code
 6. AI assumptions (lowest — never a basis for a design decision)
 
-> **`docs/MASTER_SPEC.md` is now in the repo** — "MERGE LAB — 20-LEVEL
-> CAMPAIGN CANON", v1.0. It is numbered by level (§0–§27), **not** with the
-> A5/A16/B2 scheme that older doc cross-references and source comments use.
-> Those references came from an earlier spec revision and do not resolve
-> against this document; treat one as a pointer to a topic, not a location,
-> until they are reconciled. The campaign it defines is largely unbuilt —
-> see `CURRENT_STATE.md`.
+> **`docs/MASTER_SPEC.md`** is "MERGE LAB — 20-LEVEL CAMPAIGN CANON", v1.0,
+> numbered §1–§60. Docs and source now cite it by section; the older
+> A5/A16/B2 scheme is gone. Canon specifies the **campaign** — it is silent
+> on item and merge rules, generators, energy, the currency model, the save
+> schema, monetization and UI, and `CONTEXT_MAP.md` says so per topic rather
+> than citing a section that does not discuss it. The campaign canon defines
+> is largely unbuilt — see `CURRENT_STATE.md`.
 
 ## Where to go next
 

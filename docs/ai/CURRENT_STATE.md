@@ -10,7 +10,9 @@ trust it.
 
 ## Completed
 
-The full B2 order, in the order the spec sets:
+The full B2 order, in the order the spec set. (`B2` is the historical name
+of that build sequence, from the spec revision that preceded canon — it is
+a label for work already done, not a citation you can resolve.)
 
 | B2 steps | What landed                                                         | Commit    | PR  |
 | -------- | ------------------------------------------------------------------- | --------- | --- |
@@ -24,7 +26,7 @@ The full B2 order, in the order the spec sets:
 | 14       | Narrative and dialogue                                              | `82af7c6` | #7  |
 | 15       | Tutorial                                                            | `37e35b4` | #8  |
 | —        | Lab upgrade button, first-repair rebalance                          | `34224ac` | #9  |
-| 16       | Analytics — `AnalyticsBridge`, A24 vocabulary                       | `e7c7af4` | #10 |
+| 16       | Analytics — `AnalyticsBridge`, canon §48 vocabulary                 | `e7c7af4` | #10 |
 | 17       | Monetization adapters — ads, billing, feature flags                 | `d6fcf04` | #12 |
 | 18a      | Dev-only QA debug panel                                             | `84e72d4` | #13 |
 | 18b      | Playwright e2e + screenshot capture                                 | `cfc7ecb` | #14 |
@@ -133,7 +135,7 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
   costs and buys; several are complementary rather than exclusive. Also open:
   the pipeline's section number, where the proposed numbering conflicts with
   `CONTEXT_MAP.md`.
-- **Analytics vendor.** The A24 event vocabulary is implemented; nothing is
+- **Analytics vendor.** Canon §48's event vocabulary is implemented; nothing is
   sent anywhere. Picking a vendor is a data-processing decision.
 - **Ad network and billing vendor**, plus the rewards and IAP catalog.
   `MonetizationService` deliberately does not decide what a reward grants.
@@ -179,11 +181,12 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
   now decided (ADR-0007, ADR-0009, ADR-0010); the other three still need a PM
   decision before building. A 10-step build order is proposed at the end of
   that document.
-- The canon is numbered §0–§60 by level and topic; the `A5`/`A16`/`B2`
-  references in the docs and in source comments came from an earlier spec
-  revision and do not resolve against it. Reconciling them is unfinished.
-  Canon §57's approval list also supersedes — and is stricter than — the
-  stop-list in `AI_RULES.md`.
+- ~~The `A5`/`A16`/`B2` references do not resolve against canon~~ — fixed:
+  docs and source cite canon by section, `CONTEXT_MAP.md` carries a
+  topic → section table, and every topic canon does not cover is marked
+  "not covered" rather than given a false citation. Canon §57's approval
+  list still supersedes — and is stricter than — the stop-list in
+  `AI_RULES.md`.
 - `tests/property/` exists but is empty — no property-based tests despite the
   deterministic-state invariant being a natural fit.
 - `tools/save-migrator/` is an empty placeholder. It matters as soon as a
@@ -196,9 +199,9 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 ## Recent decisions
 
 - Architecture + code review (two passes, see the PR for the merged
-  findings). Nine items fixed; three left as decisions: load-time state
-  reconciliation, the `A5`/`B2` doc-numbering reconciliation, and canon §4's
-  missing board-unlock requirement type.
+  findings). Nine items fixed. Of the three left as decisions, two are now
+  settled — quest reconciliation on load, and the canon renumbering — leaving
+  canon §4's missing board-unlock requirement type.
 - ADR-0011: the board opens progressively by section, per canon §39, on the
   unchanged 7×9 grid. Cell state stays the only record of what is unlocked —
   no new save field. Measured: identical coins earned, level and peak board

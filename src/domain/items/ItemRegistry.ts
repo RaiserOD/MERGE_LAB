@@ -1,7 +1,7 @@
 import type { ItemDefinition } from "@domain/items/ItemDefinition";
 
 /**
- * In-memory lookup over validated ItemDefinitions (B5: unique IDs, resolvable
+ * In-memory lookup over validated ItemDefinitions (unique IDs, resolvable
  * resultItemId references). Construction throws on a broken content set —
  * content-validator catches this at build time, but the registry re-checks
  * at runtime so a corrupted/mismatched content bundle fails loudly instead

@@ -4,7 +4,7 @@ import type { EventBus } from "@systems/events/EventBus";
 import type { AnalyticsAdapter } from "@infrastructure/analytics/AnalyticsAdapter";
 
 /**
- * Translates domain events into the fixed A24 analytics vocabulary. This is
+ * Translates domain events into the analytics vocabulary canon §48 requires. This is
  * the only place that calls `AnalyticsAdapter.track` — every gameplay
  * system stays exactly as unaware of analytics as it is of quests or the
  * tutorial — no direct analytics calls from domain/systems.

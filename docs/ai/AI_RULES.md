@@ -1,7 +1,7 @@
 # AI RULES
 
 Working rules for any AI agent changing this repository. These are not new
-policy — they collect what the master spec (A28 AI development protocol, B9
+policy — they collect what canon (§56 AI implementation rule, §57
 human PM control) and the ADRs already require, in one place an agent can act
 on.
 

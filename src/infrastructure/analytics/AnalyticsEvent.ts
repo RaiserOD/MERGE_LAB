@@ -1,7 +1,7 @@
 /**
- * The fixed analytics vocabulary from A24. Payloads carry only gameplay
+ * The analytics vocabulary canon §48 requires. Payloads carry only gameplay
  * identifiers (item/generator/order/quest/chapter ids) — never anything
- * that could identify a person, per A24's "no sensitive personal data".
+ * that could identify a person, per the "no sensitive personal data" rule.
  *
  * rewarded_ad_started/completed and iap_started/completed are produced by
  * MonetizationService, gated behind their feature flags — both flags
