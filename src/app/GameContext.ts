@@ -172,6 +172,7 @@ export class GameContext {
       this.progressionSystem.start(),
       this.questSystem.start(),
       this.tutorialSystem.start(),
+      this.boardExpansionSystem.start(),
       this.analyticsBridge.start(this.isFirstLaunch),
     );
 

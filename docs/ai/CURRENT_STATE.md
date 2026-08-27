@@ -53,6 +53,7 @@ Post-B2 work, in the order it landed:
 | Progressive board unlocking, canon §39 (ADR-0011)           | `cf50e41` | #30 |
 | Review hardening: save trust boundary, layering, bundle     | `63ce722` | #32 |
 | Quest reconciliation on load (PM rule: only if available)   | pending   | —   |
+| Board unlock is a grant, not a requirement (ADR-0012)       | pending   | —   |
 
 ## In progress
 
@@ -69,11 +70,12 @@ on human decisions". The exceptions, which an agent can pick up unblocked, are
 under "Known gaps and debt": property-based tests, and growing content
 volume within the mechanics that already exist.
 
-**Three balance findings are waiting on a PM decision** (measured, see
+**Two balance findings are waiting on a PM decision** (measured, see
 `docs/design/economy.md`): the 500-coin stage-3 gate is cleared by the
-starting energy bar before the tutorial ends; `order.water_delivery` is
-strictly dominated by `order.first_sample` and is never worth delivering; and
-the 7×9 board peaks at 4 of 63 cells in use.
+starting energy bar before the tutorial ends, and `order.water_delivery` is
+strictly dominated by `order.first_sample` and is never worth delivering. The
+third — the board being 94% idle — is **decided**: board pressure waits for
+content volume, and the section costs stay as they are.
 
 **The integrity audit is closed.** All six findings landed (PRs #26, #27,
 #28 and progressive board unlocking). The board now opens a section at a
@@ -198,10 +200,13 @@ Each needs an ADR before implementation, per `AI_RULES.md`:
 
 ## Recent decisions
 
-- Architecture + code review (two passes, see the PR for the merged
-  findings). Nine items fixed. Of the three left as decisions, two are now
-  settled — quest reconciliation on load, and the canon renumbering — leaving
-  canon §4's missing board-unlock requirement type.
+- ADR-0012: unlocking a board section is a grant from progression, then a
+  purchase — not a level requirement. Canon §4 stays closed; the correction
+  canon needs is in §10, which duplicates the grant canon §9 already makes at
+  Level 3. Closes the last conflict the reviews left open.
+- Architecture + code review (two passes). Nine items fixed, and all three
+  items left as decisions are now settled: quest reconciliation on load, the
+  canon renumbering, and canon §4's board-unlock gap.
 - ADR-0011: the board opens progressively by section, per canon §39, on the
   unchanged 7×9 grid. Cell state stays the only record of what is unlocked —
   no new save field. Measured: identical coins earned, level and peak board

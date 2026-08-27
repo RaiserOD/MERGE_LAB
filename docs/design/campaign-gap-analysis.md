@@ -229,8 +229,11 @@ and repair, and nothing advances a player level on requirements today.
 Per `AI_RULES.md` these are reported, not resolved. Four of the six have
 since been decided and carry an ADR; they are struck through rather than
 deleted, so the record of what was asked stays readable. ADR-0011 opened a
-_new_ one in the process — canon §4's requirement union cannot express canon
-§10's own "UNLOCK first board section" action.
+_new_ one in the process — canon §4's requirement union could not express
+canon §10's own "UNLOCK first board section" action. That one is now closed
+too, by ADR-0012: the action is a grant, not a requirement, so §4 stays
+closed and §10 is what needs amending. Canon §9 already grants the first
+board cells as a Level 3 unlock, which is the evidence the ruling rests on.
 
 1. ~~**XP from merges.**~~ Resolved by ADR-0009: canon is right, merges award
    the result item's `xpValue`. Measured at +40% total XP over a 15-hour

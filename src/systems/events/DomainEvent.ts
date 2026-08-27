@@ -46,6 +46,14 @@ export type DomainEvent =
   | { type: "PLAYER_LEVELED"; newLevel: number; totalXp: number }
   | { type: "LAB_UPGRADED"; newStage: number; title: string; coinCost: number }
   | { type: "CHAPTER_UNLOCKED"; chapterId: string }
+  /**
+   * The campaign has *offered* a section: its conditions now hold, so it can
+   * be bought. Canon §3 puts "UNLOCK LEVEL CONTENT" and "EMIT
+   * CONTENT_UNLOCKED" in the level-completion flow — this is that step for
+   * board sections. Distinct from BOARD_SECTION_UNLOCKED, which is the
+   * player paying for it (ADR-0012).
+   */
+  | { type: "BOARD_SECTION_OFFERED"; sectionId: string; title: string; coinCost: number }
   | {
       type: "BOARD_SECTION_UNLOCKED";
       sectionId: string;

@@ -161,3 +161,99 @@ describe("BoardExpansionSystem — board smaller than its section content", () =
     expect(() => system.unlockedCellCount()).not.toThrow();
   });
 });
+
+/**
+ * ADR-0012: the campaign *offers* a section (a grant, from progressing),
+ * and the player then *buys* it. The offer is the step canon §3 calls
+ * "UNLOCK LEVEL CONTENT / EMIT CONTENT_UNLOCKED", and canon §9 grants the
+ * first board cells as a Level 3 unlock rather than a Level 4 action.
+ */
+describe("BoardExpansionSystem — offers are announced, not requested", () => {
+  function harness() {
+    const sections = new BoardSectionRegistry(testBoardSections);
+    const board = new Board(
+      3,
+      3,
+      sections.initiallyLockedCells().map((cell) => ({ ...cell, state: "LOCKED" as const })),
+    );
+    const bus = new EventBus<DomainEvent>();
+    const currencies = { coins: 0, gems: 0, researchPoints: 0, energy: 1, maxEnergy: 1 };
+    const economy = new EconomySystem(currencies, bus);
+    const progress = { labStage: 1, playerLevel: 1 };
+    const system = new BoardExpansionSystem(
+      board,
+      sections,
+      economy,
+      {
+        get labStage() {
+          return progress.labStage;
+        },
+        get playerLevel() {
+          return progress.playerLevel;
+        },
+        isChapterUnlocked: () => false,
+      },
+      bus,
+    );
+
+    const offers: string[] = [];
+    bus.on("BOARD_SECTION_OFFERED", (event) => offers.push(event.sectionId));
+    return { bus, system, progress, offers, currencies };
+  }
+
+  it("says nothing at start for sections already offered", () => {
+    const { system, offers } = harness();
+
+    system.start();
+
+    // board.starter is ungated, so it was offered before the player arrived.
+    expect(offers).toEqual([]);
+  });
+
+  it("announces a section the moment progression offers it", () => {
+    const { bus, system, progress, offers } = harness();
+    system.start();
+
+    progress.labStage = 2;
+    bus.emit({ type: "LAB_UPGRADED", newStage: 2, title: "Chemistry Lab", coinCost: 0 });
+
+    expect(offers).toEqual(["board.middle"]);
+  });
+
+  it("announces each section once, however often progression moves", () => {
+    const { bus, system, progress, offers } = harness();
+    system.start();
+
+    progress.labStage = 2;
+    bus.emit({ type: "LAB_UPGRADED", newStage: 2, title: "Chemistry Lab", coinCost: 0 });
+    bus.emit({ type: "LAB_UPGRADED", newStage: 3, title: "Biology Lab", coinCost: 0 });
+    bus.emit({ type: "PLAYER_LEVELED", newLevel: 2, totalXp: 100 });
+
+    expect(offers).toEqual(["board.middle"]);
+  });
+
+  it("does not announce a section the player already bought", () => {
+    const { bus, system, progress, offers, currencies } = harness();
+    system.start();
+
+    progress.labStage = 2;
+    currencies.coins = 100;
+    system.unlockSection("board.middle");
+    offers.length = 0;
+
+    bus.emit({ type: "PLAYER_LEVELED", newLevel: 3, totalXp: 300 });
+
+    expect(offers).toEqual([]);
+  });
+
+  it("stops announcing once unsubscribed", () => {
+    const { bus, system, progress, offers } = harness();
+    const stop = system.start();
+    stop();
+
+    progress.labStage = 2;
+    bus.emit({ type: "LAB_UPGRADED", newStage: 2, title: "Chemistry Lab", coinCost: 0 });
+
+    expect(offers).toEqual([]);
+  });
+});
