@@ -5,7 +5,7 @@ journal, not documentation — it goes stale the moment work lands without
 updating it, and a stale entry here is worse than no entry, because agents
 trust it.
 
-**Updated:** 2026-08-26
+**Updated:** 2026-08-27
 **Stage:** B2 implementation order complete; no stage in flight
 
 ## Completed
@@ -49,7 +49,7 @@ Post-B2 work, in the order it landed:
 | Chapter ids stay order-free; `chapterNumber` (ADR-0010)     | `99a84f1` | #27 |
 | Dead slots: optional `sellValue`, `content/events/` removed | `663bd7a` | #28 |
 | Progressive board unlocking, canon §39 (ADR-0011)           | `cf50e41` | #30 |
-| Review hardening: save trust boundary, layering, bundle     | pending   | —   |
+| Review hardening: save trust boundary, layering, bundle     | `63ce722` | #32 |
 
 ## In progress
 
@@ -108,9 +108,10 @@ stages instead. See ADR-0011.
   statements / 94% branches, now gated in CI by a threshold ratchet.
 - 2 Playwright e2e tests — green (functional smoke + screenshot capture).
 - CI: `build`, `e2e`, `android`, `security` — all green on `main`, last
-  verified on PR #30. Actions stopped triggering for ~4 hours on 2026-08-26
+  verified on PR #32. The unit-test job runs `pnpm test:coverage`, so a
+  coverage regression now fails the build. Actions stopped triggering for ~4 hours on 2026-08-26
   and has since recovered; PR #22 merged during that window without a CI run.
-- Last full pipeline pass: PR #30, 2026-08-26.
+- Last full pipeline pass: PR #32, 2026-08-27.
 
 ## Blocked on human decisions
 
