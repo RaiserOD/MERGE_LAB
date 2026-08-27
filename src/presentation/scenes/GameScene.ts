@@ -92,6 +92,11 @@ export class GameScene extends Phaser.Scene {
       this.context.eventBus.on("DIALOGUE_COMPLETED", () => {
         this.persist();
       }),
+      // A section the campaign just offered is news: the button appears on
+      // its own otherwise, with nothing saying why.
+      this.context.eventBus.on("BOARD_SECTION_OFFERED", (event) => {
+        this.hud.setStatus(`${event.title} can be opened for ${String(event.coinCost)} coins`);
+      }),
       // Each tutorial step can introduce itself through the Professor.
       this.context.eventBus.on("TUTORIAL_STEP_COMPLETED", () => {
         this.persist();

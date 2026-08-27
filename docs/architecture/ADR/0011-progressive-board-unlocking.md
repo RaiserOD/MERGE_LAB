@@ -89,6 +89,11 @@ CONFLICT REPORTED, NOT RESOLVED:
   same shape as the open SPEND_ENERGY conflict (gap analysis #2) and is
   left for the PM: either §4's list is incomplete, or Level 4's action
   maps onto something else. Nothing here guesses which.
+
+  RESOLVED by ADR-0012: the PM ruled that Level 4's action maps onto an
+  existing thing — a section is granted by progression (canon §9 already
+  grants the first board cells as a Level 3 unlock) and then bought. §4
+  stays closed; the correction canon needs is in §10.
 MIGRATION:
   None. No save field added, changed or removed; `BoardCellSave.state`
   already accepted LOCKED. Existing saves load unchanged.

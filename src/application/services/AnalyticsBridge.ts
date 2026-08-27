@@ -53,6 +53,9 @@ export class AnalyticsBridge {
       this.eventBus.on("CHAPTER_UNLOCKED", (event) => {
         this.adapter.track({ name: "chapter_unlocked", chapterId: event.chapterId });
       }),
+      this.eventBus.on("BOARD_SECTION_OFFERED", (event) => {
+        this.adapter.track({ name: "content_unlocked", contentId: event.sectionId });
+      }),
       this.eventBus.on("BOARD_SECTION_UNLOCKED", (event) => {
         this.adapter.track({ name: "content_unlocked", contentId: event.sectionId });
       }),

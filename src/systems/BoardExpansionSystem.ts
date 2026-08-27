@@ -13,15 +13,32 @@ export class BoardExpansionError extends Error {}
 
 /**
  * Progressive board unlocking, per canon §39: the 7×9 grid never changes
- * size, but its cells become available a section at a time, gated by
- * conditions and paid for in coins.
+ * size, but its cells become available a section at a time.
  *
- * Cell state is the single source of truth for what is unlocked. It already
- * persists through `BoardCellSave.state`, and every other system already
- * treats a non-EMPTY cell as unusable (`Board.isEmpty`), so nothing else
- * needed teaching about locked cells.
+ * Two separate things happen to a section, and keeping them apart is the
+ * point of ADR-0012:
+ *
+ *   1. The campaign **offers** it — `unlockConditions` come true because the
+ *      player progressed. This is a grant, not something the player does on
+ *      purpose. Canon §9 grants the first board cells as a Level 3 *unlock*,
+ *      which is why canon §4 needs no board-unlock requirement type.
+ *   2. The player **buys** it, spending the content-defined coin cost.
+ *
+ * Cell state is the single source of truth for step 2. It already persists
+ * through `BoardCellSave.state`, and every other system treats a non-EMPTY
+ * cell as unusable (`Board.isEmpty`), so nothing else needed teaching about
+ * locked cells. Step 1 is not persisted: conditions only ever become more
+ * true (lab stage and player level rise, chapters unlock), so an offer once
+ * made cannot be withdrawn and re-deriving it is exact.
  */
 export class BoardExpansionSystem {
+  /**
+   * Sections already known to be offered. Seeded by `start()` from the
+   * loaded save so a reload does not re-announce an offer the player has
+   * already seen; after that it only grows, and each addition emits.
+   */
+  private readonly offered = new Set<string>();
+
   constructor(
     private readonly board: Board,
     private readonly sections: BoardSectionRegistry,
@@ -29,6 +46,58 @@ export class BoardExpansionSystem {
     private readonly unlockContext: UnlockContext,
     private readonly eventBus: EventBus<DomainEvent>,
   ) {}
+
+  /**
+   * Watches for sections the campaign has just offered.
+   *
+   * Subscribes to exactly the events that can move an unlock condition —
+   * lab stage, player level, chapter unlocks. Returns an unsubscribe
+   * function, like every other event-driven system here.
+   */
+  start(): () => void {
+    for (const section of this.sections.all()) {
+      if (this.conditionsMet(section.id)) {
+        this.offered.add(section.id);
+      }
+    }
+
+    const announce = (): void => {
+      this.announceNewOffers();
+    };
+
+    const unsubscribes = [
+      this.eventBus.on("LAB_UPGRADED", announce),
+      this.eventBus.on("PLAYER_LEVELED", announce),
+      this.eventBus.on("CHAPTER_UNLOCKED", announce),
+    ];
+
+    return () => {
+      for (const unsubscribe of unsubscribes) {
+        unsubscribe();
+      }
+    };
+  }
+
+  /** Emits BOARD_SECTION_OFFERED for every section that just became available. */
+  private announceNewOffers(): void {
+    for (const section of this.sections.all()) {
+      if (this.offered.has(section.id) || !this.conditionsMet(section.id)) {
+        continue;
+      }
+
+      this.offered.add(section.id);
+      if (this.isUnlocked(section.id)) {
+        continue;
+      }
+
+      this.eventBus.emit({
+        type: "BOARD_SECTION_OFFERED",
+        sectionId: section.id,
+        title: section.title,
+        coinCost: section.unlockCost,
+      });
+    }
+  }
 
   /**
    * Section cells that actually exist on this board.
@@ -53,7 +122,11 @@ export class BoardExpansionSystem {
     return cells.every((cell) => this.board.getCell(cell.x, cell.y).state !== "LOCKED");
   }
 
-  /** Conditions only — affordability is reported separately so the UI can show a priced button. */
+  /**
+   * Whether the campaign has offered this section. Affordability is reported
+   * separately, so the UI can show a priced button for an offer the player
+   * cannot yet pay for.
+   */
   conditionsMet(sectionId: string): boolean {
     const section = this.sections.requireById(sectionId);
     return evaluateUnlockConditions(section.unlockConditions, this.unlockContext);

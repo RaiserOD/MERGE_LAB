@@ -127,6 +127,15 @@ artefact.
    assumes board pressure (a merge-space squeeze, a storage upgrade) currently
    has nothing to push against.
 
+   **PM decision: board pressure waits for content volume.** The section
+   costs (40/300/800 over a 21-cell starter area) stay as they are, and
+   nothing is retuned to manufacture a squeeze. The cause is 2 items and one
+   merge chain, not a starter area that is too large — shrinking the start
+   would hide the symptom without creating the beat canon §10 asks for.
+   Re-measure when content grows; the simulator reports peak occupancy and
+   `boardFull` blocks on every run, so the moment the board starts binding
+   will show up on its own.
+
 ## Rules for changing the economy
 
 - New currency → human approval + ADR (it changes the save schema and the HUD).
