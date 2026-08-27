@@ -53,6 +53,7 @@ Post-B2 work, in the order it landed:
 | Progressive board unlocking, canon §39 (ADR-0011)           | `cf50e41` | #30 |
 | Review hardening: save trust boundary, layering, bundle     | `63ce722` | #32 |
 | Quest reconciliation on load (PM rule: only if available)   | pending   | —   |
+| Balance pass: stage pacing, merge premium, 8 board sections | pending   | —   |
 
 ## In progress
 
@@ -69,11 +70,12 @@ on human decisions". The exceptions, which an agent can pick up unblocked, are
 under "Known gaps and debt": property-based tests, and growing content
 volume within the mechanics that already exist.
 
-**Three balance findings are waiting on a PM decision** (measured, see
-`docs/design/economy.md`): the 500-coin stage-3 gate is cleared by the
-starting energy bar before the tutorial ends; `order.water_delivery` is
-strictly dominated by `order.first_sample` and is never worth delivering; and
-the 7×9 board peaks at 4 of 63 cells in use.
+**The balance findings are closed.** All three were fixed by content-only
+tuning and verified with `pnpm economy:simulate` — see the measured tables in
+`docs/design/economy.md`. Stage 3 moved from 6 minutes to 30; the merge now
+pays a +56% premium over delivering the same items raw; the starter area is
+14 cells, computed from what the content needs rather than picked. Board
+pressure still waits for content volume, as decided.
 
 **The integrity audit is closed.** All six findings landed (PRs #26, #27,
 #28 and progressive board unlocking). The board now opens a section at a
