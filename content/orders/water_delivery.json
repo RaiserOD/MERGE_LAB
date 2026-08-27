@@ -1,8 +1,14 @@
 {
   "id": "order.water_delivery",
   "chapterId": "chapter.basement",
-  "requirements": [{ "itemId": "item.water", "quantity": 2 }],
-  "coinReward": 10,
+  "title": "Water sample",
+  "requirements": [
+    {
+      "itemId": "item.water",
+      "quantity": 2
+    }
+  ],
+  "coinReward": 16,
   "researchReward": 0,
   "xpReward": 2
 }

@@ -1,65 +1,37 @@
 {
   "id": "board.chemistry_bay",
-  "sectionNumber": 3,
+  "sectionNumber": 4,
   "title": "Chemistry Bay",
   "cells": [
     {
       "x": 0,
-      "y": 5
+      "y": 4
     },
     {
       "x": 1,
-      "y": 5
+      "y": 4
     },
     {
       "x": 2,
-      "y": 5
+      "y": 4
     },
     {
       "x": 3,
-      "y": 5
+      "y": 4
     },
     {
       "x": 4,
-      "y": 5
+      "y": 4
     },
     {
       "x": 5,
-      "y": 5
+      "y": 4
     },
     {
       "x": 6,
-      "y": 5
-    },
-    {
-      "x": 0,
-      "y": 6
-    },
-    {
-      "x": 1,
-      "y": 6
-    },
-    {
-      "x": 2,
-      "y": 6
-    },
-    {
-      "x": 3,
-      "y": 6
-    },
-    {
-      "x": 4,
-      "y": 6
-    },
-    {
-      "x": 5,
-      "y": 6
-    },
-    {
-      "x": 6,
-      "y": 6
+      "y": 4
     }
   ],
   "unlockConditions": ["labStage>=3"],
-  "unlockCost": 300
+  "unlockCost": 140
 }

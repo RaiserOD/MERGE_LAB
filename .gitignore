@@ -37,3 +37,6 @@ dev-dist/
 
 # TypeScript incremental build info
 *.tsbuildinfo
+
+# Standalone demo artifact (pnpm demo) — built on demand, never committed
+demo-dist

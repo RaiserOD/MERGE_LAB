@@ -1,65 +1,37 @@
 {
   "id": "board.biology_bay",
-  "sectionNumber": 4,
+  "sectionNumber": 5,
   "title": "Biology Bay",
   "cells": [
     {
       "x": 0,
-      "y": 7
+      "y": 5
     },
     {
       "x": 1,
-      "y": 7
+      "y": 5
     },
     {
       "x": 2,
-      "y": 7
+      "y": 5
     },
     {
       "x": 3,
-      "y": 7
+      "y": 5
     },
     {
       "x": 4,
-      "y": 7
+      "y": 5
     },
     {
       "x": 5,
-      "y": 7
+      "y": 5
     },
     {
       "x": 6,
-      "y": 7
-    },
-    {
-      "x": 0,
-      "y": 8
-    },
-    {
-      "x": 1,
-      "y": 8
-    },
-    {
-      "x": 2,
-      "y": 8
-    },
-    {
-      "x": 3,
-      "y": 8
-    },
-    {
-      "x": 4,
-      "y": 8
-    },
-    {
-      "x": 5,
-      "y": 8
-    },
-    {
-      "x": 6,
-      "y": 8
+      "y": 5
     }
   ],
-  "unlockConditions": ["labStage>=4"],
-  "unlockCost": 800
+  "unlockConditions": ["playerLevel>=4"],
+  "unlockCost": 200
 }

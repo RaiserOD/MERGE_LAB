@@ -1,0 +1,37 @@
+{
+  "id": "board.locked_room",
+  "sectionNumber": 3,
+  "title": "The Locked Room",
+  "cells": [
+    {
+      "x": 0,
+      "y": 3
+    },
+    {
+      "x": 1,
+      "y": 3
+    },
+    {
+      "x": 2,
+      "y": 3
+    },
+    {
+      "x": 3,
+      "y": 3
+    },
+    {
+      "x": 4,
+      "y": 3
+    },
+    {
+      "x": 5,
+      "y": 3
+    },
+    {
+      "x": 6,
+      "y": 3
+    }
+  ],
+  "unlockConditions": ["labStage>=2"],
+  "unlockCost": 80
+}

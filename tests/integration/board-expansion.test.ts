@@ -12,6 +12,25 @@ import { FixedClock } from "../fixtures/FixedClock";
  * of-truth (ADR-0011) is betting on.
  */
 describe("Board expansion (integration)", () => {
+  /**
+   * Satisfies whatever gate `board.power_console` declares. The content
+   * schedule follows canon §39's cadence, so the first expansion is keyed to
+   * player level — but the test is about the mechanism, not the gate, and
+   * should not break the next time the schedule is retuned.
+   */
+  function grantGate(context: GameContext): void {
+    const section = context.boardSections.requireById("board.power_console");
+    let guard = 0;
+    while (!context.boardExpansionSystem.conditionsMet(section.id) && guard < 50) {
+      context.progressionSystem.grantXp(100);
+      if (context.progressionSystem.canUpgradeLab()) {
+        context.progressionSystem.upgradeLab();
+      }
+      guard += 1;
+    }
+    expect(context.boardExpansionSystem.conditionsMet(section.id)).toBe(true);
+  }
+
   function freshContext(storage: InMemoryStorage): GameContext {
     const context = new GameContext({ storage, clock: new FixedClock(0) });
     context.start();
@@ -45,15 +64,14 @@ describe("Board expansion (integration)", () => {
     expect(() => context.boardSystem.spawnItem("item.water")).toThrow(/Board is full/);
   });
 
-  it("unlocks the next section once its lab stage and coins are in place", () => {
+  it("unlocks the next section once its gate and coins are in place", () => {
     const context = freshContext(new InMemoryStorage());
     const section = context.boardSections.requireById("board.power_console");
 
     expect(context.boardExpansionSystem.canUnlock(section.id)).toBe(false);
 
     context.economySystem.grant("coins", 1000);
-    context.progressionSystem.upgradeLab();
-    expect(context.progressionSystem.getLabStage()).toBe(2);
+    grantGate(context);
 
     expect(context.boardExpansionSystem.canUnlock(section.id)).toBe(true);
     const before = context.economySystem.getBalance("coins");
@@ -71,7 +89,7 @@ describe("Board expansion (integration)", () => {
     const section = context.boardSections.requireById("board.power_console");
 
     context.economySystem.grant("coins", 1000);
-    context.progressionSystem.upgradeLab();
+    grantGate(context);
     context.boardExpansionSystem.unlockSection(section.id);
     context.save();
 
@@ -92,7 +110,7 @@ describe("Board expansion (integration)", () => {
     context.start();
 
     context.economySystem.grant("coins", 1000);
-    context.progressionSystem.upgradeLab();
+    grantGate(context);
     tracked.length = 0;
     context.boardExpansionSystem.unlockSection("board.power_console");
 
