@@ -1,6 +1,6 @@
 # Acceptance criteria
 
-Canon is `docs/MASTER_SPEC.md` (A27). What "done" means before a change lands,
+Canon is `docs/MASTER_SPEC.md`; per-level acceptance is §49–§55. What "done" means before a change lands,
 and what a reviewer checks.
 
 ## Definition of done

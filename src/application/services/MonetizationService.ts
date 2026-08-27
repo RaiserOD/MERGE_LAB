@@ -9,7 +9,7 @@ export type PurchaseOutcome = "success" | "failed" | "unavailable";
 
 /**
  * Gates ad/billing calls behind their feature flags and emits the domain
- * events AnalyticsBridge translates into A24's rewarded-ad/IAP vocabulary
+ * events AnalyticsBridge translates into the rewarded-ad/IAP vocabulary
  * — this is the only place that calls RewardedAdAdapter/BillingAdapter, the
  * same way AnalyticsBridge is the only caller of AnalyticsAdapter.
  *

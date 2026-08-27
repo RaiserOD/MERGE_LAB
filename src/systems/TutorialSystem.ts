@@ -9,7 +9,7 @@ import type { DomainEvent } from "@systems/events/DomainEvent";
 import type { EventBus } from "@systems/events/EventBus";
 
 /**
- * Drives the A3 opening beats (ML-027). The tutorial observes the same
+ * Drives the opening beats of canon §7 (Level 1). The tutorial observes the same
  * domain events quests do rather than gating input: a player who works out
  * the merge before being told is never blocked waiting for the banner, and
  * gameplay systems stay unaware a tutorial exists.

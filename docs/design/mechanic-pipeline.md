@@ -214,11 +214,12 @@ loud rather than implying rigour that is not there.
 ## Open questions for the PM
 
 1. **Where does this live in canon?** The proposal that prompted this asked
-   for a `MASTER_SPEC` section `A14A`, after "Story Architecture / Chapter
-   Design" and before "Events". That numbering conflicts with
-   `CONTEXT_MAP.md`, where A13 is Quests, A14–A15 are Narrative/Dialogue,
-   A11–A12 are Progression/Chapters and A21–A22 are Events. Both cannot be
-   right and MASTER_SPEC is not here to settle it. Reported, not resolved.
+   for a `MASTER_SPEC` section `A14A`, from a spec revision that no longer
+   exists — canon is now §1–§60 and carries no `A` numbering at all. Canon
+   also has no section on mechanic design: the nearest neighbours are §56
+   (AI implementation rule) and §57 (human approval). Whether this pipeline
+   becomes a new canon section, or stays a repo process outside canon, is
+   part of the decision ADR-0008 is waiting on.
 2. **Retro-document how much?** One worked example (ML-MECH-001) is written.
    Backfilling merge, generators, orders and quests is real effort for
    documentation of things that already work.

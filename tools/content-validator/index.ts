@@ -288,7 +288,7 @@ export function validateQuests(
  * COMPLETE_QUEST chains must not form a cycle. A -> B -> A is not a crash
  * (QuestSystem marks a quest completed before emitting, so re-entry
  * terminates) but neither quest can ever complete, because each is waiting
- * on the other. Chapters have had this check since B5; quests only checked
+ * on the other. Chapters have had this check from the start; quests only checked
  * direct self-reference, which missed every cycle longer than one.
  */
 function findQuestCycles(quests: QuestDefinition[]): string[] {
@@ -410,7 +410,7 @@ function findNumberingGaps(numbering: Map<number, string>): string[] {
   return errors;
 }
 
-/** B5: "no circular chapter unlocks" — a cycle would leave those chapters permanently locked. */
+/** "No circular chapter unlocks" — a cycle would leave those chapters permanently locked. */
 function findUnlockCycles(dependencies: Map<string, string[]>): string[] {
   const errors: string[] = [];
   const visiting = new Set<string>();

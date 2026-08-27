@@ -15,7 +15,7 @@ export class BoardSystem {
     return this.board;
   }
 
-  /** First empty cell in stable row-major order — the deterministic placement policy from A7. */
+  /** First empty cell in stable row-major order — the deterministic placement policy. */
   findFirstEmptyCell(): BoardPosition | undefined {
     for (const cell of this.board.allCells()) {
       if (cell.state === "EMPTY") {

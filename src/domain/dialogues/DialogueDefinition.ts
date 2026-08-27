@@ -3,7 +3,7 @@ import { z } from "zod";
 /**
  * Dialogue content: dialogues are content JSON, not code.
  *
- * Speakers are the MVP NPC roster from A12 plus `narrator` for lines with
+ * Speakers are the MVP NPC roster plus `narrator` for lines with
  * no on-screen character. A line carries only text — no branching, since
  * MVP narrative is explicitly linear and branching narrative is a
  * stated non-goal.

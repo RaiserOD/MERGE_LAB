@@ -3,11 +3,42 @@
 Retrieval map: classify the task, load only the rows below it. This is the
 file that keeps a scoped change from costing a full-spec read.
 
-`docs/MASTER_SPEC.md` is now in the repo, but it is the **20-level campaign
-canon**, numbered by level (§0–§27). The `A5` / `A16` / `B2` references below
-came from an earlier spec revision and **do not resolve against it** — read
-them as "the topic this row is about", not as a location, until they are
-reconciled. Everything else below is a path that exists today.
+`docs/MASTER_SPEC.md` is the **20-level campaign canon**, §1–§60. Every row
+below now cites canon by section, or says plainly that canon does not cover
+the topic. The old `A5` / `A16` / `B2` references are gone.
+
+**Canon does not cover the whole engine, and that is not a gap in the map.**
+It specifies the campaign — levels, progression, narrative, data contracts,
+events, analytics, acceptance. It says nothing about item and merge rules,
+generators, energy, the currency model, the save schema, monetization or UI.
+For those the authority is the ADR or design document named in the row, and
+the row says "not in canon" rather than pointing at a section that does not
+discuss it. A false citation is worse than an honest absence.
+
+| Topic                | Canon                                 |
+| -------------------- | ------------------------------------- |
+| Progression model    | §2, §3 (completion), §6 (pacing)      |
+| Requirement types    | §4                                    |
+| XP sources           | §5                                    |
+| Levels 1–20          | §7–§26, table at §27                  |
+| Level data contract  | §28, §31 (unlock), §32 (idempotency)  |
+| Narrative beats      | §29, §34 (story rule), §35 (delivery) |
+| Chapters             | §30                                   |
+| Content unlock       | §33                                   |
+| Lab visuals          | §36                                   |
+| Difficulty           | §37, §38                              |
+| Board expansion      | §39                                   |
+| Orders               | §40                                   |
+| Quests               | §41                                   |
+| Research             | §42                                   |
+| Implementation files | §46                                   |
+| Required events      | §47                                   |
+| Required analytics   | §48                                   |
+| Acceptance tests     | §49–§55                               |
+| AI procedure         | §56                                   |
+| PM approval          | §57                                   |
+
+Everything else below is a path that exists today.
 
 Every task also implicitly loads `PROJECT_MEMORY.md` (automatic) and should
 check `docs/architecture/ADR/` for a binding prior decision.
@@ -16,7 +47,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Board
 
-- Spec: A5; canon §39 (progressive unlocking)
+- Canon: §39 (board expansion; the 7×9 grid itself is not specified elsewhere)
 - Docs: `architecture/system-map.md`, `architecture/data-contracts.md`
 - Code: `src/domain/board/`, `src/systems/BoardSystem.ts`,
   `src/systems/BoardExpansionSystem.ts`, `src/config/runtime.ts`
@@ -28,14 +59,14 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Merge
 
-- Spec: A5, A6
+- Canon: not covered — merge rules are an invariant of this repo, not canon
 - Docs: `architecture/data-contracts.md`, `design/game-design.md`
 - Code: `src/systems/MergeSystem.ts`, `src/domain/items/`, `src/domain/board/`
 - Tests: `tests/unit/MergeSystem.test.ts`, `tests/integration/first-merge.test.ts`
 
 ## Items and content definitions
 
-- Spec: A6
+- Canon: not covered — item and merge-chain shape is a repo contract
 - Docs: `design/content-pipeline.md`, `architecture/data-contracts.md`
 - Code: `src/domain/items/`, `src/infrastructure/content/ContentLoader.ts`,
   `content/items/`, `tools/content-validator/`
@@ -43,7 +74,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Generators and energy
 
-- Spec: A7, A8
+- Canon: not covered — generators and energy are repo mechanics
 - Docs: `design/economy.md`
 - Code: `src/systems/GeneratorSystem.ts`, `src/systems/EnergySystem.ts`,
   `src/domain/generators/`, `src/infrastructure/clock/Clock.ts`,
@@ -53,7 +84,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Economy and currencies
 
-- Spec: A9, A16
+- Canon: §42 covers research points only; the wider economy is not covered
 - Docs: `design/economy.md`
 - Code: `src/systems/EconomySystem.ts`, `src/systems/events/DomainEvent.ts`
   (`CurrencyKind`)
@@ -63,7 +94,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Orders
 
-- Spec: A10
+- Canon: §40 (order progression across the 20 levels)
 - Docs: `design/economy.md`, `design/game-design.md`
 - Code: `src/systems/OrderSystem.ts`, `src/domain/orders/`, `content/orders/`
 - Tests: `tests/unit/OrderSystem.test.ts`, `tests/unit/OrderRegistry.test.ts`,
@@ -81,7 +112,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Progression, lab stages, chapters
 
-- Spec: A11, A12
+- Canon: §2 (progression model), §36 (lab visual progression)
 - Docs: `design/game-design.md`
 - Code: `src/systems/ProgressionSystem.ts`, `src/domain/progression/`,
   `content/lab-stages/`, `content/chapters/`
@@ -89,7 +120,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Quests
 
-- Spec: A13
+- Canon: §41 (quest progression), §4 (requirement types)
 - Docs: `design/game-design.md`
 - Code: `src/systems/QuestSystem.ts`, `src/domain/quests/`, `content/quests/`,
   `src/domain/progression/ProgressionRequirement.ts` (the shared predicate)
@@ -98,7 +129,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Narrative and dialogue
 
-- Spec: A14, A15
+- Canon: §29 (beat contract), §34 (story rule), §35 (delivery priority)
 - Docs: `design/narrative.md`
 - Code: `src/systems/DialogueSystem.ts`, `src/domain/dialogues/`,
   `src/presentation/npc/DialogueView.ts`, `content/dialogues/`
@@ -106,7 +137,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Tutorial
 
-- Spec: A20
+- Canon: §7 (Level 1 opening beats); the tutorial mechanism is not covered
 - Docs: `design/game-design.md`, `design/narrative.md`
 - Code: `src/systems/TutorialSystem.ts`, `src/domain/tutorial/`,
   `src/presentation/ui/TutorialBanner.ts`, `content/tutorial/`
@@ -114,7 +145,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Save and persistence
 
-- Spec: A23
+- Canon: not covered — the save schema is a repo contract (ADR-0001, ADR-0006)
 - Docs: `architecture/data-contracts.md`
 - Code: `src/infrastructure/persistence/SaveSystem.ts`,
   `src/domain/save/SaveDataV1.ts`, `src/domain/GameState.ts`
@@ -123,7 +154,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## UI and presentation
 
-- Spec: A18, A19
+- Canon: §36 covers lab visuals only; UI structure is not covered
 - Docs: `architecture/system-map.md`
 - Code: `src/presentation/` (scenes, `BoardView`, `Hud`, `ActionBar`, `theme.ts`),
   `src/app/GameApp.ts`
@@ -132,7 +163,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Analytics
 
-- Spec: A24
+- Canon: §48 (required analytics)
 - Docs: `architecture/system-map.md`
 - Code: `src/application/services/AnalyticsBridge.ts`,
   `src/infrastructure/analytics/`
@@ -141,7 +172,7 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Monetization
 
-- Spec: A17
+- Canon: not covered — canon says nothing about monetization at all
 - Docs: `design/monetization.md`, `design/economy.md`
 - Code: `src/application/services/MonetizationService.ts`,
   `src/infrastructure/ads/`, `src/infrastructure/billing/`,
@@ -152,14 +183,14 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Events and system wiring
 
-- Spec: A21, A22
+- Canon: §46 (implementation files), §47 (required events)
 - Docs: `architecture/system-map.md`
 - Code: `src/systems/events/DomainEvent.ts`, `src/systems/events/EventBus.ts`,
   `src/app/GameContext.ts`
 
 ## Mechanic design (proposed)
 
-- Spec: not yet in canon — see the open question in `design/mechanic-pipeline.md`
+- Canon: not covered — see the open question in `design/mechanic-pipeline.md`
 - Docs: `design/mechanic-pipeline.md`, `design/mechanics/README.md`,
   `design/mechanics/TEMPLATE.md`
 - ADR: 0008 (**Proposed** — not binding until Accepted)
@@ -168,21 +199,21 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## Content pipeline
 
-- Spec: A25
+- Canon: §46 (recommended content files)
 - Docs: `design/content-pipeline.md`
 - Code: `content/`, `tools/content-validator/`,
   `src/infrastructure/content/ContentLoader.ts`
 
 ## Testing and QA
 
-- Spec: A27
+- Canon: §49–§55 (per-level acceptance tests)
 - Docs: `qa/test-strategy.md`, `qa/acceptance.md`
 - Code: `vite.config.ts` (Vitest), `playwright.config.ts`, `tests/`
 - ADR: 0002
 
 ## Build, tooling, CI
 
-- Spec: B1, B3
+- Canon: not covered — build tooling is a repo decision (ADR-0001)
 - Docs: `architecture/system-map.md`
 - Code: `package.json`, `vite.config.ts`, `tsconfig.*.json`,
   `eslint.config.js`, `.github/workflows/ci.yml`
@@ -190,14 +221,14 @@ check `docs/architecture/ADR/` for a binding prior decision.
 
 ## PWA and offline
 
-- Spec: B2 step 19
+- Canon: not covered — PWA is a delivery decision (ADR-0005)
 - Code: `src/infrastructure/pwa/registerServiceWorker.ts`,
   `src/presentation/pwa/updateBanner.ts`, `vite.config.ts` (`vite-plugin-pwa`),
   `src/main.ts`
 
 ## Mobile / Android
 
-- Spec: B2 step 20
+- Canon: not covered — packaging is a repo decision (ADR-0003, ADR-0005)
 - Code: `capacitor.config.ts`, `android/`, `.github/workflows/ci.yml`
   (`android` job)
 - ADR: 0003 (Capacitor), 0005 (Android is the release target; iOS kept

@@ -152,7 +152,7 @@ dispatch.
 
 ## 10. Analytics
 
-EVENTS — names in the A24 vocabulary (`AnalyticsEvent.ts`).
+EVENTS — names in canon §48's vocabulary (`AnalyticsEvent.ts`).
 SUCCESS_METRIC / FAILURE_METRIC — what would show this mechanic works or does
 not. Emitted only through `AnalyticsBridge`.
 

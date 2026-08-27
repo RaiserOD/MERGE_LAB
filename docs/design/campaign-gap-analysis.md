@@ -290,10 +290,16 @@ exactly once, none of the content matters.
 
 ## 7. Section-numbering mismatch
 
-Docs and source comments cite `A5`, `A8`, `A16`, `A21`–`A28`, `B2`, `B5`, `B9`.
-Those come from an earlier spec revision and **do not resolve** against this
-document, which is numbered §0–§60 by level and topic. The references are
-currently topic pointers, not locations.
+**Resolved.** Docs and source comments used to cite `A5`, `A8`, `A16`,
+`A21`–`A28`, `B2`, `B5`, `B9` from an earlier spec revision. They now cite
+canon by section, and `CONTEXT_MAP.md` carries a topic → section table.
+
+The reconciliation was not one-to-one, and could not have been: canon
+specifies the **campaign**, not the engine. It has no section on item and
+merge rules, generators, energy, the currency model, the save schema,
+monetization or UI. Those topics are marked "not covered" and point at the
+ADR or design document that actually governs them, rather than at a section
+that does not discuss them.
 
 Canon §57's approval list is the successor to what the docs cite as B9, and it
 is stricter — it adds `merge rules`, `core Energy rules` and `campaign

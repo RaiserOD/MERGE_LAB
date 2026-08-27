@@ -10,7 +10,7 @@ import type { EconomySystem } from "@systems/EconomySystem";
 export class ProgressionError extends Error {}
 
 /**
- * The three progression tracks from A11: player XP/level, laboratory stage
+ * The three progression tracks (canon §2): player XP/level, laboratory stage
  * (bought with coins), and chapter unlocks.
  *
  * XP arrives by subscription rather than being pushed, so the systems that

@@ -10,7 +10,7 @@ export const SCENE_KEYS = {
 /**
  * Builds the game context and hands it to GameScene. On a first run the
  * board is empty, so a couple of starter items are spawned to make the
- * merge affordance visible immediately (A3: one draggable item in the
+ * merge affordance visible immediately (canon §7, Level 1: one draggable item in the
  * first 10 seconds).
  */
 export class BootScene extends Phaser.Scene {
